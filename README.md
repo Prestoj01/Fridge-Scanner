@@ -1,2 +1,2 @@
-# Fridge-Recipes
+# Fridge-Scanner
 
