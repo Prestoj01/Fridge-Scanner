@@ -23,23 +23,36 @@ export default function App() {
             <Suspense fallback={<Loading />}>
               {flow.step === 'upload' && (
                 <UploadScreen
+                  aiEnabled={flow.aiEnabled}
                   photos={flow.photos}
+                  detection={flow.detection}
                   onAddPhotos={flow.addPhotos}
                   onRemovePhoto={flow.removePhoto}
-                  onNext={flow.goNext}
+                  onDetect={() => void flow.detect()}
+                  onEnterManually={flow.enterManually}
                 />
               )}
               {flow.step === 'review' && (
                 <ReviewScreen
                   ingredients={flow.ingredients}
+                  detectedCount={flow.detectedCount}
+                  diet={flow.diet}
                   onAddIngredient={flow.addIngredient}
                   onRemoveIngredient={flow.removeIngredient}
+                  onDietChange={flow.setDiet}
                   onBack={flow.goBack}
-                  onNext={flow.goNext}
+                  onFindRecipes={() => void flow.findRecipes()}
                 />
               )}
               {flow.step === 'recipes' && (
-                <RecipesScreen recipes={flow.recipes} onBack={flow.goBack} onReset={flow.reset} />
+                <RecipesScreen
+                  recipes={flow.recipes}
+                  generation={flow.generation}
+                  onRetry={() => void flow.findRecipes()}
+                  onUseLibrary={flow.showLibraryRecipes}
+                  onBack={flow.goBack}
+                  onReset={flow.reset}
+                />
               )}
             </Suspense>
           </ErrorBoundary>

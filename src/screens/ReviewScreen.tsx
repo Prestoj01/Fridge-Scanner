@@ -1,27 +1,42 @@
 import { useState, type SyntheticEvent } from 'react'
 import { EmptyState } from '../components/EmptyState'
-import type { Ingredient } from '../types'
+import { Notice } from '../components/Notice'
+import type { Diet, Ingredient } from '../types'
 
 interface ReviewScreenProps {
   ingredients: readonly Ingredient[]
+  /** How many ingredients the last photo detection found, or null if none ran. */
+  detectedCount: number | null
+  diet: Diet
   onAddIngredient: (name: string) => void
   onRemoveIngredient: (id: string) => void
+  onDietChange: (diet: Diet) => void
   onBack: () => void
-  onNext: () => void
+  onFindRecipes: () => void
 }
+
+const DIETS: readonly { value: Diet; label: string }[] = [
+  { value: 'any', label: 'No preference' },
+  { value: 'vegetarian', label: 'Vegetarian' },
+  { value: 'vegan', label: 'Vegan' },
+]
 
 export default function ReviewScreen({
   ingredients,
+  detectedCount,
+  diet,
   onAddIngredient,
   onRemoveIngredient,
+  onDietChange,
   onBack,
-  onNext,
+  onFindRecipes,
 }: ReviewScreenProps) {
   const [draft, setDraft] = useState('')
 
   const handleSubmit = (event: SyntheticEvent<HTMLFormElement>) => {
     event.preventDefault()
-    onAddIngredient(draft)
+    // Allow several at once: "eggs, milk, spinach".
+    for (const name of draft.split(',')) onAddIngredient(name)
     setDraft('')
   }
 
@@ -30,12 +45,23 @@ export default function ReviewScreen({
       <h2 id="review-heading">Review ingredients</h2>
       <p className="screen__intro">Confirm what you have. Add anything missing, remove mistakes.</p>
 
+      {detectedCount !== null && (
+        <Notice>
+          {detectedCount === 0
+            ? 'We could not spot any food in those photos. Add your ingredients below.'
+            : `Found ${String(detectedCount)} ${detectedCount === 1 ? 'ingredient' : 'ingredients'} in your photos. Check the list before continuing.`}
+        </Notice>
+      )}
+
       <form className="add-form" onSubmit={handleSubmit}>
         <input
           type="text"
           value={draft}
-          placeholder="e.g. spinach"
+          placeholder="e.g. eggs, spinach"
           aria-label="Ingredient name"
+          autoComplete="off"
+          enterKeyHint="done"
+          maxLength={200}
           onChange={(event) => {
             setDraft(event.target.value)
           }}
@@ -49,10 +75,10 @@ export default function ReviewScreen({
         <EmptyState
           icon="🥕"
           title="No ingredients yet"
-          description="Automatic detection is coming soon. For now, add ingredients by hand above."
+          description="Type what you have above. Separate several with commas."
         />
       ) : (
-        <ul className="chip-list">
+        <ul className="chip-list" aria-label="Your ingredients">
           {ingredients.map((ingredient) => (
             <li key={ingredient.id} className="chip">
               {ingredient.name}
@@ -70,11 +96,33 @@ export default function ReviewScreen({
         </ul>
       )}
 
+      <label className="field">
+        <span>Diet</span>
+        <select
+          value={diet}
+          onChange={(event) => {
+            const choice = DIETS.find((option) => option.value === event.target.value)
+            if (choice) onDietChange(choice.value)
+          }}
+        >
+          {DIETS.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </select>
+      </label>
+
       <div className="screen__actions">
         <button type="button" className="button" onClick={onBack}>
           Back
         </button>
-        <button type="button" className="button button--primary" onClick={onNext}>
+        <button
+          type="button"
+          className="button button--primary"
+          disabled={ingredients.length === 0}
+          onClick={onFindRecipes}
+        >
           Find recipes
         </button>
       </div>

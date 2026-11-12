@@ -6,11 +6,21 @@ export function normalizeIngredientName(raw: string): string {
 }
 
 /**
- * Returns a new list with the ingredient added, or the same list if the name
- * is blank or already present.
+ * Returns a new list with the ingredients added, skipping blanks and names
+ * already present. Returns the same list if nothing was added.
  */
-export function addIngredient(list: readonly Ingredient[], rawName: string): readonly Ingredient[] {
-  const name = normalizeIngredientName(rawName)
-  if (name === '' || list.some((item) => item.name === name)) return list
-  return [...list, { id: crypto.randomUUID(), name }]
+export function addIngredients(
+  list: readonly Ingredient[],
+  rawNames: readonly string[],
+  source: Ingredient['source'],
+): readonly Ingredient[] {
+  const known = new Set(list.map((item) => item.name))
+  const added: Ingredient[] = []
+  for (const rawName of rawNames) {
+    const name = normalizeIngredientName(rawName)
+    if (name === '' || known.has(name)) continue
+    known.add(name)
+    added.push({ id: crypto.randomUUID(), name, source })
+  }
+  return added.length === 0 ? list : [...list, ...added]
 }

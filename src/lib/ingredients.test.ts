@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { addIngredient, normalizeIngredientName } from './ingredients'
+import { addIngredients, normalizeIngredientName } from './ingredients'
 
 describe('normalizeIngredientName', () => {
   it('trims, collapses whitespace, and lowercases', () => {
@@ -7,15 +7,18 @@ describe('normalizeIngredientName', () => {
   })
 })
 
-describe('addIngredient', () => {
-  it('adds a normalized ingredient', () => {
-    const result = addIngredient([], ' Spinach ')
-    expect(result.map((item) => item.name)).toEqual(['spinach'])
+describe('addIngredients', () => {
+  it('adds normalized ingredients with their source', () => {
+    const result = addIngredients([], [' Spinach ', 'Eggs'], 'detected')
+    expect(result.map((item) => [item.name, item.source])).toEqual([
+      ['spinach', 'detected'],
+      ['eggs', 'detected'],
+    ])
   })
 
   it('ignores blanks and duplicates', () => {
-    const list = addIngredient([], 'eggs')
-    expect(addIngredient(list, '   ')).toBe(list)
-    expect(addIngredient(list, 'EGGS')).toBe(list)
+    const list = addIngredients([], ['eggs'], 'manual')
+    expect(addIngredients(list, ['   ', 'EGGS', 'eggs'], 'manual')).toBe(list)
+    expect(addIngredients(list, ['milk', 'Milk'], 'manual')).toHaveLength(2)
   })
 })

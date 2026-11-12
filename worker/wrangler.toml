@@ -1,0 +1,13 @@
+name = "fridge-scanner-api"
+main = "src/index.ts"
+compatibility_date = "2026-11-01"
+
+[vars]
+# Any Gemini model with image input that is on the free tier.
+GEMINI_MODEL = "gemini-3.5-flash-lite"
+# Comma-separated list of origins allowed to call this API from a browser.
+ALLOWED_ORIGINS = "https://prestoj01.github.io,http://localhost:5173,http://localhost:4173"
+
+# The API key is a secret, not a var. Set it with:
+#   npx wrangler secret put GEMINI_API_KEY --config worker/wrangler.toml
+# For local development, copy worker/.dev.vars.example to worker/.dev.vars.
