@@ -4,6 +4,12 @@ Snap a photo of your fridge or pantry and get healthy recipes, with steps, from 
 
 **Live demo:** <https://prestoj01.github.io/Fridge-Scanner/>
 
+<p>
+  <img src="docs/screenshots/upload.png" alt="Upload screen with a large Add photos target" width="260">
+  <img src="docs/screenshots/review.png" alt="Review screen listing six detected ingredients and a diet choice" width="260">
+  <img src="docs/screenshots/recipes.png" alt="Recipes screen with two healthy recipes, one needing soy sauce" width="260">
+</p>
+
 ## How it works
 
 1. **Photos.** Add up to four photos. They are downscaled in the browser before upload.
