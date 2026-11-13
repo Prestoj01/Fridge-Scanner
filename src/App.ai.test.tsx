@@ -32,6 +32,7 @@ async function uploadPhoto(user: ReturnType<typeof userEvent.setup>) {
   const photo = new File(['x'], 'fridge.png', { type: 'image/png' })
   await user.upload(await screen.findByLabelText('Choose photos'), photo)
   expect(screen.getByAltText('fridge.png')).toBeInTheDocument()
+  expect(screen.getByText('1 of 4 photos')).toBeInTheDocument()
 }
 
 beforeEach(() => {
@@ -44,35 +45,58 @@ beforeEach(() => {
 
 it('detects ingredients from a photo and shows AI recipes', async () => {
   vi.mocked(detectIngredients).mockResolvedValue(['chicken', 'broccoli'])
-  vi.mocked(fetchRecipes).mockResolvedValue([stirFry])
+  let finish: (recipes: RecipeContent[]) => void = () => undefined
+  vi.mocked(fetchRecipes).mockReturnValue(
+    new Promise((resolve) => {
+      finish = resolve
+    }),
+  )
   const user = userEvent.setup()
   render(<App />)
 
-  expect(await screen.findByRole('button', { name: 'Detect ingredients' })).toBeDisabled()
+  expect(await screen.findByRole('button', { name: /Add photos/ })).toBeInTheDocument()
+  expect(screen.queryByRole('button', { name: 'Detect ingredients' })).not.toBeInTheDocument()
   await uploadPhoto(user)
   await user.click(screen.getByRole('button', { name: 'Detect ingredients' }))
 
-  expect(await screen.findByText(/Found 2 ingredients in your photos/)).toBeInTheDocument()
+  expect(
+    await screen.findByRole('heading', { name: 'We spotted 2 ingredients' }),
+  ).toBeInTheDocument()
   expect(screen.getByText('chicken')).toBeInTheDocument()
 
   await user.click(screen.getByRole('button', { name: 'Find recipes' }))
   expect(
+    await screen.findByRole('heading', { name: 'Finding healthy recipes…' }),
+  ).toBeInTheDocument()
+
+  finish([stirFry])
+  expect(
     await screen.findByRole('heading', { name: 'Garlic chicken stir-fry' }),
   ).toBeInTheDocument()
-  expect(screen.getByText('🛒 1 to buy')).toBeInTheDocument()
+  expect(screen.getByRole('heading', { name: '1 healthy recipe for you' })).toBeInTheDocument()
+  expect(screen.getByText('Need soy sauce')).toBeInTheDocument()
   expect(screen.getByText('Cook the chicken for 6 minutes.')).toBeInTheDocument()
   expect(fetchRecipes).toHaveBeenCalledWith(['chicken', 'broccoli'], 'any')
 })
 
-it('shows a detection error and lets the user retry', async () => {
+it('shows a busy state while detecting, then an error with retry', async () => {
+  let fail: (error: Error) => void = () => undefined
   vi.mocked(detectIngredients)
-    .mockRejectedValueOnce(new ApiError('rate_limited'))
+    .mockReturnValueOnce(
+      new Promise((_, reject) => {
+        fail = reject
+      }),
+    )
     .mockResolvedValueOnce([])
   const user = userEvent.setup()
   render(<App />)
 
   await uploadPhoto(user)
   await user.click(screen.getByRole('button', { name: 'Detect ingredients' }))
+  expect(await screen.findByText('Looking for ingredients…')).toBeInTheDocument()
+  expect(screen.getByRole('button', { name: 'Remove fridge.png' })).toBeDisabled()
+
+  fail(new ApiError('rate_limited'))
   expect(await screen.findByRole('alert')).toHaveTextContent('Too many requests')
 
   await user.click(screen.getByRole('button', { name: 'Try again' }))
@@ -86,7 +110,7 @@ it('falls back to built-in recipes when the AI request fails', async () => {
 
   await user.click(await screen.findByRole('button', { name: 'Type ingredients instead' }))
   await user.type(await screen.findByLabelText('Ingredient name'), 'bread, avocado, eggs{Enter}')
-  await user.selectOptions(screen.getByLabelText('Diet'), 'vegetarian')
+  await user.click(screen.getByRole('radio', { name: 'Vegetarian' }))
   await user.click(screen.getByRole('button', { name: 'Find recipes' }))
 
   expect(await screen.findByRole('alert')).toHaveTextContent('not set up yet')

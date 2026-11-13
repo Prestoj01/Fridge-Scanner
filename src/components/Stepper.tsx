@@ -20,10 +20,11 @@ export function Stepper({ current }: StepperProps) {
               className={`stepper__item stepper__item--${state}`}
               aria-current={state === 'current' ? 'step' : undefined}
             >
-              <span className="stepper__number" aria-hidden="true">
-                {index + 1}
+              <span className="stepper__bar" aria-hidden="true" />
+              <span>
+                {step.label}
+                {state === 'done' && <span className="visually-hidden"> (done)</span>}
               </span>
-              <span className="stepper__label">{step.label}</span>
             </li>
           )
         })}

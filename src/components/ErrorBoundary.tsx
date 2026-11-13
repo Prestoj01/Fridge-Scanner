@@ -1,4 +1,6 @@
+import { TriangleAlert } from 'lucide-react'
 import { Component, type ErrorInfo, type ReactNode } from 'react'
+import { Icon } from './Icon'
 
 interface ErrorBoundaryProps {
   children: ReactNode
@@ -27,8 +29,9 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
     if (this.state.error) {
       return (
         <div className="error-state" role="alert">
+          <Icon icon={TriangleAlert} size={32} />
           <h2>Something went wrong</h2>
-          <p>The app hit an unexpected error. Your photos never left this device.</p>
+          <p>The page hit an unexpected error. Your photos and ingredients are still here.</p>
           <button type="button" className="button button--primary" onClick={this.handleRetry}>
             Try again
           </button>

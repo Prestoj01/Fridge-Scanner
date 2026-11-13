@@ -1,7 +1,9 @@
+import type { LucideIcon } from 'lucide-react'
 import type { ReactNode } from 'react'
+import { Icon } from './Icon'
 
 interface EmptyStateProps {
-  icon: string
+  icon: LucideIcon
   title: string
   description: string
   /** Optional call to action, e.g. a button. */
@@ -11,9 +13,7 @@ interface EmptyStateProps {
 export function EmptyState({ icon, title, description, children }: EmptyStateProps) {
   return (
     <div className="empty-state">
-      <span className="empty-state__icon" aria-hidden="true">
-        {icon}
-      </span>
+      <Icon icon={icon} size={32} />
       <h3 className="empty-state__title">{title}</h3>
       <p className="empty-state__description">{description}</p>
       {children}

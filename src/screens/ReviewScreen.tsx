@@ -1,6 +1,7 @@
+import { ChevronLeft, ListPlus, X } from 'lucide-react'
 import { useState, type SyntheticEvent } from 'react'
 import { EmptyState } from '../components/EmptyState'
-import { Notice } from '../components/Notice'
+import { Icon } from '../components/Icon'
 import type { Diet, Ingredient } from '../types'
 
 interface ReviewScreenProps {
@@ -16,10 +17,30 @@ interface ReviewScreenProps {
 }
 
 const DIETS: readonly { value: Diet; label: string }[] = [
-  { value: 'any', label: 'No preference' },
+  { value: 'any', label: 'Anything' },
   { value: 'vegetarian', label: 'Vegetarian' },
   { value: 'vegan', label: 'Vegan' },
 ]
+
+function plural(count: number, word: string): string {
+  return `${String(count)} ${word}${count === 1 ? '' : 's'}`
+}
+
+function headline(count: number, detectedCount: number | null): string {
+  if (detectedCount !== null && detectedCount > 0) {
+    return `We spotted ${plural(detectedCount, 'ingredient')}`
+  }
+  if (count === 0) return 'What do you have to cook with?'
+  return `${plural(count, 'ingredient')} on your list`
+}
+
+function intro(detectedCount: number | null): string {
+  if (detectedCount === null)
+    return 'Type an ingredient and press Enter. Separate several with commas.'
+  if (detectedCount === 0)
+    return 'We could not spot any food in those photos. Type what you have instead.'
+  return 'Remove anything we got wrong and add what we missed.'
+}
 
 export default function ReviewScreen({
   ingredients,
@@ -42,22 +63,21 @@ export default function ReviewScreen({
 
   return (
     <section className="screen" aria-labelledby="review-heading">
-      <h2 id="review-heading">Review ingredients</h2>
-      <p className="screen__intro">Confirm what you have. Add anything missing, remove mistakes.</p>
+      <button type="button" className="button button--ghost screen__back" onClick={onBack}>
+        <Icon icon={ChevronLeft} />
+        Photos
+      </button>
 
-      {detectedCount !== null && (
-        <Notice>
-          {detectedCount === 0
-            ? 'We could not spot any food in those photos. Add your ingredients below.'
-            : `Found ${String(detectedCount)} ${detectedCount === 1 ? 'ingredient' : 'ingredients'} in your photos. Check the list before continuing.`}
-        </Notice>
-      )}
+      <header className="screen__header">
+        <h2 id="review-heading">{headline(ingredients.length, detectedCount)}</h2>
+        <p className="screen__intro">{intro(detectedCount)}</p>
+      </header>
 
-      <form className="add-form" onSubmit={handleSubmit}>
+      <form className="input-group" onSubmit={handleSubmit}>
         <input
           type="text"
           value={draft}
-          placeholder="e.g. eggs, spinach"
+          placeholder="eggs, spinach, rice"
           aria-label="Ingredient name"
           autoComplete="off"
           enterKeyHint="done"
@@ -73,9 +93,9 @@ export default function ReviewScreen({
 
       {ingredients.length === 0 ? (
         <EmptyState
-          icon="🥕"
-          title="No ingredients yet"
-          description="Type what you have above. Separate several with commas."
+          icon={ListPlus}
+          title="Your list is empty"
+          description="Start with a protein, a vegetable, and a grain for the best matches."
         />
       ) : (
         <ul className="chip-list" aria-label="Your ingredients">
@@ -89,34 +109,35 @@ export default function ReviewScreen({
                   onRemoveIngredient(ingredient.id)
                 }}
               >
-                ×
+                <Icon icon={X} size={16} />
               </button>
             </li>
           ))}
         </ul>
       )}
 
-      <label className="field">
-        <span>Diet</span>
-        <select
-          value={diet}
-          onChange={(event) => {
-            const choice = DIETS.find((option) => option.value === event.target.value)
-            if (choice) onDietChange(choice.value)
-          }}
-        >
+      <fieldset className="segmented">
+        <legend>Diet</legend>
+        <div className="segmented__options">
           {DIETS.map((option) => (
-            <option key={option.value} value={option.value}>
+            <label key={option.value} className="segmented__option">
+              <input
+                type="radio"
+                name="diet"
+                value={option.value}
+                checked={diet === option.value}
+                className="visually-hidden"
+                onChange={() => {
+                  onDietChange(option.value)
+                }}
+              />
               {option.label}
-            </option>
+            </label>
           ))}
-        </select>
-      </label>
+        </div>
+      </fieldset>
 
       <div className="screen__actions">
-        <button type="button" className="button" onClick={onBack}>
-          Back
-        </button>
         <button
           type="button"
           className="button button--primary"
