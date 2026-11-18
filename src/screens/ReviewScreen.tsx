@@ -1,5 +1,6 @@
 import { ChevronLeft, ListPlus, X } from 'lucide-react'
-import { useState, type SyntheticEvent, type CSSProperties } from 'react'
+import { AnimatePresence, motion } from 'motion/react'
+import { useEffect, useState, type SyntheticEvent } from 'react'
 import { EmptyState } from '../components/EmptyState'
 import { Icon } from '../components/Icon'
 import { magnetColor, tilt } from '../lib/fun'
@@ -54,6 +55,16 @@ export default function ReviewScreen({
   onFindRecipes,
 }: ReviewScreenProps) {
   const [draft, setDraft] = useState('')
+  // Magnets present on arrival drop in one by one; later ones drop at once.
+  const [settled, setSettled] = useState(false)
+  useEffect(() => {
+    const id = window.setTimeout(() => {
+      setSettled(true)
+    }, 900)
+    return () => {
+      window.clearTimeout(id)
+    }
+  }, [])
 
   const handleSubmit = (event: SyntheticEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -66,7 +77,7 @@ export default function ReviewScreen({
     <section className="screen" aria-labelledby="review-heading">
       <button type="button" className="button button--ghost screen__back" onClick={onBack}>
         <Icon icon={ChevronLeft} />
-        Photos
+        Back
       </button>
 
       <header className="screen__header">
@@ -100,24 +111,51 @@ export default function ReviewScreen({
         />
       ) : (
         <ul className="chip-list" aria-label="Your ingredients">
-          {ingredients.map((ingredient) => (
-            <li
-              key={ingredient.id}
-              className={`chip magnet--${magnetColor(ingredient.name)}`}
-              style={{ '--tilt': `${String(tilt(ingredient.name, 4))}deg` } as CSSProperties}
-            >
-              {ingredient.name}
-              <button
-                type="button"
-                aria-label={`Remove ${ingredient.name}`}
-                onClick={() => {
-                  onRemoveIngredient(ingredient.id)
+          <AnimatePresence mode="popLayout">
+            {ingredients.map((ingredient, index) => (
+              <motion.li
+                key={ingredient.id}
+                layout
+                className={`chip magnet--${magnetColor(ingredient.name)}`}
+                initial={{ y: -90, opacity: 0, rotate: -25, scale: 0.6 }}
+                animate={{ y: 0, opacity: 1, rotate: tilt(ingredient.name, 4), scale: 1 }}
+                exit={{
+                  y: 320,
+                  opacity: 0,
+                  zIndex: 20,
+                  rotate: tilt(ingredient.name, 4) > 0 ? 70 : -70,
+                  transition: { duration: 0.5, ease: 'easeIn' },
                 }}
+                transition={{
+                  type: 'spring',
+                  stiffness: 520,
+                  damping: 16,
+                  delay: settled ? 0 : index * 0.07,
+                }}
+                drag
+                dragSnapToOrigin
+                dragElastic={0.75}
+                dragTransition={{ bounceStiffness: 480, bounceDamping: 11 }}
+                whileDrag={{ scale: 1.15, rotate: 0, zIndex: 10, cursor: 'grabbing' }}
+                whileHover={{ scale: 1.05 }}
               >
-                <Icon icon={X} size={16} />
-              </button>
-            </li>
-          ))}
+                {ingredient.name}
+                <button
+                  type="button"
+                  aria-label={`Remove ${ingredient.name}`}
+                  onPointerDown={(event) => {
+                    // Let the button click without starting a drag.
+                    event.stopPropagation()
+                  }}
+                  onClick={() => {
+                    onRemoveIngredient(ingredient.id)
+                  }}
+                >
+                  <Icon icon={X} size={16} />
+                </button>
+              </motion.li>
+            ))}
+          </AnimatePresence>
         </ul>
       )}
 

@@ -1,5 +1,6 @@
 import { Camera, ImagePlus, X } from 'lucide-react'
-import { useRef, useState, type ChangeEvent, type DragEvent, type CSSProperties } from 'react'
+import { AnimatePresence, motion } from 'motion/react'
+import { useRef, useState, type ChangeEvent, type DragEvent } from 'react'
 import { Icon } from '../components/Icon'
 import { Notice } from '../components/Notice'
 import { magnetColor, tilt } from '../lib/fun'
@@ -122,31 +123,38 @@ function PhotoUpload({
             {photos.length} of {API_LIMITS.maxImages} photos
           </p>
           <ul className="photo-grid">
-            {photos.map((photo) => (
-              <li
-                key={photo.id}
-                className={`photo-tile magnet--${magnetColor(photo.id)}`}
-                style={{ '--tilt': `${String(tilt(photo.id, 3))}deg` } as CSSProperties}
-              >
-                <span className="photo-tile__pin" aria-hidden="true" />
-                <span className="photo-tile__frame">
-                  <img src={photo.url} alt={photo.name} />
-                </span>
-                <button
-                  type="button"
-                  className="photo-tile__remove"
-                  aria-label={`Remove ${photo.name}`}
-                  disabled={busy}
-                  onClick={() => {
-                    onRemovePhoto(photo.id)
-                  }}
+            <AnimatePresence mode="popLayout">
+              {photos.map((photo) => (
+                <motion.li
+                  key={photo.id}
+                  layout
+                  className={`photo-tile magnet--${magnetColor(photo.id)}`}
+                  initial={{ y: -160, opacity: 0, rotate: -30, scale: 1.3 }}
+                  animate={{ y: 0, opacity: 1, rotate: tilt(photo.id, 4), scale: 1 }}
+                  exit={{ scale: 0.2, opacity: 0, rotate: 90, transition: { duration: 0.3 } }}
+                  transition={{ type: 'spring', stiffness: 380, damping: 15 }}
+                  whileHover={{ rotate: 0, scale: 1.03 }}
                 >
-                  <Icon icon={X} />
-                </button>
-              </li>
-            ))}
+                  <span className="photo-tile__pin" aria-hidden="true" />
+                  <span className="photo-tile__frame">
+                    <img src={photo.url} alt={photo.name} />
+                  </span>
+                  <button
+                    type="button"
+                    className="photo-tile__remove"
+                    aria-label={`Remove ${photo.name}`}
+                    disabled={busy}
+                    onClick={() => {
+                      onRemovePhoto(photo.id)
+                    }}
+                  >
+                    <Icon icon={X} />
+                  </button>
+                </motion.li>
+              ))}
+            </AnimatePresence>
             {!full && (
-              <li>
+              <motion.li layout key="add">
                 <button
                   type="button"
                   className="photo-tile photo-tile--add"
@@ -156,7 +164,7 @@ function PhotoUpload({
                   <Icon icon={ImagePlus} size={24} />
                   Add more
                 </button>
-              </li>
+              </motion.li>
             )}
           </ul>
         </div>

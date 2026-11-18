@@ -315,9 +315,19 @@ a {
   border: var(--line) solid var(--color-line);
   border-radius: var(--radius-xl);
   background: linear-gradient(170deg, var(--enamel-top), var(--enamel-bottom));
+  perspective: 1400px;
   box-shadow:
     var(--lift-md),
     0 22px 40px -18px rgb(43 29 22 / 35%);
+}
+
+.door__swing {
+  transform-origin: left center;
+}
+
+.chip-list,
+.photo-grid {
+  position: relative;
 }
 
 .door::after {
@@ -763,7 +773,6 @@ a {
   box-shadow:
     0 1px 0 rgb(0 0 0 / 10%),
     0 12px 20px -12px rgb(0 0 0 / 50%);
-  transform: rotate(var(--tilt, 0deg));
 }
 
 .photo-tile__frame {
@@ -931,7 +940,6 @@ a {
     inset 0 -4px 0 rgb(0 0 0 / 16%),
     inset 0 3px 0 rgb(255 255 255 / 35%),
     var(--lift-sm);
-  transform: rotate(var(--tilt, 0deg));
   touch-action: none;
   user-select: none;
   cursor: grab;
@@ -1265,6 +1273,15 @@ a {
 
   .door {
     padding: var(--space-6) var(--space-7) var(--space-6) var(--space-6);
+  }
+
+  .door__swing {
+    transform-origin: left center;
+  }
+
+  .chip-list,
+  .photo-grid {
+    position: relative;
   }
 
   .door::after {
