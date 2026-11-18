@@ -5,9 +5,9 @@ Snap a photo of your fridge or pantry and get healthy recipes, with steps, from 
 **Live demo:** <https://prestoj01.github.io/Fridge-Scanner/>
 
 <p>
-  <img src="docs/screenshots/upload.png" alt="Upload screen with a large Add photos target" width="260">
-  <img src="docs/screenshots/review.png" alt="Review screen listing six detected ingredients and a diet choice" width="260">
-  <img src="docs/screenshots/recipes.png" alt="Recipes screen with two healthy recipes, one needing soy sauce" width="260">
+  <img src="docs/screenshots/upload.png" alt="Upload screen: Chilly the fridge asks for photos above a fridge-door panel" width="260">
+  <img src="docs/screenshots/review.png" alt="Review screen: six detected ingredients shown as colorful fridge magnets" width="260">
+  <img src="docs/screenshots/recipes.png" alt="Recipes screen: recipe notes pinned to the door with magnets" width="260">
 </p>
 
 ## How it works
@@ -17,6 +17,12 @@ Snap a photo of your fridge or pantry and get healthy recipes, with steps, from 
 3. **Recipes.** The model suggests healthy recipes that use what you have, shows what you would still need to buy, and gives step-by-step instructions.
 
 The app also works with no backend at all. In **offline mode** you type your ingredients and recipes come from a built-in library, matched against what you have. If the AI service fails or hits its quota, the app offers the same library as a fallback.
+
+## Design
+
+The whole app is a fridge door. Ingredients are magnets you can grab and fling, photos are polaroids, and recipes are notes pinned up with magnets. Chilly, a small fridge with a face, sits on top and reacts to what is happening: hungry for photos, darting its eyes while scanning, bouncing when recipes arrive, sulking on errors. Food doodles float behind the page with parallax.
+
+Every animation is turned off or reduced when the device asks for reduced motion.
 
 ## Architecture
 
@@ -37,6 +43,7 @@ Everything runs on free tiers: GitHub Pages, Cloudflare Workers, and the Gemini 
 ## Tech stack
 
 - [Vite](https://vite.dev/) + [React](https://react.dev/) + [TypeScript](https://www.typescriptlang.org/) (strict), plain CSS, React state only
+- [Motion](https://motion.dev/) for springs, drag, and enter/exit animations; [Lucide](https://lucide.dev/) icons; Fredoka and Nunito fonts, self-hosted
 - [Cloudflare Workers](https://developers.cloudflare.com/workers/) for the API, with no runtime dependencies
 - [Gemini API](https://aistudio.google.com/) for image understanding and recipe generation
 - [Vitest](https://vitest.dev/) + [Testing Library](https://testing-library.com/), ESLint, Prettier
