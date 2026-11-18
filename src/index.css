@@ -1388,3 +1388,31 @@ a {
     transform: translateX(4px);
   }
 }
+
+/* ───────────── Floating food ───────────── */
+
+.doodles {
+  --doodle-scale: 1;
+
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.doodle {
+  position: absolute;
+}
+
+@media (min-width: 64rem) {
+  .doodles {
+    --doodle-scale: 1.7;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .doodle {
+    filter: saturate(0.85) brightness(0.9);
+  }
+}

@@ -1,6 +1,7 @@
 import { AnimatePresence, MotionConfig, motion, useAnimate } from 'motion/react'
 import { lazy, Suspense, useEffect } from 'react'
 import { ErrorBoundary } from './components/ErrorBoundary'
+import { FoodDoodles } from './components/FoodDoodles'
 import { Footer } from './components/Footer'
 import { Header } from './components/Header'
 import { Loading } from './components/Loading'
@@ -37,6 +38,7 @@ export default function App() {
   return (
     <MotionConfig reducedMotion="user">
       <div className="app">
+        <FoodDoodles />
         <Header />
         <main className="app-main">
           <div className="container">
