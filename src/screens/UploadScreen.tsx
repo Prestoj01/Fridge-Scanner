@@ -129,7 +129,9 @@ function PhotoUpload({
                 style={{ '--tilt': `${String(tilt(photo.id, 3))}deg` } as CSSProperties}
               >
                 <span className="photo-tile__pin" aria-hidden="true" />
-                <img src={photo.url} alt={photo.name} />
+                <span className="photo-tile__frame">
+                  <img src={photo.url} alt={photo.name} />
+                </span>
                 <button
                   type="button"
                   className="photo-tile__remove"
