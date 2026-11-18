@@ -1,5 +1,6 @@
 import { AnimatePresence, MotionConfig, motion, useAnimate } from 'motion/react'
 import { lazy, Suspense, useEffect } from 'react'
+import { Confetti } from './components/Confetti'
 import { ErrorBoundary } from './components/ErrorBoundary'
 import { FoodDoodles } from './components/FoodDoodles'
 import { Footer } from './components/Footer'
@@ -29,6 +30,15 @@ export default function App() {
   })
   const line = useRotatingLine(chilly.lines)
 
+  // Celebrate when ingredients are found and when recipes land.
+  const firstDetected = flow.ingredients.find((item) => item.source === 'detected')
+  const celebration =
+    flow.step === 'recipes' && flow.generation.status === 'idle' && flow.recipes[0]
+      ? { seed: flow.recipes[0].id, pieces: 64 }
+      : flow.step === 'review' && firstDetected
+        ? { seed: firstDetected.id, pieces: 28 }
+        : null
+
   // The door gives a little thunk whenever the step changes.
   const [door, animateDoor] = useAnimate<HTMLDivElement>()
   useEffect(() => {
@@ -39,6 +49,9 @@ export default function App() {
     <MotionConfig reducedMotion="user">
       <div className="app">
         <FoodDoodles />
+        {celebration && (
+          <Confetti key={celebration.seed} seed={celebration.seed} pieces={celebration.pieces} />
+        )}
         <Header />
         <main className="app-main">
           <div className="container">

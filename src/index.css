@@ -1416,3 +1416,162 @@ a {
     filter: saturate(0.85) brightness(0.9);
   }
 }
+
+/* ───────────── Celebration and cooking ───────────── */
+
+.confetti {
+  position: fixed;
+  top: 22%;
+  left: 50%;
+  z-index: 50;
+  pointer-events: none;
+}
+
+.confetti__piece {
+  position: absolute;
+  top: 0;
+  left: 0;
+  border: 1.5px solid rgb(0 0 0 / 35%);
+  background: var(--magnet);
+}
+
+.pot {
+  display: grid;
+  place-items: center;
+  color: var(--color-text-muted);
+}
+
+.pot svg {
+  overflow: visible;
+}
+
+.pot__lid {
+  transform-box: fill-box;
+  transform-origin: center bottom;
+  animation: rattle 0.45s ease-in-out infinite;
+}
+
+.pot__bubbles circle {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: bubble 1.2s ease-in infinite;
+}
+
+.pot__bubbles circle:nth-child(2) {
+  animation-delay: 0.4s;
+}
+
+.pot__bubbles circle:nth-child(3) {
+  animation-delay: 0.8s;
+}
+
+.pot__steam path {
+  animation: steam 2.2s ease-out infinite;
+  opacity: 0;
+}
+
+.pot__steam path:nth-child(2) {
+  animation-delay: 0.7s;
+}
+
+.pot__steam path:nth-child(3) {
+  animation-delay: 1.4s;
+}
+
+.pot__flames path {
+  transform-box: fill-box;
+  transform-origin: center bottom;
+  animation: flicker 0.35s ease-in-out infinite alternate;
+}
+
+.pot__flames path:nth-child(2) {
+  animation-duration: 0.28s;
+}
+
+/* A shine sweeps across the main button now and then. */
+.button--primary {
+  position: relative;
+  overflow: hidden;
+}
+
+.button--primary:not(:disabled)::after {
+  content: '';
+  position: absolute;
+  inset-block: 0;
+  left: -60%;
+  width: 40%;
+  background: linear-gradient(100deg, transparent, rgb(255 255 255 / 45%), transparent);
+  transform: skewX(-20deg);
+  animation: shine 4s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes rattle {
+  0%,
+  100% {
+    transform: rotate(-3deg) translateY(0);
+  }
+
+  50% {
+    transform: rotate(3deg) translateY(-3px);
+  }
+}
+
+@keyframes bubble {
+  0% {
+    transform: translateY(6px) scale(0.4);
+    opacity: 0;
+  }
+
+  30% {
+    opacity: 1;
+  }
+
+  100% {
+    transform: translateY(-14px) scale(1.15);
+    opacity: 0;
+  }
+}
+
+@keyframes steam {
+  0% {
+    transform: translateY(10px);
+    opacity: 0;
+  }
+
+  40% {
+    opacity: 0.8;
+  }
+
+  100% {
+    transform: translateY(-16px);
+    opacity: 0;
+  }
+}
+
+@keyframes flicker {
+  from {
+    transform: scaleY(0.85) skewX(-4deg);
+  }
+
+  to {
+    transform: scaleY(1.1) skewX(4deg);
+  }
+}
+
+@keyframes shine {
+  0%,
+  70% {
+    left: -60%;
+  }
+
+  100% {
+    left: 130%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .button--primary::after {
+    display: none;
+  }
+}

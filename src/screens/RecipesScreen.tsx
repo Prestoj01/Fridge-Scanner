@@ -1,4 +1,5 @@
 import { ChevronLeft, CookingPot, RotateCcw } from 'lucide-react'
+import { BubblingPot } from '../components/BubblingPot'
 import { motion } from 'motion/react'
 import { EmptyState } from '../components/EmptyState'
 import { Icon } from '../components/Icon'
@@ -52,8 +53,8 @@ export default function RecipesScreen({
             Matching your ingredients. This takes a few seconds.
           </p>
         </header>
+        <BubblingPot />
         <div className="recipe-list">
-          <RecipeSkeleton />
           <RecipeSkeleton />
           <RecipeSkeleton />
         </div>
