@@ -19,43 +19,45 @@ export default function App() {
       <main className="app-main">
         <div className="container">
           <Stepper current={flow.step} />
-          <ErrorBoundary>
-            <Suspense fallback={<Loading />}>
-              {flow.step === 'upload' && (
-                <UploadScreen
-                  aiEnabled={flow.aiEnabled}
-                  photos={flow.photos}
-                  detection={flow.detection}
-                  onAddPhotos={flow.addPhotos}
-                  onRemovePhoto={flow.removePhoto}
-                  onDetect={() => void flow.detect()}
-                  onEnterManually={flow.enterManually}
-                />
-              )}
-              {flow.step === 'review' && (
-                <ReviewScreen
-                  ingredients={flow.ingredients}
-                  detectedCount={flow.detectedCount}
-                  diet={flow.diet}
-                  onAddIngredient={flow.addIngredient}
-                  onRemoveIngredient={flow.removeIngredient}
-                  onDietChange={flow.setDiet}
-                  onBack={flow.goBack}
-                  onFindRecipes={() => void flow.findRecipes()}
-                />
-              )}
-              {flow.step === 'recipes' && (
-                <RecipesScreen
-                  recipes={flow.recipes}
-                  generation={flow.generation}
-                  onRetry={() => void flow.findRecipes()}
-                  onUseLibrary={flow.showLibraryRecipes}
-                  onBack={flow.goBack}
-                  onReset={flow.reset}
-                />
-              )}
-            </Suspense>
-          </ErrorBoundary>
+          <div className="door">
+            <ErrorBoundary>
+              <Suspense fallback={<Loading />}>
+                {flow.step === 'upload' && (
+                  <UploadScreen
+                    aiEnabled={flow.aiEnabled}
+                    photos={flow.photos}
+                    detection={flow.detection}
+                    onAddPhotos={flow.addPhotos}
+                    onRemovePhoto={flow.removePhoto}
+                    onDetect={() => void flow.detect()}
+                    onEnterManually={flow.enterManually}
+                  />
+                )}
+                {flow.step === 'review' && (
+                  <ReviewScreen
+                    ingredients={flow.ingredients}
+                    detectedCount={flow.detectedCount}
+                    diet={flow.diet}
+                    onAddIngredient={flow.addIngredient}
+                    onRemoveIngredient={flow.removeIngredient}
+                    onDietChange={flow.setDiet}
+                    onBack={flow.goBack}
+                    onFindRecipes={() => void flow.findRecipes()}
+                  />
+                )}
+                {flow.step === 'recipes' && (
+                  <RecipesScreen
+                    recipes={flow.recipes}
+                    generation={flow.generation}
+                    onRetry={() => void flow.findRecipes()}
+                    onUseLibrary={flow.showLibraryRecipes}
+                    onBack={flow.goBack}
+                    onReset={flow.reset}
+                  />
+                )}
+              </Suspense>
+            </ErrorBoundary>
+          </div>
         </div>
       </main>
       <Footer />

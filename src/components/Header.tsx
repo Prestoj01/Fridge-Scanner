@@ -1,14 +1,20 @@
-import { Refrigerator } from 'lucide-react'
-import { Icon } from './Icon'
+import type { ReactNode } from 'react'
+import { MagnetWord } from './MagnetWord'
 
-export function Header() {
+interface HeaderProps {
+  /** The mascot, shown on the right. */
+  children?: ReactNode
+}
+
+export function Header({ children }: HeaderProps) {
   return (
     <header className="app-header">
       <div className="container app-header__inner">
-        <span className="app-header__mark">
-          <Icon icon={Refrigerator} size={16} />
-        </span>
-        <span className="app-header__title">Fridge Scanner</span>
+        <h1 className="logo">
+          <MagnetWord text="FRIDGE" />
+          <MagnetWord text="SCANNER" offset={3} />
+        </h1>
+        {children}
       </div>
     </header>
   )

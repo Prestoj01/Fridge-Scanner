@@ -1,29 +1,40 @@
 /*
- * Fridge Scanner design system.
- * Every color, space, radius, size, and duration below comes from a token in
- * :root. Components never use raw values except 1px hairlines.
+ * Fridge Scanner design system: "fridge-door magnets".
+ * Daytime kitchen in light mode, a midnight snack in dark mode.
+ * Components use tokens only, except 1px hairlines.
  */
 
 /* ───────────── Tokens ───────────── */
 
 :root {
-  /* Color: neutrals */
-  --color-bg: #f7f8f5;
-  --color-surface: #ffffff;
-  --color-sunken: #eef1ec;
-  --color-text: #17201b;
-  --color-text-muted: #4d5852;
-  --color-border: #d9dfd8;
-  --color-border-strong: #aeb8b0;
+  /* Palette */
+  --cherry: #d23a26;
+  --cherry-deep: #9e2414;
+  --butter: #ffcf4a;
+  --mint: #57c79a;
+  --sky: #62b8f2;
+  --grape: #8c5bd0;
+  --tangerine: #ff8a3d;
 
-  /* Color: accent (brand green) and status */
-  --color-accent: #2f7d4f;
-  --color-accent-hover: #256540;
-  --color-accent-subtle: #e2f1e7;
+  /* Semantic colors */
+  --color-bg: #fdf0d9;
+  --color-surface: #fffaf1;
+  --color-sunken: #f5e6cb;
+  --color-text: #2b1d16;
+  --color-text-muted: #6a5245;
+  --color-line: #2b1d16;
+  --color-accent: var(--cherry);
+  --color-accent-hover: #bb2f1c;
+  --color-accent-subtle: #fde0d6;
   --color-on-accent: #ffffff;
+  --color-good: #1f7a52;
   --color-warn: #8a4b08;
   --color-danger: #b3261e;
-  --color-danger-subtle: #fbe9e7;
+  --color-danger-subtle: #ffd9d3;
+  --color-note: #fff1a8;
+  --enamel-top: #e7f7ef;
+  --enamel-bottom: #bfe8d4;
+  --chrome: linear-gradient(90deg, #b9c0c4, #ffffff 45%, #a9b1b6);
 
   /* Space: 4px base */
   --space-1: 0.25rem;
@@ -35,37 +46,43 @@
   --space-7: 3rem;
 
   /* Radius. Nested corners use calc(outer - padding) so curves stay concentric. */
-  --radius-sm: 0.5rem;
-  --radius-md: 0.75rem;
-  --radius-lg: 1rem;
+  --radius-sm: 0.625rem;
+  --radius-md: 1rem;
+  --radius-lg: 1.5rem;
+  --radius-xl: 2rem;
   --radius-pill: 999px;
 
+  /* Lines and depth: cartoon outlines with hard, offset shadows */
+  --line: 3px;
+  --lift-sm: 0 3px 0 var(--color-line);
+  --lift-md: 0 5px 0 var(--color-line);
+
   /* Type */
-  --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-display: 'Fredoka Variable', 'Nunito Variable', system-ui, sans-serif;
+  --font-body: 'Nunito Variable', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --text-xs: 0.8125rem;
-  --text-sm: 0.875rem;
-  --text-md: 1rem;
-  --text-lg: 1.125rem;
-  --text-xl: 1.75rem;
-  --leading-tight: 1.2;
-  --leading-normal: 1.5;
+  --text-sm: 0.9375rem;
+  --text-md: 1.0625rem;
+  --text-lg: 1.25rem;
+  --text-xl: 2.125rem;
+  --leading-tight: 1.1;
+  --leading-normal: 1.55;
 
   /* Sizes */
   --control-sm: 2.5rem;
   --control-md: 3rem;
-  --control-lg: 3.5rem;
-  --max-width: 40rem;
+  --control-lg: 3.75rem;
+  --max-width: 36rem;
 
   /* Motion */
   --duration-fast: 120ms;
-  --duration-base: 200ms;
-  --duration-slow: 320ms;
+  --duration-base: 220ms;
+  --duration-slow: 420ms;
   --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
-
-  --shadow-sm: 0 1px 2px rgb(16 24 20 / 6%), 0 1px 1px rgb(16 24 20 / 4%);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
 
   color-scheme: light dark;
-  font-family: var(--font-sans);
+  font-family: var(--font-body);
   font-size: 100%;
   line-height: var(--leading-normal);
   color: var(--color-text);
@@ -76,21 +93,25 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --color-bg: #111513;
-    --color-surface: #1a201c;
-    --color-sunken: #0b0e0c;
-    --color-text: #e9eee9;
-    --color-text-muted: #a8b3ac;
-    --color-border: #2b332e;
-    --color-border-strong: #4a554e;
-    --color-accent: #5cc285;
-    --color-accent-hover: #78d39d;
-    --color-accent-subtle: #163322;
-    --color-on-accent: #07140c;
-    --color-warn: #f2c07d;
-    --color-danger: #f4b4b0;
-    --color-danger-subtle: #3a1715;
-    --shadow-sm: none;
+    --cherry: #ff6b55;
+    --cherry-deep: #b8361f;
+    --color-bg: #1d1833;
+    --color-surface: #2a2447;
+    --color-sunken: #171329;
+    --color-text: #fcefdc;
+    --color-text-muted: #cbbdd6;
+    --color-line: #0c0918;
+    --color-accent: var(--cherry);
+    --color-accent-hover: #ff8673;
+    --color-accent-subtle: #4a2433;
+    --color-on-accent: #2a0b05;
+    --color-good: #7ee0b0;
+    --color-warn: #ffd27a;
+    --color-danger: #ffb4aa;
+    --color-danger-subtle: #4a1c22;
+    --color-note: #fff1a8;
+    --enamel-top: #3a4a6b;
+    --enamel-bottom: #2b3756;
   }
 }
 
@@ -104,6 +125,7 @@
 
 body {
   margin: 0;
+  overflow-x: hidden;
 }
 
 h1,
@@ -123,6 +145,7 @@ h1,
 h2,
 h3,
 h4 {
+  font-family: var(--font-display);
   line-height: var(--leading-tight);
   text-wrap: balance;
 }
@@ -148,17 +171,24 @@ select {
 
 a {
   color: var(--color-accent);
-  text-underline-offset: 0.15em;
+  font-weight: 700;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.18em;
 }
 
 :focus-visible {
-  outline: 2px solid var(--color-accent);
-  outline-offset: 2px;
+  outline: 3px solid var(--sky);
+  outline-offset: 3px;
 }
 
 ::placeholder {
   color: var(--color-text-muted);
   opacity: 1;
+}
+
+::selection {
+  background: var(--butter);
+  color: #2b1d16;
 }
 
 .visually-hidden {
@@ -174,17 +204,49 @@ a {
   flex: none;
 }
 
-/* Numbers that change or sit in columns get equal-width digits. */
 .tabular {
   font-variant-numeric: tabular-nums;
+}
+
+/* Magnet colors, shared by letters, ingredient magnets, and pins. */
+.magnet--cherry {
+  --magnet: var(--cherry);
+  --magnet-ink: #ffffff;
+}
+
+.magnet--butter {
+  --magnet: var(--butter);
+  --magnet-ink: #2b1d16;
+}
+
+.magnet--mint {
+  --magnet: var(--mint);
+  --magnet-ink: #10261c;
+}
+
+.magnet--sky {
+  --magnet: var(--sky);
+  --magnet-ink: #0d2233;
+}
+
+.magnet--grape {
+  --magnet: var(--grape);
+  --magnet-ink: #ffffff;
+}
+
+.magnet--tangerine {
+  --magnet: var(--tangerine);
+  --magnet-ink: #2b1206;
 }
 
 /* ───────────── Layout ───────────── */
 
 .app {
+  position: relative;
   display: flex;
   flex-direction: column;
   min-height: 100dvh;
+  isolation: isolate;
 }
 
 .container {
@@ -195,87 +257,152 @@ a {
 }
 
 .app-header {
-  padding-block: var(--space-3);
-  border-bottom: 1px solid var(--color-border);
-  background: var(--color-surface);
+  padding-top: var(--space-4);
 }
 
 .app-header__inner {
   display: flex;
-  align-items: center;
-  gap: var(--space-2);
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-3);
+  min-height: 7rem;
 }
 
-.app-header__mark {
-  display: grid;
+.logo {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-3);
+  font-size: 1.5rem;
+}
+
+.magnet-word {
+  display: inline-flex;
+  gap: 2px;
+}
+
+.magnet-letter {
+  display: inline-grid;
   place-items: center;
-  width: 1.75rem;
-  height: 1.75rem;
-  border-radius: var(--radius-sm);
-  background: var(--color-accent);
-  color: var(--color-on-accent);
+  min-width: 1.15em;
+  height: 1.3em;
+  padding-inline: 0.08em;
+  border-radius: 0.28em;
+  background: var(--magnet);
+  color: var(--magnet-ink);
+  font-family: var(--font-display);
+  font-weight: 700;
+  line-height: 1;
+  box-shadow:
+    inset 0 -3px 0 rgb(0 0 0 / 18%),
+    inset 0 2px 0 rgb(255 255 255 / 35%),
+    0 2px 0 var(--color-line);
+  transform: rotate(var(--tilt, 0deg));
+  transition: transform var(--duration-base) var(--ease-spring);
 }
 
-.app-header__title {
-  font-size: var(--text-lg);
-  font-weight: 700;
-  letter-spacing: -0.01em;
+.logo:hover .magnet-letter {
+  transform: rotate(calc(var(--tilt, 0deg) * -1.6)) translateY(-2px);
 }
 
 .app-main {
   flex: 1;
-  padding-block: var(--space-5) var(--space-7);
+  padding-block: var(--space-4) var(--space-7);
+}
+
+/* The content panel is a fridge door: enamel, outline, and a chrome handle. */
+.door {
+  position: relative;
+  padding: var(--space-5) var(--space-6) var(--space-6) var(--space-4);
+  border: var(--line) solid var(--color-line);
+  border-radius: var(--radius-xl);
+  background: linear-gradient(170deg, var(--enamel-top), var(--enamel-bottom));
+  box-shadow:
+    var(--lift-md),
+    0 22px 40px -18px rgb(43 29 22 / 35%);
+}
+
+.door::after {
+  content: '';
+  position: absolute;
+  top: var(--space-6);
+  right: 0.625rem;
+  width: 0.75rem;
+  height: 7rem;
+  border: 2px solid var(--color-line);
+  border-radius: var(--radius-pill);
+  background: var(--chrome);
 }
 
 .app-footer {
-  padding-block: var(--space-5);
-  border-top: 1px solid var(--color-border);
+  padding-block: var(--space-5) var(--space-6);
   color: var(--color-text-muted);
   font-size: var(--text-sm);
-}
-
-.app-footer a {
-  color: inherit;
+  text-align: center;
 }
 
 .app-footer p + p {
   margin-top: var(--space-1);
+  font-size: var(--text-xs);
 }
 
-/* ───────────── Stepper ───────────── */
+/* ───────────── Stepper: three magnets ───────────── */
 
 .stepper {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: var(--space-2);
-  margin-bottom: var(--space-5);
+  display: flex;
+  justify-content: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
   padding: 0;
   list-style: none;
 }
 
 .stepper__item {
-  display: grid;
+  display: inline-flex;
+  align-items: center;
   gap: var(--space-2);
-  color: var(--color-text-muted);
-  font-size: var(--text-xs);
-  font-weight: 500;
-}
-
-.stepper__bar {
-  height: 4px;
+  padding: var(--space-1) var(--space-3) var(--space-1) var(--space-1);
+  border: 2px dashed var(--color-text-muted);
   border-radius: var(--radius-pill);
-  background: var(--color-border);
-  transition: background-color var(--duration-slow) var(--ease-out);
+  color: var(--color-text-muted);
+  font-family: var(--font-display);
+  font-weight: 600;
+  transition:
+    transform var(--duration-slow) var(--ease-spring),
+    background-color var(--duration-base) var(--ease-out);
 }
 
-.stepper__item--done .stepper__bar,
-.stepper__item--current .stepper__bar {
-  background: var(--color-accent);
+.stepper__dot {
+  display: grid;
+  place-items: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 50%;
+  background: var(--color-sunken);
+  font-variant-numeric: tabular-nums;
 }
 
 .stepper__item--current {
-  color: var(--color-text);
-  font-weight: 600;
+  border: 2px solid var(--color-line);
+  background: var(--butter);
+  color: #2b1d16;
+  box-shadow: var(--lift-sm);
+  transform: rotate(-3deg) scale(1.08);
+}
+
+.stepper__item--current .stepper__dot {
+  background: #2b1d16;
+  color: var(--butter);
+}
+
+.stepper__item--done {
+  border: 2px solid var(--color-line);
+  background: var(--mint);
+  color: #10261c;
+  box-shadow: var(--lift-sm);
+}
+
+.stepper__item--done .stepper__dot {
+  background: rgb(255 255 255 / 55%);
 }
 
 /* ───────────── Screen ───────────── */
@@ -284,10 +411,8 @@ a {
   display: flex;
   flex-direction: column;
   gap: var(--space-5);
-  animation: enter var(--duration-slow) var(--ease-out);
 }
 
-/* Title and intro sit close together; everything else gets a full gap. */
 .screen__header {
   display: grid;
   gap: var(--space-2);
@@ -295,13 +420,14 @@ a {
 
 .screen__header h2 {
   font-size: var(--text-xl);
-  font-weight: 700;
-  letter-spacing: -0.02em;
+  font-weight: 650;
+  letter-spacing: -0.01em;
   font-variant-numeric: tabular-nums;
 }
 
 .screen__intro {
   color: var(--color-text-muted);
+  font-size: var(--text-md);
 }
 
 .screen__source {
@@ -312,21 +438,16 @@ a {
 .screen__back {
   align-self: flex-start;
   gap: var(--space-1);
-  /*
-   * Optical alignment: the chevron's stroke starts about 7px inside its box.
-   * Pull the button left by its padding plus that inset so the visible
-   * chevron lines up with the headline below.
-   */
   margin: calc(var(--space-2) * -1) 0 calc(var(--space-3) * -1)
     calc((var(--space-2) + 0.4375rem) * -1);
 }
 
 .screen__actions {
   display: grid;
-  gap: var(--space-2);
+  gap: var(--space-3);
 }
 
-/* ───────────── Buttons ───────────── */
+/* ───────────── Buttons: chunky, they press down ───────────── */
 
 .button {
   display: inline-flex;
@@ -335,51 +456,58 @@ a {
   gap: var(--space-2);
   min-height: var(--control-md);
   padding: 0 var(--space-4);
-  border: 1px solid var(--color-border-strong);
+  border: var(--line) solid var(--color-line);
   border-radius: var(--radius-md);
   background: var(--color-surface);
+  font-family: var(--font-display);
   font-size: var(--text-md);
   font-weight: 600;
+  box-shadow: var(--lift-sm);
   cursor: pointer;
   transition:
-    background-color var(--duration-fast) var(--ease-out),
-    border-color var(--duration-fast) var(--ease-out),
-    transform var(--duration-fast) var(--ease-out);
+    transform var(--duration-fast) var(--ease-out),
+    box-shadow var(--duration-fast) var(--ease-out),
+    background-color var(--duration-fast) var(--ease-out);
 }
 
 .button:hover:not(:disabled) {
-  border-color: var(--color-text-muted);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 0 var(--color-line);
 }
 
 .button:active:not(:disabled) {
-  transform: scale(0.98);
+  transform: translateY(3px);
+  box-shadow: 0 0 0 var(--color-line);
 }
 
 .button:disabled {
-  border-color: var(--color-border);
   background: var(--color-sunken);
   color: var(--color-text-muted);
+  box-shadow: none;
   cursor: not-allowed;
 }
 
 .button--primary {
   min-height: var(--control-lg);
-  border-color: transparent;
   background: var(--color-accent);
   color: var(--color-on-accent);
   font-size: var(--text-lg);
+  box-shadow: var(--lift-md);
 }
 
 .button--primary:hover:not(:disabled) {
-  border-color: transparent;
   background: var(--color-accent-hover);
+  box-shadow: 0 6px 0 var(--color-line);
 }
 
-/* Busy primary buttons keep their color so they read as working, not unavailable. */
+.button--primary:active:not(:disabled) {
+  transform: translateY(5px);
+}
+
 .button--primary[aria-busy='true']:disabled {
-  border-color: transparent;
   background: var(--color-accent);
   color: var(--color-on-accent);
+  box-shadow: var(--lift-md);
   cursor: progress;
 }
 
@@ -388,38 +516,43 @@ a {
   padding-inline: var(--space-2);
   border-color: transparent;
   background: transparent;
-  color: var(--color-accent);
+  color: var(--color-text);
+  box-shadow: none;
+  text-decoration: underline wavy var(--color-accent);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.3em;
 }
 
 .button--ghost:hover:not(:disabled) {
   border-color: transparent;
-  background: var(--color-accent-subtle);
+  background: rgb(255 255 255 / 35%);
+  box-shadow: none;
+}
+
+.button--ghost:active:not(:disabled) {
+  transform: scale(0.96);
 }
 
 .button--ghost:disabled {
-  border-color: transparent;
   background: transparent;
+  text-decoration-color: currentcolor;
 }
 
-.screen__actions /* Busy primary buttons keep their color so they read as working, not unavailable. */
-.button--primary[aria-busy='true']:disabled {
-  border-color: transparent;
-  background: var(--color-accent);
-  color: var(--color-on-accent);
-  cursor: progress;
+.screen__back.button--ghost {
+  text-decoration: none;
 }
 
-.button--ghost {
+.screen__actions .button--ghost {
   justify-self: center;
 }
 
-/* ───────────── Spinner, notice, empty state ───────────── */
+/* ───────────── Spinner, notes, empty state ───────────── */
 
 .spinner {
   flex: none;
-  width: 1.125rem;
-  height: 1.125rem;
-  border: 2px solid currentcolor;
+  width: 1.25rem;
+  height: 1.25rem;
+  border: 3px solid currentcolor;
   border-right-color: transparent;
   border-radius: 50%;
   animation: spin 0.7s linear infinite;
@@ -432,34 +565,52 @@ a {
   gap: var(--space-3);
   padding-block: var(--space-6);
   color: var(--color-text-muted);
+  font-family: var(--font-display);
 }
 
+/* Notices are sticky notes. */
 .notice {
+  position: relative;
   display: flex;
   align-items: flex-start;
   gap: var(--space-3);
-  padding: var(--space-3) var(--space-4);
-  border-radius: var(--radius-md);
-  background: var(--color-sunken);
+  padding: var(--space-4);
+  background: var(--color-note);
+  color: #2b1d16;
   font-size: var(--text-sm);
-  animation: enter var(--duration-base) var(--ease-out);
+  font-weight: 600;
+  box-shadow: 0 10px 18px -12px rgb(0 0 0 / 45%);
+  transform: rotate(-1deg);
+}
+
+.notice::before {
+  /* A strip of tape */
+  content: '';
+  position: absolute;
+  top: -0.6rem;
+  left: 50%;
+  width: 4.5rem;
+  height: 1.2rem;
+  background: rgb(255 255 255 / 55%);
+  border: 1px solid rgb(0 0 0 / 8%);
+  transform: translateX(-50%) rotate(2deg);
 }
 
 .notice .icon {
-  /* Optically center the icon on the first line of text. */
-  margin-top: 0.0625rem;
+  margin-top: 0.125rem;
 }
 
 .notice--error {
-  background: var(--color-danger-subtle);
-  color: var(--color-danger);
+  background: #ffc9c0;
+  color: #5b130b;
+  transform: rotate(1deg);
 }
 
 .empty-state {
   display: grid;
   justify-items: center;
   gap: var(--space-2);
-  padding: var(--space-6) var(--space-4);
+  padding: var(--space-5) var(--space-4);
   text-align: center;
 }
 
@@ -473,7 +624,7 @@ a {
 }
 
 .empty-state__description {
-  max-width: 26rem;
+  max-width: 24rem;
   color: var(--color-text-muted);
 }
 
@@ -494,7 +645,7 @@ a {
 }
 
 .error-state p {
-  max-width: 26rem;
+  max-width: 24rem;
   color: var(--color-text-muted);
 }
 
@@ -503,20 +654,19 @@ a {
 .dropzone {
   display: grid;
   justify-items: center;
+  align-content: center;
   gap: var(--space-2);
   width: 100%;
-  min-height: 16rem;
-  align-content: center;
+  min-height: 17rem;
   padding: var(--space-6) var(--space-4);
-  border: 2px dashed var(--color-border-strong);
+  border: var(--line) dashed var(--color-line);
   border-radius: var(--radius-lg);
-  background: var(--color-surface);
+  background: rgb(255 255 255 / 55%);
   text-align: center;
   cursor: pointer;
   transition:
-    border-color var(--duration-base) var(--ease-out),
     background-color var(--duration-base) var(--ease-out),
-    transform var(--duration-fast) var(--ease-out);
+    transform var(--duration-base) var(--ease-spring);
 }
 
 .dropzone > * {
@@ -525,98 +675,134 @@ a {
 
 .dropzone:hover,
 .dropzone--over {
-  border-color: var(--color-accent);
-  background: var(--color-accent-subtle);
+  background: var(--color-note);
+  transform: rotate(-1deg) scale(1.01);
 }
 
 .dropzone:active {
-  transform: scale(0.99);
+  transform: scale(0.98);
 }
 
 .dropzone__icon {
   display: grid;
   place-items: center;
-  width: 4rem;
-  height: 4rem;
+  width: 4.5rem;
+  height: 4.5rem;
   margin-bottom: var(--space-2);
+  border: var(--line) solid var(--color-line);
   border-radius: 50%;
-  background: var(--color-accent-subtle);
-  color: var(--color-accent);
+  background: var(--cherry);
+  color: #fff;
+  box-shadow: var(--lift-sm);
 }
 
 .dropzone__title {
+  font-family: var(--font-display);
   font-size: var(--text-lg);
-  font-weight: 700;
+  font-weight: 650;
+  color: #2b1d16;
 }
 
 .dropzone__hint {
-  color: var(--color-text-muted);
+  color: #6a5245;
   font-size: var(--text-sm);
+}
+
+@media (prefers-color-scheme: dark) {
+  .dropzone {
+    background: rgb(0 0 0 / 18%);
+  }
+
+  .dropzone__title,
+  .dropzone__hint {
+    color: var(--color-text);
+  }
+
+  .photo-tile--add {
+    background: rgb(0 0 0 / 18%);
+  }
+
+  .dropzone:hover .dropzone__title,
+  .dropzone--over .dropzone__title,
+  .dropzone:hover .dropzone__hint,
+  .dropzone--over .dropzone__hint {
+    color: #2b1d16;
+  }
 }
 
 .photo-panel {
-  --panel-pad: var(--space-2);
-
   display: grid;
-  gap: var(--space-2);
-  padding: var(--panel-pad);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  background: var(--color-surface);
-  transition: border-color var(--duration-base) var(--ease-out);
+  gap: var(--space-3);
+  transition: transform var(--duration-base) var(--ease-spring);
 }
 
 .photo-panel--over {
-  border-color: var(--color-accent);
+  transform: scale(1.02);
 }
 
 .photo-panel__count {
-  padding: var(--space-1) var(--space-2) 0;
+  font-family: var(--font-display);
+  font-weight: 600;
   color: var(--color-text-muted);
-  font-size: var(--text-sm);
 }
 
 .photo-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: var(--space-2);
+  gap: var(--space-4);
   padding: 0;
   list-style: none;
 }
 
+/* Photos are polaroids held up by a magnet. */
 .photo-tile {
-  --tile-radius: calc(var(--radius-lg) - var(--panel-pad));
+  --pad: var(--space-2);
 
   position: relative;
-  aspect-ratio: 4 / 3;
-  overflow: hidden;
-  border-radius: var(--tile-radius);
-  background: var(--color-sunken);
-  animation: pop var(--duration-base) var(--ease-out);
+  padding: var(--pad) var(--pad) var(--space-5);
+  background: #fffdf8;
+  box-shadow:
+    0 1px 0 rgb(0 0 0 / 10%),
+    0 12px 20px -12px rgb(0 0 0 / 50%);
+  transform: rotate(var(--tilt, 0deg));
 }
 
 .photo-tile img {
   width: 100%;
-  height: 100%;
+  aspect-ratio: 1;
   object-fit: cover;
   transition: opacity var(--duration-base) var(--ease-out);
 }
 
-.photo-tile__remove {
-  --inset: var(--space-2);
-
+.photo-tile__pin {
   position: absolute;
-  top: var(--inset);
-  right: var(--inset);
+  top: -0.6rem;
+  left: 50%;
+  z-index: 1;
+  width: 1.4rem;
+  height: 1.4rem;
+  border: 2px solid var(--color-line);
+  border-radius: 50%;
+  background: var(--magnet);
+  box-shadow:
+    inset 0 -3px 0 rgb(0 0 0 / 20%),
+    inset 2px 2px 0 rgb(255 255 255 / 45%);
+  transform: translateX(-50%);
+}
+
+.photo-tile__remove {
+  position: absolute;
+  top: calc(var(--pad) + var(--space-1));
+  right: calc(var(--pad) + var(--space-1));
   display: grid;
   place-items: center;
   width: var(--control-sm);
   height: var(--control-sm);
   padding: 0;
-  border: 0;
-  border-radius: calc(var(--tile-radius) - var(--inset));
-  background: rgb(0 0 0 / 60%);
-  color: #fff;
+  border: 2px solid var(--color-line);
+  border-radius: 50%;
+  background: #fffdf8;
+  color: #2b1d16;
   cursor: pointer;
 }
 
@@ -630,18 +816,23 @@ a {
   justify-items: center;
   gap: var(--space-1);
   width: 100%;
-  border: 1px dashed var(--color-border-strong);
-  background: transparent;
-  color: var(--color-accent);
-  font-size: var(--text-sm);
+  height: 100%;
+  min-height: 9rem;
+  padding: var(--space-3);
+  border: var(--line) dashed var(--color-line);
+  border-radius: var(--radius-md);
+  background: rgb(255 255 255 / 45%);
+  color: var(--color-text);
+  font-family: var(--font-display);
   font-weight: 600;
+  box-shadow: none;
+  transform: none;
   cursor: pointer;
-  animation: none;
 }
 
 .photo-tile--add:hover:not(:disabled) {
-  border-color: var(--color-accent);
-  background: var(--color-accent-subtle);
+  background: var(--color-note);
+  color: #2b1d16;
 }
 
 .photo-tile--add:disabled {
@@ -649,20 +840,19 @@ a {
   cursor: not-allowed;
 }
 
-/* Detection in progress: dim the photos and sweep a scan line over them. */
 .photo-panel--scanning .photo-tile img {
-  opacity: 0.55;
+  opacity: 0.6;
 }
 
 .photo-panel--scanning .photo-tile:not(.photo-tile--add)::after {
   content: '';
   position: absolute;
-  inset-inline: 0;
-  top: 0;
+  inset-inline: var(--pad);
+  top: var(--pad);
   height: 30%;
-  background: linear-gradient(to bottom, transparent, var(--color-accent));
-  opacity: 0.45;
-  animation: scan 1.4s var(--ease-out) infinite;
+  background: linear-gradient(to bottom, transparent, var(--mint));
+  opacity: 0.7;
+  animation: scan 1.3s var(--ease-out) infinite;
 }
 
 /* ───────────── Review ───────────── */
@@ -673,16 +863,15 @@ a {
   display: flex;
   gap: var(--space-1);
   padding: var(--group-pad);
-  border: 1px solid var(--color-border-strong);
+  border: var(--line) solid var(--color-line);
   border-radius: var(--radius-md);
   background: var(--color-surface);
-  transition: border-color var(--duration-fast) var(--ease-out);
+  box-shadow: var(--lift-sm);
 }
 
 .input-group:focus-within {
-  border-color: var(--color-accent);
-  outline: 2px solid var(--color-accent);
-  outline-offset: 0;
+  outline: 3px solid var(--sky);
+  outline-offset: 2px;
 }
 
 .input-group input {
@@ -691,55 +880,81 @@ a {
   padding: 0 var(--space-3);
   border: 0;
   background: transparent;
-  /* 16px or more stops iOS from zooming on focus. */
   font-size: var(--text-md);
+  font-weight: 600;
   outline: none;
 }
 
 .input-group .button {
   min-height: var(--control-sm);
-  border-radius: calc(var(--radius-md) - var(--group-pad));
+  border-width: 2px;
+  border-radius: calc(var(--radius-md) - var(--group-pad) - var(--line));
+  background: var(--butter);
+  color: #2b1d16;
+  box-shadow: none;
 }
 
+.input-group .button:disabled {
+  background: var(--color-sunken);
+  color: var(--color-text-muted);
+}
+
+/* Ingredients are fridge magnets. */
 .chip-list {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-2);
-  padding: 0;
+  gap: var(--space-3) var(--space-2);
+  padding: var(--space-1) 0;
   list-style: none;
 }
 
 .chip {
+  position: relative;
   display: inline-flex;
   align-items: center;
   gap: var(--space-1);
-  min-height: var(--control-sm);
-  /* Less padding on the right: the round button already reads as space. */
-  padding: var(--space-1) var(--space-1) var(--space-1) var(--space-3);
-  border: 1px solid var(--color-border);
+  min-height: var(--control-md);
+  padding: var(--space-1) var(--space-1) var(--space-1) var(--space-4);
+  border: var(--line) solid var(--color-line);
   border-radius: var(--radius-pill);
-  background: var(--color-surface);
-  box-shadow: var(--shadow-sm);
-  animation: pop var(--duration-base) var(--ease-out);
+  background: var(--magnet);
+  color: var(--magnet-ink);
+  font-family: var(--font-display);
+  font-size: var(--text-md);
+  font-weight: 600;
+  box-shadow:
+    inset 0 -4px 0 rgb(0 0 0 / 16%),
+    inset 0 3px 0 rgb(255 255 255 / 35%),
+    var(--lift-sm);
+  transform: rotate(var(--tilt, 0deg));
+  touch-action: none;
+  user-select: none;
+  cursor: grab;
+}
+
+.chip:active {
+  cursor: grabbing;
 }
 
 .chip button {
   display: grid;
   place-items: center;
-  width: 2rem;
-  height: 2rem;
+  width: 2.25rem;
+  height: 2.25rem;
   padding: 0;
   border: 0;
   border-radius: 50%;
-  background: transparent;
-  color: var(--color-text-muted);
+  background: rgb(255 255 255 / 30%);
+  color: inherit;
   cursor: pointer;
-  transition: background-color var(--duration-fast) var(--ease-out);
+  transition:
+    background-color var(--duration-fast) var(--ease-out),
+    transform var(--duration-base) var(--ease-spring);
 }
 
 .chip button:hover {
-  background: var(--color-sunken);
-  color: var(--color-text);
+  background: rgb(255 255 255 / 55%);
+  transform: rotate(90deg);
 }
 
 .segmented {
@@ -752,7 +967,8 @@ a {
 .segmented legend {
   margin-bottom: var(--space-2);
   padding: 0;
-  font-weight: 600;
+  font-family: var(--font-display);
+  font-weight: 650;
 }
 
 .segmented__options {
@@ -760,32 +976,35 @@ a {
   grid-template-columns: repeat(3, 1fr);
   gap: var(--space-1);
   padding: var(--group-pad);
+  border: var(--line) solid var(--color-line);
   border-radius: var(--radius-md);
-  background: var(--color-sunken);
+  background: var(--color-surface);
+  box-shadow: var(--lift-sm);
 }
 
 .segmented__option {
   display: grid;
   place-items: center;
   min-height: var(--control-sm);
-  border-radius: calc(var(--radius-md) - var(--group-pad));
+  border-radius: calc(var(--radius-md) - var(--group-pad) - var(--line));
   color: var(--color-text-muted);
-  font-size: var(--text-sm);
+  font-family: var(--font-display);
   font-weight: 600;
   cursor: pointer;
   transition:
     background-color var(--duration-base) var(--ease-out),
-    color var(--duration-base) var(--ease-out);
+    color var(--duration-base) var(--ease-out),
+    transform var(--duration-base) var(--ease-spring);
 }
 
 .segmented__option:has(input:checked) {
-  background: var(--color-surface);
-  color: var(--color-text);
-  box-shadow: var(--shadow-sm);
+  background: var(--mint);
+  color: #10261c;
+  transform: scale(1.04);
 }
 
 .segmented__option:has(input:focus-visible) {
-  outline: 2px solid var(--color-accent);
+  outline: 3px solid var(--sky);
   outline-offset: 1px;
 }
 
@@ -793,35 +1012,36 @@ a {
 
 .recipe-list {
   display: grid;
-  gap: var(--space-4);
-  padding: 0;
+  gap: var(--space-6);
+  padding: var(--space-2) 0 0;
   list-style: none;
 }
 
-.recipe-list > li {
-  animation: enter var(--duration-slow) var(--ease-out) backwards;
-}
-
-.recipe-list > li:nth-child(2) {
-  animation-delay: 40ms;
-}
-
-.recipe-list > li:nth-child(3) {
-  animation-delay: 80ms;
-}
-
-.recipe-list > li:nth-child(n + 4) {
-  animation-delay: 120ms;
-}
-
+/* Recipe cards are notes stuck to the door. */
 .recipe-card {
+  position: relative;
   display: grid;
   gap: var(--space-3);
-  padding: var(--space-4);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
+  padding: var(--space-5) var(--space-4) var(--space-4);
+  border: var(--line) solid var(--color-line);
+  border-radius: var(--radius-sm);
   background: var(--color-surface);
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--lift-md);
+}
+
+.recipe-card__pin {
+  position: absolute;
+  top: -1rem;
+  left: 50%;
+  width: 2rem;
+  height: 2rem;
+  border: var(--line) solid var(--color-line);
+  border-radius: 50%;
+  background: var(--magnet);
+  box-shadow:
+    inset 0 -4px 0 rgb(0 0 0 / 20%),
+    inset 3px 3px 0 rgb(255 255 255 / 45%);
+  transform: translateX(-50%);
 }
 
 .recipe-card__header {
@@ -830,8 +1050,8 @@ a {
 }
 
 .recipe-card h3 {
-  font-size: var(--text-lg);
-  letter-spacing: -0.01em;
+  font-size: 1.5rem;
+  font-weight: 650;
 }
 
 .recipe-card__summary {
@@ -841,13 +1061,21 @@ a {
 .recipe-card__meta {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-1) var(--space-4);
-  color: var(--color-text-muted);
+  gap: var(--space-2);
   font-size: var(--text-sm);
+  font-weight: 700;
   font-variant-numeric: tabular-nums;
 }
 
-.recipe-card__meta div,
+.recipe-card__meta div {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-pill);
+  background: var(--color-sunken);
+}
+
 .recipe-card__status,
 .recipe-card__health {
   display: flex;
@@ -855,19 +1083,18 @@ a {
   gap: var(--space-2);
 }
 
-.recipe-card__meta .icon,
 .recipe-card__status .icon,
 .recipe-card__health .icon {
-  margin-top: 0.125rem;
+  margin-top: 0.1875rem;
 }
 
 .recipe-card__status {
-  font-size: var(--text-sm);
-  font-weight: 600;
+  font-family: var(--font-display);
+  font-weight: 650;
 }
 
 .recipe-card__status--ready {
-  color: var(--color-accent);
+  color: var(--color-good);
 }
 
 .recipe-card__status--missing {
@@ -880,7 +1107,7 @@ a {
 }
 
 .recipe-card details {
-  border-top: 1px solid var(--color-border);
+  border-top: 2px dashed var(--color-border, rgb(43 29 22 / 25%));
 }
 
 .recipe-card summary {
@@ -888,8 +1115,8 @@ a {
   align-items: center;
   justify-content: space-between;
   min-height: var(--control-md);
-  color: var(--color-accent);
-  font-weight: 600;
+  font-family: var(--font-display);
+  font-weight: 650;
   list-style: none;
   cursor: pointer;
 }
@@ -899,7 +1126,7 @@ a {
 }
 
 .recipe-card__chevron {
-  transition: transform var(--duration-base) var(--ease-out);
+  transition: transform var(--duration-slow) var(--ease-spring);
 }
 
 .recipe-card details[open] .recipe-card__chevron {
@@ -910,16 +1137,12 @@ a {
   display: grid;
   gap: var(--space-2);
   padding-bottom: var(--space-2);
-  animation: enter var(--duration-base) var(--ease-out);
 }
 
 .recipe-card h4 {
   margin-top: var(--space-2);
-  color: var(--color-text-muted);
-  font-size: var(--text-xs);
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+  font-size: var(--text-md);
+  font-weight: 650;
 }
 
 .recipe-card__body ul,
@@ -934,23 +1157,18 @@ a {
 }
 
 .recipe-card__body li::marker {
-  color: var(--color-text-muted);
-}
-
-.recipe-card__body ol li::marker {
-  color: var(--color-text-muted);
+  color: var(--color-accent);
   font-variant-numeric: tabular-nums;
-  font-weight: 600;
+  font-weight: 800;
 }
 
-/* Placeholder cards while recipes load. */
 .skeleton {
   display: grid;
   gap: var(--space-3);
-  padding: var(--space-4);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  background: var(--color-surface);
+  padding: var(--space-5) var(--space-4);
+  border: var(--line) dashed var(--color-line);
+  border-radius: var(--radius-sm);
+  background: rgb(255 255 255 / 35%);
 }
 
 .skeleton__line {
@@ -958,38 +1176,39 @@ a {
   border-radius: var(--radius-pill);
   background: linear-gradient(
     90deg,
-    var(--color-sunken) 0%,
-    var(--color-border) 50%,
-    var(--color-sunken) 100%
+    rgb(43 29 22 / 10%) 0%,
+    rgb(43 29 22 / 22%) 50%,
+    rgb(43 29 22 / 10%) 100%
   );
   background-size: 200% 100%;
-  animation: shimmer 1.4s linear infinite;
+  animation: shimmer 1.2s linear infinite;
 }
 
 .skeleton__line--title {
   width: 65%;
-  height: 1.25rem;
+  height: 1.375rem;
 }
 
 .skeleton__line--short {
   width: 40%;
 }
 
-/* ───────────── Motion ───────────── */
+@media (prefers-color-scheme: dark) {
+  .skeleton {
+    background: rgb(0 0 0 / 15%);
+  }
 
-@keyframes enter {
-  from {
-    opacity: 0;
-    transform: translateY(6px);
+  .skeleton__line {
+    background-image: linear-gradient(
+      90deg,
+      rgb(255 255 255 / 8%) 0%,
+      rgb(255 255 255 / 20%) 50%,
+      rgb(255 255 255 / 8%) 100%
+    );
   }
 }
 
-@keyframes pop {
-  from {
-    opacity: 0;
-    transform: scale(0.92);
-  }
-}
+/* ───────────── Keyframes ───────────── */
 
 @keyframes spin {
   to {
@@ -1003,7 +1222,7 @@ a {
   }
 
   to {
-    transform: translateY(340%);
+    transform: translateY(300%);
   }
 }
 
@@ -1022,7 +1241,6 @@ a {
     transition-duration: 0.01ms !important;
   }
 
-  /* Keep a visible busy state without movement. */
   .spinner {
     border-right-color: currentcolor;
     opacity: 0.6;
@@ -1036,15 +1254,16 @@ a {
 /* ───────────── Wider screens ───────────── */
 
 @media (min-width: 40rem) {
-  .app-main {
-    padding-block: var(--space-6) var(--space-7);
+  .logo {
+    font-size: 1.875rem;
   }
 
-  .photo-grid {
-    grid-template-columns: repeat(4, 1fr);
+  .door {
+    padding: var(--space-6) var(--space-7) var(--space-6) var(--space-6);
   }
 
-  .photo-tile {
-    aspect-ratio: 1;
+  .door::after {
+    right: 1rem;
+    height: 9rem;
   }
 }

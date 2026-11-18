@@ -1,5 +1,7 @@
+import { Check } from 'lucide-react'
 import { STEPS, stepIndex } from '../lib/steps'
 import type { StepId } from '../types'
+import { Icon } from './Icon'
 
 interface StepperProps {
   current: StepId
@@ -20,11 +22,11 @@ export function Stepper({ current }: StepperProps) {
               className={`stepper__item stepper__item--${state}`}
               aria-current={state === 'current' ? 'step' : undefined}
             >
-              <span className="stepper__bar" aria-hidden="true" />
-              <span>
-                {step.label}
-                {state === 'done' && <span className="visually-hidden"> (done)</span>}
+              <span className="stepper__dot" aria-hidden="true">
+                {state === 'done' ? <Icon icon={Check} size={16} /> : index + 1}
               </span>
+              {step.label}
+              {state === 'done' && <span className="visually-hidden"> (done)</span>}
             </li>
           )
         })}

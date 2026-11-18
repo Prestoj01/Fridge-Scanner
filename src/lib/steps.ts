@@ -1,9 +1,9 @@
 import type { Step, StepId } from '../types'
 
 export const STEPS: readonly Step[] = [
-  { id: 'upload', label: 'Photos' },
-  { id: 'review', label: 'Ingredients' },
-  { id: 'recipes', label: 'Recipes' },
+  { id: 'upload', label: 'Snap' },
+  { id: 'review', label: 'Check' },
+  { id: 'recipes', label: 'Cook' },
 ]
 
 export function stepIndex(id: StepId): number {

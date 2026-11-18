@@ -1,7 +1,8 @@
 import { ChevronLeft, ListPlus, X } from 'lucide-react'
-import { useState, type SyntheticEvent } from 'react'
+import { useState, type SyntheticEvent, type CSSProperties } from 'react'
 import { EmptyState } from '../components/EmptyState'
 import { Icon } from '../components/Icon'
+import { magnetColor, tilt } from '../lib/fun'
 import type { Diet, Ingredient } from '../types'
 
 interface ReviewScreenProps {
@@ -100,7 +101,11 @@ export default function ReviewScreen({
       ) : (
         <ul className="chip-list" aria-label="Your ingredients">
           {ingredients.map((ingredient) => (
-            <li key={ingredient.id} className="chip">
+            <li
+              key={ingredient.id}
+              className={`chip magnet--${magnetColor(ingredient.name)}`}
+              style={{ '--tilt': `${String(tilt(ingredient.name, 4))}deg` } as CSSProperties}
+            >
               {ingredient.name}
               <button
                 type="button"

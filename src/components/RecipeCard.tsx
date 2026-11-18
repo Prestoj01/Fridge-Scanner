@@ -1,4 +1,5 @@
 import { Check, ChevronDown, Clock, Leaf, ShoppingBasket, Users } from 'lucide-react'
+import { magnetColor } from '../lib/fun'
 import type { Recipe } from '../types'
 import { Icon } from './Icon'
 
@@ -12,7 +13,8 @@ export function RecipeCard({ recipe, defaultOpen = false }: RecipeCardProps) {
   const ready = recipe.missingIngredients.length === 0
 
   return (
-    <article className="recipe-card">
+    <article className={`recipe-card magnet--${magnetColor(recipe.title)}`}>
+      <span className="recipe-card__pin" aria-hidden="true" />
       <header className="recipe-card__header">
         <h3>{recipe.title}</h3>
         {recipe.summary !== '' && <p className="recipe-card__summary">{recipe.summary}</p>}

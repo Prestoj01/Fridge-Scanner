@@ -1,7 +1,8 @@
 import { Camera, ImagePlus, X } from 'lucide-react'
-import { useRef, useState, type ChangeEvent, type DragEvent } from 'react'
+import { useRef, useState, type ChangeEvent, type DragEvent, type CSSProperties } from 'react'
 import { Icon } from '../components/Icon'
 import { Notice } from '../components/Notice'
+import { magnetColor, tilt } from '../lib/fun'
 import type { AsyncState, Photo } from '../types'
 import { API_LIMITS } from '../types/api'
 
@@ -122,7 +123,12 @@ function PhotoUpload({
           </p>
           <ul className="photo-grid">
             {photos.map((photo) => (
-              <li key={photo.id} className="photo-tile">
+              <li
+                key={photo.id}
+                className={`photo-tile magnet--${magnetColor(photo.id)}`}
+                style={{ '--tilt': `${String(tilt(photo.id, 3))}deg` } as CSSProperties}
+              >
+                <span className="photo-tile__pin" aria-hidden="true" />
                 <img src={photo.url} alt={photo.name} />
                 <button
                   type="button"
