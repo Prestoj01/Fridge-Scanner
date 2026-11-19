@@ -3,6 +3,7 @@ import { motion } from 'motion/react'
 import { EmptyState } from '../components/EmptyState'
 import { Icon } from '../components/Icon'
 import { Notice } from '../components/Notice'
+import { RevealText } from '../components/RevealText'
 import { RecipeCard } from '../components/RecipeCard'
 import { RecipeSkeleton } from '../components/RecipeSkeleton'
 import type { AsyncState, Recipe } from '../types'
@@ -39,7 +40,9 @@ export default function RecipesScreen({
     return (
       <section className="screen" aria-labelledby="recipes-heading" aria-busy="true">
         <header className="screen__header">
-          <h2 id="recipes-heading">Finding healthy recipes…</h2>
+          <h2 id="recipes-heading">
+            <RevealText text="Finding *healthy* recipes…" />
+          </h2>
           <p className="screen__intro" role="status">
             Matching your ingredients. This takes a few seconds.
           </p>
@@ -56,7 +59,9 @@ export default function RecipesScreen({
     return (
       <section className="screen" aria-labelledby="recipes-heading">
         <header className="screen__header">
-          <h2 id="recipes-heading">We could not get recipes</h2>
+          <h2 id="recipes-heading">
+            <RevealText text="We could not *get recipes*" />
+          </h2>
         </header>
         <Notice tone="error">{generation.message}</Notice>
         <div className="screen__actions">
@@ -94,7 +99,9 @@ export default function RecipesScreen({
     <section className="screen" aria-labelledby="recipes-heading">
       <header className="screen__header">
         <h2 id="recipes-heading">
-          {recipes.length} healthy {recipes.length === 1 ? 'recipe' : 'recipes'} for you
+          <RevealText
+            text={`${String(recipes.length)} healthy *${recipes.length === 1 ? 'recipe' : 'recipes'}* for you`}
+          />
         </h2>
         <p className="screen__intro">{summaryLine(recipes)}</p>
         {recipes.some((recipe) => recipe.source === 'library') && (
@@ -105,9 +112,14 @@ export default function RecipesScreen({
         {recipes.map((recipe, index) => (
           <motion.li
             key={recipe.id}
-            initial={{ opacity: 0, y: 32 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, ease: [0.2, 0.8, 0.2, 1], delay: 0.1 + index * 0.1 }}
+            initial={{ opacity: 0, y: 70, clipPath: 'inset(14% 8% 0% 8% round 28px)' }}
+            whileInView={{ opacity: 1, y: 0, clipPath: 'inset(0% 0% 0% 0% round 28px)' }}
+            viewport={{ once: true, amount: 'some' }}
+            transition={{
+              duration: 0.9,
+              ease: [0.2, 0.8, 0.2, 1],
+              delay: index < 2 ? 0.35 + index * 0.15 : 0,
+            }}
           >
             <RecipeCard recipe={recipe} index={index} defaultOpen={index === 0} />
           </motion.li>

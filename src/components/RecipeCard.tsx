@@ -1,4 +1,6 @@
 import { ChevronDown, Clock, Leaf, ShoppingBasket, Users } from 'lucide-react'
+import { motion, useScroll, useTransform } from 'motion/react'
+import { useRef } from 'react'
 import type { Recipe } from '../types'
 import { Icon } from './Icon'
 
@@ -18,13 +20,20 @@ function handNote(recipe: Recipe): string {
 
 export function RecipeCard({ recipe, index, defaultOpen = false }: RecipeCardProps) {
   const ready = recipe.missingIngredients.length === 0
+  const cardRef = useRef<HTMLElement>(null)
+  const { scrollYProgress } = useScroll({ target: cardRef, offset: ['start end', 'end start'] })
+  const numberY = useTransform(scrollYProgress, [0, 1], [28, -28])
 
   return (
-    <article className="recipe-card">
+    <article className="recipe-card" ref={cardRef}>
       <div className="recipe-card__top">
-        <span className="recipe-card__number tabular" aria-hidden="true">
+        <motion.span
+          className="recipe-card__number tabular"
+          aria-hidden="true"
+          style={{ y: numberY }}
+        >
           {String(index + 1).padStart(2, '0')}
-        </span>
+        </motion.span>
         <span className={`hand recipe-card__note${ready ? ' recipe-card__note--ready' : ''}`}>
           {handNote(recipe)}
         </span>

@@ -64,10 +64,10 @@ export default function App() {
               <AnimatePresence mode="wait" initial={false}>
                 <motion.div
                   key={flow.step}
-                  initial={{ opacity: 0, y: 16 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -12 }}
-                  transition={{ duration: 0.35, ease: [0.2, 0.8, 0.2, 1] }}
+                  initial={{ opacity: 1 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0, y: -24, filter: 'blur(8px)' }}
+                  transition={{ duration: 0.4, ease: [0.65, 0, 0.35, 1] }}
                 >
                   <Suspense fallback={<Loading />}>
                     {flow.step === 'upload' && (

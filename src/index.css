@@ -1262,3 +1262,39 @@ a {
     transform: scale(1.55);
   }
 }
+
+/* ───────────── Cinematic entrances ───────────── */
+
+.reveal-word {
+  display: inline-block;
+  will-change: transform, filter;
+}
+
+/* Each screen's parts rise in sequence: header first, then content, then actions. */
+.screen > * {
+  animation: rise 0.9s var(--ease-out) both;
+}
+
+.screen > :nth-child(2) {
+  animation-delay: 0.18s;
+}
+
+.screen > :nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+.screen > :nth-child(4) {
+  animation-delay: 0.42s;
+}
+
+.screen > :nth-child(n + 5) {
+  animation-delay: 0.54s;
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(22px);
+    filter: blur(6px);
+  }
+}

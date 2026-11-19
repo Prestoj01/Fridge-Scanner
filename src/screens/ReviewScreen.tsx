@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from 'motion/react'
 import { useEffect, useState, type SyntheticEvent } from 'react'
 import { EmptyState } from '../components/EmptyState'
 import { Icon } from '../components/Icon'
+import { RevealText } from '../components/RevealText'
 import { tintFor } from '../lib/fun'
 import type { Diet, Ingredient } from '../types'
 
@@ -29,10 +30,10 @@ function plural(count: number, word: string): string {
 
 function headline(count: number, detectedCount: number | null): string {
   if (detectedCount !== null && detectedCount > 0) {
-    return `We spotted ${plural(detectedCount, 'ingredient')}`
+    return `We spotted *${plural(detectedCount, 'ingredient')}*`
   }
-  if (count === 0) return 'What do you have to cook with?'
-  return `${plural(count, 'ingredient')} on your list`
+  if (count === 0) return 'What do you have to *cook with?*'
+  return `*${plural(count, 'ingredient')}* on your list`
 }
 
 function intro(detectedCount: number | null): string {
@@ -74,7 +75,9 @@ export default function ReviewScreen({
   return (
     <section className="screen" aria-labelledby="review-heading">
       <header className="screen__header">
-        <h2 id="review-heading">{headline(ingredients.length, detectedCount)}</h2>
+        <h2 id="review-heading">
+          <RevealText text={headline(ingredients.length, detectedCount)} />
+        </h2>
         <p className="screen__intro">{intro(detectedCount)}</p>
       </header>
 

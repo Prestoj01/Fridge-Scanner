@@ -2,6 +2,7 @@ import { Camera, ImagePlus, X } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
 import { useRef, useState, type ChangeEvent, type DragEvent } from 'react'
 import { Icon } from '../components/Icon'
+import { RevealText } from '../components/RevealText'
 import { Notice } from '../components/Notice'
 import type { AsyncState, Photo } from '../types'
 import { API_LIMITS } from '../types/api'
@@ -25,7 +26,9 @@ function OfflineStart({ onEnterManually }: UploadScreenProps) {
   return (
     <section className="screen" aria-labelledby="upload-heading">
       <header className="screen__header">
-        <h2 id="upload-heading">Turn what you have into a healthy meal</h2>
+        <h2 id="upload-heading">
+          <RevealText text="Turn what you have into a *healthy meal*" />
+        </h2>
         <p className="screen__intro">
           List the ingredients in your fridge or pantry and get recipes with step-by-step
           instructions.
@@ -80,7 +83,9 @@ function PhotoUpload({
   return (
     <section className="screen" aria-labelledby="upload-heading">
       <header className="screen__header">
-        <h2 id="upload-heading">Photograph your fridge to find recipes</h2>
+        <h2 id="upload-heading">
+          <RevealText text="Photograph your fridge to *find recipes*" />
+        </h2>
         <p className="screen__intro">
           Open the door wide and make sure the shelves are well lit. Add the pantry too if you like.
         </p>
@@ -135,9 +140,14 @@ function PhotoUpload({
                   exit={{ opacity: 0, scale: 0.85, transition: { duration: 0.25 } }}
                   transition={{ duration: 0.5, ease: [0.2, 0.8, 0.2, 1] }}
                 >
-                  <span className="photo-tile__frame">
+                  <motion.span
+                    className="photo-tile__frame"
+                    initial={{ clipPath: 'circle(0% at 50% 50%)' }}
+                    animate={{ clipPath: 'circle(75% at 50% 50%)' }}
+                    transition={{ duration: 0.9, ease: [0.65, 0, 0.35, 1] }}
+                  >
                     <img src={photo.url} alt={photo.name} />
-                  </span>
+                  </motion.span>
                   <button
                     type="button"
                     className="photo-tile__remove"
