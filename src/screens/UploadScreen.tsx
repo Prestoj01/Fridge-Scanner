@@ -1,5 +1,5 @@
 import { Camera, ImagePlus, X } from 'lucide-react'
-import { AnimatePresence, motion } from 'motion/react'
+import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import { useRef, useState, type ChangeEvent, type DragEvent } from 'react'
 import { Icon } from '../components/Icon'
 import { RevealText } from '../components/RevealText'
@@ -54,6 +54,7 @@ function PhotoUpload({
 }: UploadScreenProps) {
   const inputRef = useRef<HTMLInputElement>(null)
   const [dragging, setDragging] = useState(false)
+  const calm = useReducedMotion() ?? false
   const busy = detection.status === 'loading'
   const full = photos.length >= API_LIMITS.maxImages
 
@@ -142,7 +143,7 @@ function PhotoUpload({
                 >
                   <motion.span
                     className="photo-tile__frame"
-                    initial={{ clipPath: 'circle(0% at 50% 50%)' }}
+                    initial={calm ? false : { clipPath: 'circle(0% at 50% 50%)' }}
                     animate={{ clipPath: 'circle(75% at 50% 50%)' }}
                     transition={{ duration: 0.9, ease: [0.65, 0, 0.35, 1] }}
                   >

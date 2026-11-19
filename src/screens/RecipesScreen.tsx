@@ -1,5 +1,5 @@
 import { CookingPot, RotateCcw } from 'lucide-react'
-import { motion } from 'motion/react'
+import { motion, useReducedMotion } from 'motion/react'
 import { EmptyState } from '../components/EmptyState'
 import { Icon } from '../components/Icon'
 import { Notice } from '../components/Notice'
@@ -36,6 +36,7 @@ export default function RecipesScreen({
   onBack,
   onReset,
 }: RecipesScreenProps) {
+  const calm = useReducedMotion() ?? false
   if (generation.status === 'loading') {
     return (
       <section className="screen" aria-labelledby="recipes-heading" aria-busy="true">
@@ -112,7 +113,9 @@ export default function RecipesScreen({
         {recipes.map((recipe, index) => (
           <motion.li
             key={recipe.id}
-            initial={{ opacity: 0, y: 70, clipPath: 'inset(14% 8% 0% 8% round 28px)' }}
+            initial={
+              calm ? false : { opacity: 0, y: 70, clipPath: 'inset(14% 8% 0% 8% round 28px)' }
+            }
             whileInView={{ opacity: 1, y: 0, clipPath: 'inset(0% 0% 0% 0% round 28px)' }}
             viewport={{ once: true, amount: 'some' }}
             transition={{

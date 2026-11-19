@@ -1,5 +1,5 @@
 import { ListPlus, X } from 'lucide-react'
-import { AnimatePresence, motion } from 'motion/react'
+import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import { useEffect, useState, type SyntheticEvent } from 'react'
 import { EmptyState } from '../components/EmptyState'
 import { Icon } from '../components/Icon'
@@ -54,6 +54,7 @@ export default function ReviewScreen({
   onFindRecipes,
 }: ReviewScreenProps) {
   const [draft, setDraft] = useState('')
+  const calm = useReducedMotion() ?? false
   // Magnets present on arrival drop in one by one; later ones drop at once.
   const [settled, setSettled] = useState(false)
   useEffect(() => {
@@ -113,7 +114,7 @@ export default function ReviewScreen({
                 key={ingredient.id}
                 layout
                 className={`chip tint--${tintFor(ingredient.name)}`}
-                initial={{ opacity: 0, scale: 0.85, filter: 'blur(6px)' }}
+                initial={calm ? false : { opacity: 0, scale: 0.85, filter: 'blur(6px)' }}
                 animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
                 exit={{
                   opacity: 0,

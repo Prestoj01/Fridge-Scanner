@@ -1,4 +1,4 @@
-import { AnimatePresence, motion } from 'motion/react'
+import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import type { OrbMood } from '../lib/orb'
 import { Orb } from './Orb'
 
@@ -13,6 +13,7 @@ const glide = { type: 'spring', stiffness: 120, damping: 20, mass: 0.9 } as cons
 
 /** Holds the orb and its handwritten caption, and glides between sizes. */
 export function OrbStage({ mood, caption, size }: OrbStageProps) {
+  const calm = useReducedMotion() ?? false
   return (
     <motion.div layout className={`orb-stage orb-stage--${size}`} transition={glide}>
       <motion.div layout className="orb-stage__orb" transition={glide}>
@@ -24,9 +25,9 @@ export function OrbStage({ mood, caption, size }: OrbStageProps) {
             key={caption}
             className="hand"
             aria-hidden="true"
-            initial={{ opacity: 0, y: 8, filter: 'blur(6px)' }}
+            initial={calm ? false : { opacity: 0, y: 8, filter: 'blur(6px)' }}
             animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-            exit={{ opacity: 0, y: -6, filter: 'blur(6px)' }}
+            exit={calm ? { opacity: 0 } : { opacity: 0, y: -6, filter: 'blur(6px)' }}
             transition={{ duration: 0.45, ease: [0.2, 0.8, 0.2, 1] }}
           >
             {caption}

@@ -1,5 +1,5 @@
 import { ChevronLeft } from 'lucide-react'
-import { AnimatePresence, MotionConfig, motion } from 'motion/react'
+import { AnimatePresence, MotionConfig, motion, useReducedMotion } from 'motion/react'
 import { lazy, Suspense } from 'react'
 import { Ambient } from './components/Ambient'
 import { ErrorBoundary } from './components/ErrorBoundary'
@@ -19,6 +19,7 @@ const RecipesScreen = lazy(() => import('./screens/RecipesScreen'))
 
 export default function App() {
   const flow = useScanFlow()
+  const calm = useReducedMotion() ?? false
   const orb = orbState({
     aiEnabled: flow.aiEnabled,
     step: flow.step,
@@ -68,7 +69,7 @@ export default function App() {
                   key={flow.step}
                   initial={{ opacity: 1 }}
                   animate={{ opacity: 1 }}
-                  exit={{ opacity: 0, y: -24, filter: 'blur(8px)' }}
+                  exit={calm ? { opacity: 0 } : { opacity: 0, y: -24, filter: 'blur(8px)' }}
                   transition={{ duration: 0.4, ease: [0.65, 0, 0.35, 1] }}
                 >
                   <Suspense fallback={<Loading />}>
