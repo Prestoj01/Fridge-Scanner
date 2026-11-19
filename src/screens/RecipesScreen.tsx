@@ -1,4 +1,4 @@
-import { ChevronLeft, CookingPot, RotateCcw } from 'lucide-react'
+import { CookingPot, RotateCcw } from 'lucide-react'
 import { motion } from 'motion/react'
 import { EmptyState } from '../components/EmptyState'
 import { Icon } from '../components/Icon'
@@ -35,17 +35,9 @@ export default function RecipesScreen({
   onBack,
   onReset,
 }: RecipesScreenProps) {
-  const back = (
-    <button type="button" className="button button--ghost screen__back" onClick={onBack}>
-      <Icon icon={ChevronLeft} />
-      Ingredients
-    </button>
-  )
-
   if (generation.status === 'loading') {
     return (
       <section className="screen" aria-labelledby="recipes-heading" aria-busy="true">
-        {back}
         <header className="screen__header">
           <h2 id="recipes-heading">Finding healthy recipes…</h2>
           <p className="screen__intro" role="status">
@@ -63,7 +55,6 @@ export default function RecipesScreen({
   if (generation.status === 'error') {
     return (
       <section className="screen" aria-labelledby="recipes-heading">
-        {back}
         <header className="screen__header">
           <h2 id="recipes-heading">We could not get recipes</h2>
         </header>
@@ -83,7 +74,6 @@ export default function RecipesScreen({
   if (recipes.length === 0) {
     return (
       <section className="screen" aria-labelledby="recipes-heading">
-        {back}
         <header className="visually-hidden">
           <h2 id="recipes-heading">Recipes</h2>
         </header>
@@ -102,7 +92,6 @@ export default function RecipesScreen({
 
   return (
     <section className="screen" aria-labelledby="recipes-heading">
-      {back}
       <header className="screen__header">
         <h2 id="recipes-heading">
           {recipes.length} healthy {recipes.length === 1 ? 'recipe' : 'recipes'} for you

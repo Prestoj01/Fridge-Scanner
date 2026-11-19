@@ -1,4 +1,4 @@
-import { ChevronLeft, ListPlus, X } from 'lucide-react'
+import { ListPlus, X } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
 import { useEffect, useState, type SyntheticEvent } from 'react'
 import { EmptyState } from '../components/EmptyState'
@@ -14,7 +14,6 @@ interface ReviewScreenProps {
   onAddIngredient: (name: string) => void
   onRemoveIngredient: (id: string) => void
   onDietChange: (diet: Diet) => void
-  onBack: () => void
   onFindRecipes: () => void
 }
 
@@ -51,7 +50,6 @@ export default function ReviewScreen({
   onAddIngredient,
   onRemoveIngredient,
   onDietChange,
-  onBack,
   onFindRecipes,
 }: ReviewScreenProps) {
   const [draft, setDraft] = useState('')
@@ -75,11 +73,6 @@ export default function ReviewScreen({
 
   return (
     <section className="screen" aria-labelledby="review-heading">
-      <button type="button" className="button button--ghost screen__back" onClick={onBack}>
-        <Icon icon={ChevronLeft} />
-        Back
-      </button>
-
       <header className="screen__header">
         <h2 id="review-heading">{headline(ingredients.length, detectedCount)}</h2>
         <p className="screen__intro">{intro(detectedCount)}</p>
