@@ -1,5 +1,4 @@
 import { ChevronLeft, CookingPot, RotateCcw } from 'lucide-react'
-import { BubblingPot } from '../components/BubblingPot'
 import { motion } from 'motion/react'
 import { EmptyState } from '../components/EmptyState'
 import { Icon } from '../components/Icon'
@@ -53,7 +52,6 @@ export default function RecipesScreen({
             Matching your ingredients. This takes a few seconds.
           </p>
         </header>
-        <BubblingPot />
         <div className="recipe-list">
           <RecipeSkeleton />
           <RecipeSkeleton />
@@ -115,25 +113,16 @@ export default function RecipesScreen({
         )}
       </header>
       <ul className="recipe-list">
-        {recipes.map((recipe, index) => {
-          const lean = index % 2 === 0 ? -1.2 : 1.4
-          return (
-            <motion.li
-              key={recipe.id}
-              initial={{ y: 140, opacity: 0, rotate: lean * 6, scale: 0.9 }}
-              animate={{ y: 0, opacity: 1, rotate: lean, scale: 1 }}
-              whileHover={{ rotate: 0, y: -4 }}
-              transition={{
-                type: 'spring',
-                stiffness: 220,
-                damping: 18,
-                delay: 0.15 + index * 0.12,
-              }}
-            >
-              <RecipeCard recipe={recipe} defaultOpen={index === 0} />
-            </motion.li>
-          )
-        })}
+        {recipes.map((recipe, index) => (
+          <motion.li
+            key={recipe.id}
+            initial={{ opacity: 0, y: 32 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: [0.2, 0.8, 0.2, 1], delay: 0.1 + index * 0.1 }}
+          >
+            <RecipeCard recipe={recipe} index={index} defaultOpen={index === 0} />
+          </motion.li>
+        ))}
       </ul>
       <div className="screen__actions">
         <button type="button" className="button button--ghost" onClick={onReset}>

@@ -1,7 +1,6 @@
-import { Check } from 'lucide-react'
+import { motion } from 'motion/react'
 import { STEPS, stepIndex } from '../lib/steps'
 import type { StepId } from '../types'
-import { Icon } from './Icon'
 
 interface StepperProps {
   current: StepId
@@ -22,10 +21,15 @@ export function Stepper({ current }: StepperProps) {
               className={`stepper__item stepper__item--${state}`}
               aria-current={state === 'current' ? 'step' : undefined}
             >
-              <span className="stepper__dot" aria-hidden="true">
-                {state === 'done' ? <Icon icon={Check} size={16} /> : index + 1}
-              </span>
-              {step.label}
+              {state === 'current' && (
+                <motion.span
+                  layoutId="stepper-pill"
+                  className="stepper__pill"
+                  transition={{ type: 'spring', stiffness: 260, damping: 28 }}
+                />
+              )}
+              <span className="stepper__number tabular">{String(index + 1).padStart(2, '0')}</span>
+              <span className="stepper__label">{step.label}</span>
               {state === 'done' && <span className="visually-hidden"> (done)</span>}
             </li>
           )

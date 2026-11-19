@@ -4,12 +4,20 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#2f7d4f" />
+    <meta name="theme-color" content="#f4efe4" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#121a15" media="(prefers-color-scheme: dark)" />
     <meta
       name="description"
       content="Snap a photo of your fridge or pantry and get healthy recipes you can cook right now."
     />
     <title>Fridge Scanner</title>
+    <script>
+      // Apply a saved theme before first paint to avoid a flash.
+      try {
+        const theme = localStorage.getItem('fridge-scanner-theme')
+        if (theme === 'light' || theme === 'dark') document.documentElement.dataset.theme = theme
+      } catch {}
+    </script>
   </head>
   <body>
     <div id="root"></div>

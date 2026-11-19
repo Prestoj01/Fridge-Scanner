@@ -3,7 +3,7 @@ import { AnimatePresence, motion } from 'motion/react'
 import { useEffect, useState, type SyntheticEvent } from 'react'
 import { EmptyState } from '../components/EmptyState'
 import { Icon } from '../components/Icon'
-import { magnetColor, tilt } from '../lib/fun'
+import { tintFor } from '../lib/fun'
 import type { Diet, Ingredient } from '../types'
 
 interface ReviewScreenProps {
@@ -116,37 +116,26 @@ export default function ReviewScreen({
               <motion.li
                 key={ingredient.id}
                 layout
-                className={`chip magnet--${magnetColor(ingredient.name)}`}
-                initial={{ y: -90, opacity: 0, rotate: -25, scale: 0.6 }}
-                animate={{ y: 0, opacity: 1, rotate: tilt(ingredient.name, 4), scale: 1 }}
+                className={`chip tint--${tintFor(ingredient.name)}`}
+                initial={{ opacity: 0, scale: 0.85, filter: 'blur(6px)' }}
+                animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
                 exit={{
-                  y: 320,
                   opacity: 0,
-                  zIndex: 20,
-                  rotate: tilt(ingredient.name, 4) > 0 ? 70 : -70,
-                  transition: { duration: 0.5, ease: 'easeIn' },
+                  scale: 0.8,
+                  filter: 'blur(6px)',
+                  transition: { duration: 0.25 },
                 }}
                 transition={{
-                  type: 'spring',
-                  stiffness: 520,
-                  damping: 16,
-                  delay: settled ? 0 : index * 0.07,
+                  duration: 0.45,
+                  ease: [0.2, 0.8, 0.2, 1],
+                  delay: settled ? 0 : index * 0.05,
                 }}
-                drag
-                dragSnapToOrigin
-                dragElastic={0.75}
-                dragTransition={{ bounceStiffness: 480, bounceDamping: 11 }}
-                whileDrag={{ scale: 1.15, rotate: 0, zIndex: 10, cursor: 'grabbing' }}
-                whileHover={{ scale: 1.05 }}
               >
+                <span className="chip__dot" aria-hidden="true" />
                 {ingredient.name}
                 <button
                   type="button"
                   aria-label={`Remove ${ingredient.name}`}
-                  onPointerDown={(event) => {
-                    // Let the button click without starting a drag.
-                    event.stopPropagation()
-                  }}
                   onClick={() => {
                     onRemoveIngredient(ingredient.id)
                   }}
@@ -164,6 +153,13 @@ export default function ReviewScreen({
         <div className="segmented__options">
           {DIETS.map((option) => (
             <label key={option.value} className="segmented__option">
+              {diet === option.value && (
+                <motion.span
+                  layoutId="diet-thumb"
+                  className="segmented__thumb"
+                  transition={{ type: 'spring', stiffness: 320, damping: 30 }}
+                />
+              )}
               <input
                 type="radio"
                 name="diet"
@@ -174,7 +170,7 @@ export default function ReviewScreen({
                   onDietChange(option.value)
                 }}
               />
-              {option.label}
+              <span className="segmented__label">{option.label}</span>
             </label>
           ))}
         </div>

@@ -1,20 +1,35 @@
-import { Check, ChevronDown, Clock, Leaf, ShoppingBasket, Users } from 'lucide-react'
-import { magnetColor } from '../lib/fun'
+import { ChevronDown, Clock, Leaf, ShoppingBasket, Users } from 'lucide-react'
 import type { Recipe } from '../types'
 import { Icon } from './Icon'
 
 interface RecipeCardProps {
   recipe: Recipe
+  /** Position in the list, shown as a large number. */
+  index: number
   /** Open the first card so the user sees a full recipe right away. */
   defaultOpen?: boolean
 }
 
-export function RecipeCard({ recipe, defaultOpen = false }: RecipeCardProps) {
+function handNote(recipe: Recipe): string {
+  const missing = recipe.missingIngredients.length
+  if (missing === 0) return 'ready to cook!'
+  return missing === 1 ? 'just 1 thing to grab' : `${String(missing)} things to grab`
+}
+
+export function RecipeCard({ recipe, index, defaultOpen = false }: RecipeCardProps) {
   const ready = recipe.missingIngredients.length === 0
 
   return (
-    <article className={`recipe-card magnet--${magnetColor(recipe.title)}`}>
-      <span className="recipe-card__pin" aria-hidden="true" />
+    <article className="recipe-card">
+      <div className="recipe-card__top">
+        <span className="recipe-card__number tabular" aria-hidden="true">
+          {String(index + 1).padStart(2, '0')}
+        </span>
+        <span className={`hand recipe-card__note${ready ? ' recipe-card__note--ready' : ''}`}>
+          {handNote(recipe)}
+        </span>
+      </div>
+
       <header className="recipe-card__header">
         <h3>{recipe.title}</h3>
         {recipe.summary !== '' && <p className="recipe-card__summary">{recipe.summary}</p>}
@@ -36,10 +51,7 @@ export function RecipeCard({ recipe, defaultOpen = false }: RecipeCardProps) {
       </dl>
 
       {ready ? (
-        <p className="recipe-card__status recipe-card__status--ready">
-          <Icon icon={Check} size={16} />
-          You have everything
-        </p>
+        <p className="recipe-card__status recipe-card__status--ready">You have everything</p>
       ) : (
         <p className="recipe-card__status recipe-card__status--missing">
           <Icon icon={ShoppingBasket} size={16} />
@@ -62,14 +74,14 @@ export function RecipeCard({ recipe, defaultOpen = false }: RecipeCardProps) {
         <div className="recipe-card__body">
           <h4>Ingredients</h4>
           <ul>
-            {recipe.ingredients.map((line, index) => (
-              <li key={index}>{line}</li>
+            {recipe.ingredients.map((line, i) => (
+              <li key={i}>{line}</li>
             ))}
           </ul>
           <h4>Steps</h4>
           <ol>
-            {recipe.steps.map((line, index) => (
-              <li key={index}>{line}</li>
+            {recipe.steps.map((line, i) => (
+              <li key={i}>{line}</li>
             ))}
           </ol>
         </div>

@@ -1,4 +1,4 @@
-/** Small deterministic helpers for playful, per-item variety. */
+/** Small deterministic helpers for organic, per-item variety. */
 
 /** Stable 32-bit hash of a string (FNV-1a). */
 export function hashString(text: string): number {
@@ -15,15 +15,15 @@ export function pick<T>(seed: string, items: readonly [T, ...T[]]): T {
   return items[hashString(seed) % items.length] ?? items[0]
 }
 
-/** A small, stable tilt in degrees between -max and +max for a seed string. */
-export function tilt(seed: string, max = 4): number {
-  const unit = (hashString(`${seed}:tilt`) % 1000) / 999
-  return Math.round((unit * 2 - 1) * max * 10) / 10
+/** A stable number in [0, 1) for a seed string. */
+export function unit(seed: string): number {
+  return (hashString(seed) % 10_000) / 10_000
 }
 
-export const MAGNET_COLORS = ['cherry', 'butter', 'mint', 'sky', 'grape', 'tangerine'] as const
-export type MagnetColor = (typeof MAGNET_COLORS)[number]
+export const TINTS = ['sage', 'peach', 'butter'] as const
+export type Tint = (typeof TINTS)[number]
 
-export function magnetColor(seed: string): MagnetColor {
-  return pick(seed, MAGNET_COLORS)
+/** A stable soft tint for an item, so the same ingredient always gets the same color. */
+export function tintFor(seed: string): Tint {
+  return pick(seed, TINTS)
 }

@@ -3,7 +3,6 @@ import { AnimatePresence, motion } from 'motion/react'
 import { useRef, useState, type ChangeEvent, type DragEvent } from 'react'
 import { Icon } from '../components/Icon'
 import { Notice } from '../components/Notice'
-import { magnetColor, tilt } from '../lib/fun'
 import type { AsyncState, Photo } from '../types'
 import { API_LIMITS } from '../types/api'
 
@@ -105,8 +104,10 @@ function PhotoUpload({
           onClick={openPicker}
           {...dropHandlers}
         >
-          <span className="dropzone__icon">
-            <Icon icon={Camera} size={32} />
+          <span className="dropzone__visual">
+            <span className="dropzone__icon">
+              <Icon icon={Camera} size={32} />
+            </span>
           </span>
           <span className="dropzone__title">Add photos</span>
           <span className="dropzone__hint">
@@ -128,14 +129,12 @@ function PhotoUpload({
                 <motion.li
                   key={photo.id}
                   layout
-                  className={`photo-tile magnet--${magnetColor(photo.id)}`}
-                  initial={{ y: -160, opacity: 0, rotate: -30, scale: 1.3 }}
-                  animate={{ y: 0, opacity: 1, rotate: tilt(photo.id, 4), scale: 1 }}
-                  exit={{ scale: 0.2, opacity: 0, rotate: 90, transition: { duration: 0.3 } }}
-                  transition={{ type: 'spring', stiffness: 380, damping: 15 }}
-                  whileHover={{ rotate: 0, scale: 1.03 }}
+                  className="photo-tile"
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.85, transition: { duration: 0.25 } }}
+                  transition={{ duration: 0.5, ease: [0.2, 0.8, 0.2, 1] }}
                 >
-                  <span className="photo-tile__pin" aria-hidden="true" />
                   <span className="photo-tile__frame">
                     <img src={photo.url} alt={photo.name} />
                   </span>
