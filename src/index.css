@@ -1298,3 +1298,84 @@ a {
     filter: blur(6px);
   }
 }
+
+/* ───────────── Ambient fields and grain ───────────── */
+
+/* light-dark() only takes colors, so per-theme numbers live in custom properties. */
+:root {
+  --ambient-strength: 0.32;
+  --grain-strength: 0.16;
+}
+
+:root[data-theme='dark'] {
+  --ambient-strength: 0.16;
+  --grain-strength: 0.1;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --ambient-strength: 0.16;
+    --grain-strength: 0.1;
+  }
+}
+
+.ambient {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+  transition: filter 1.6s var(--ease-in-out);
+}
+
+.ambient--sad {
+  filter: saturate(0.3);
+}
+
+.ambient__field {
+  position: absolute;
+  width: clamp(26rem, 60vmax, 56rem);
+  height: clamp(26rem, 60vmax, 56rem);
+  opacity: var(--ambient-strength);
+  filter: blur(80px);
+  will-change: transform;
+}
+
+.ambient__field > div {
+  width: 100%;
+  height: 100%;
+}
+
+.ambient__field--sage {
+  top: -18rem;
+  left: -16rem;
+}
+
+.ambient__field--peach {
+  top: 30vh;
+  right: -20rem;
+}
+
+.ambient__field--butter {
+  bottom: -22rem;
+  left: -6rem;
+  opacity: calc(var(--ambient-strength) * 0.85);
+}
+
+.ambient__grain {
+  position: absolute;
+  inset: 0;
+  opacity: var(--grain-strength);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.12 0 0 0 0 0.2 0 0 0 0 0.15 0 0 0 0.35 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  mix-blend-mode: multiply;
+}
+
+:root[data-theme='dark'] .ambient__grain {
+  mix-blend-mode: screen;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) .ambient__grain {
+    mix-blend-mode: screen;
+  }
+}

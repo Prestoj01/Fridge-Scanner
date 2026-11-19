@@ -1,6 +1,7 @@
 import { ChevronLeft } from 'lucide-react'
 import { AnimatePresence, MotionConfig, motion } from 'motion/react'
 import { lazy, Suspense } from 'react'
+import { Ambient } from './components/Ambient'
 import { ErrorBoundary } from './components/ErrorBoundary'
 import { Footer } from './components/Footer'
 import { Icon } from './components/Icon'
@@ -33,6 +34,7 @@ export default function App() {
   return (
     <MotionConfig reducedMotion="user">
       <div className="app">
+        <Ambient mood={orb.mood} />
         <Header />
         <main className="app-main">
           <div className="container">
