@@ -1,25 +1,29 @@
 import { ChevronLeft } from 'lucide-react'
 import { AnimatePresence, MotionConfig, motion, useReducedMotion } from 'motion/react'
-import { lazy, Suspense } from 'react'
+import { useEffect } from 'react'
 import { ErrorBoundary } from './components/ErrorBoundary'
 import { Footer } from './components/Footer'
 import { Icon } from './components/Icon'
 import { Header } from './components/Header'
-import { Loading } from './components/Loading'
 import { PageWipe } from './components/PageWipe'
 import { StatusLine } from './components/StatusLine'
 import { Stepper } from './components/Stepper'
 import { Ticker } from './components/Ticker'
 import { useRotatingLine } from './hooks/useRotatingLine'
+import RecipesScreen from './screens/RecipesScreen'
+import ReviewScreen from './screens/ReviewScreen'
+import UploadScreen from './screens/UploadScreen'
 import { useScanFlow } from './hooks/useScanFlow'
 import { orbState } from './lib/orb'
 
-const UploadScreen = lazy(() => import('./screens/UploadScreen'))
-const ReviewScreen = lazy(() => import('./screens/ReviewScreen'))
-const RecipesScreen = lazy(() => import('./screens/RecipesScreen'))
-
 export default function App() {
   const flow = useScanFlow()
+
+  // Each step starts at the top of the page; the page wipe hides the jump.
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [flow.step])
+
   const calm = useReducedMotion() ?? false
   const orb = orbState({
     aiEnabled: flow.aiEnabled,
@@ -73,7 +77,7 @@ export default function App() {
                   exit={calm ? { opacity: 0 } : { opacity: 0, y: -24, filter: 'blur(8px)' }}
                   transition={{ duration: 0.4, ease: [0.65, 0, 0.35, 1] }}
                 >
-                  <Suspense fallback={<Loading />}>
+                  <>
                     {flow.step === 'upload' && (
                       <UploadScreen
                         aiEnabled={flow.aiEnabled}
@@ -107,7 +111,7 @@ export default function App() {
                         onReset={flow.reset}
                       />
                     )}
-                  </Suspense>
+                  </>
                 </motion.div>
               </AnimatePresence>
             </ErrorBoundary>

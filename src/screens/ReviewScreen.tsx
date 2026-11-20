@@ -1,4 +1,4 @@
-import { ListPlus, X } from 'lucide-react'
+import { X } from 'lucide-react'
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import { useEffect, useState, type SyntheticEvent } from 'react'
 import { EmptyState } from '../components/EmptyState'
@@ -103,7 +103,7 @@ export default function ReviewScreen({
 
       {ingredients.length === 0 ? (
         <EmptyState
-          icon={ListPlus}
+          food="jar"
           title="Your list is empty"
           description="Start with a protein, a vegetable, and a grain for the best matches."
         />

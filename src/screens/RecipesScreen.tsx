@@ -1,4 +1,4 @@
-import { CookingPot, RotateCcw } from 'lucide-react'
+import { RotateCcw } from 'lucide-react'
 import { motion, useReducedMotion } from 'motion/react'
 import { EmptyState } from '../components/EmptyState'
 import { Icon } from '../components/Icon'
@@ -88,7 +88,7 @@ export default function RecipesScreen({
           <h2 id="recipes-heading">Recipes</h2>
         </header>
         <EmptyState
-          icon={CookingPot}
+          food="grain"
           title="No recipes match"
           description="Add a few more ingredients, such as a protein, a vegetable, or a grain."
         >

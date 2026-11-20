@@ -1,7 +1,7 @@
 import '@testing-library/jest-dom/vitest'
 import { cleanup } from '@testing-library/react'
 import { MotionGlobalConfig } from 'motion/react'
-import { afterEach } from 'vitest'
+import { afterEach, vi } from 'vitest'
 
 // Animations add nothing to behavior tests and delay exits.
 MotionGlobalConfig.skipAnimations = true
@@ -45,3 +45,6 @@ class InViewObserver implements IntersectionObserver {
 }
 
 globalThis.IntersectionObserver = InViewObserver
+
+// jsdom does not implement scrolling.
+if (typeof window !== 'undefined') window.scrollTo = vi.fn()

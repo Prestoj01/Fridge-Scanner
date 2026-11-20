@@ -559,15 +559,6 @@ a {
   animation: spin 0.8s linear infinite;
 }
 
-.loading {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-3);
-  padding-block: var(--space-7);
-  color: var(--color-text-muted);
-}
-
 .notice {
   display: flex;
   align-items: flex-start;
@@ -597,9 +588,8 @@ a {
   text-align: center;
 }
 
-.empty-state > .icon {
-  margin-bottom: var(--space-2);
-  color: var(--color-accent);
+.empty-state__art {
+  margin-bottom: var(--space-1);
 }
 
 .empty-state__title {
