@@ -384,6 +384,11 @@ a {
   min-height: var(--control-sm);
 }
 
+/* Nothing to go back to on the first screen: don't hold the space. */
+.back-slot:empty {
+  display: none;
+}
+
 .back-link {
   gap: var(--space-1);
   margin-left: calc((var(--space-3) + 0.4375rem) * -1);
@@ -1423,4 +1428,53 @@ a {
 
     aspect-ratio: 16 / 9;
   }
+}
+
+/* ───────────── Ticker ───────────── */
+
+.ticker {
+  margin-top: var(--space-4);
+  overflow: hidden;
+  background: var(--color-primary);
+  color: var(--sunshine);
+  mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+}
+
+.ticker__track {
+  display: flex;
+  width: max-content;
+  animation: ticker linear infinite;
+}
+
+.ticker:hover .ticker__track {
+  animation-play-state: paused;
+}
+
+.ticker__item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding-block: var(--space-2);
+  font-size: var(--text-sm);
+  font-stretch: 75%;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.ticker__star {
+  margin-inline: var(--space-4);
+  color: var(--tomato);
+}
+
+@keyframes ticker {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+:root[data-theme='dark'] .ticker,
+:root:not([data-theme='light']) .ticker {
+  color: light-dark(var(--sunshine), #151312);
 }

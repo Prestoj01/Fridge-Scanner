@@ -8,6 +8,7 @@ import { Header } from './components/Header'
 import { Loading } from './components/Loading'
 import { StatusLine } from './components/StatusLine'
 import { Stepper } from './components/Stepper'
+import { Ticker } from './components/Ticker'
 import { useRotatingLine } from './hooks/useRotatingLine'
 import { useScanFlow } from './hooks/useScanFlow'
 import { orbState } from './lib/orb'
@@ -35,6 +36,7 @@ export default function App() {
     <MotionConfig reducedMotion="user">
       <div className="app">
         <Header />
+        <Ticker names={flow.ingredients.map((item) => item.name)} />
         <main className="app-main">
           <div className="container">
             <Stepper current={flow.step} />
