@@ -47,7 +47,8 @@ it('shows an empty state when nothing matches, and can start over', async () => 
   expect(await screen.findByText('No recipes match')).toBeInTheDocument()
 
   await user.click(screen.getByRole('button', { name: 'Add ingredients' }))
-  expect(await screen.findByText('ketchup')).toBeInTheDocument()
+  const list = await screen.findByRole('list', { name: 'Your ingredients' })
+  expect(within(list).getByText('ketchup')).toBeInTheDocument()
 })
 
 it('starts over from the recipes screen', async () => {

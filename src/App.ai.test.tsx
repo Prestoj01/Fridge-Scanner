@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react'
+import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { beforeEach, expect, it, vi } from 'vitest'
 import App from './App'
@@ -62,7 +62,8 @@ it('detects ingredients from a photo and shows AI recipes', async () => {
   expect(
     await screen.findByRole('heading', { name: 'We spotted 2 ingredients' }),
   ).toBeInTheDocument()
-  expect(screen.getByText('chicken')).toBeInTheDocument()
+  const list = screen.getByRole('list', { name: 'Your ingredients' })
+  expect(within(list).getByText('chicken')).toBeInTheDocument()
 
   await user.click(screen.getByRole('button', { name: 'Find recipes' }))
   expect(
