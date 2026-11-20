@@ -1,7 +1,10 @@
 import { ChevronDown, Clock, Leaf, ShoppingBasket, Users } from 'lucide-react'
-import { motion, useScroll, useTransform } from 'motion/react'
+import { motion, useReducedMotion, useScroll, useTransform, type MotionValue } from 'motion/react'
 import { useRef } from 'react'
+import type { FoodKind } from '../lib/foodKind'
+import { recipeFoods } from '../lib/recipeFoods'
 import type { Recipe } from '../types'
+import { Food } from './food/Food'
 import { Icon } from './Icon'
 
 interface RecipeCardProps {
@@ -12,52 +15,118 @@ interface RecipeCardProps {
   defaultOpen?: boolean
 }
 
-function handNote(recipe: Recipe): string {
+const SPREAD_COLORS = ['tomato', 'sunshine', 'cobalt', 'basil', 'blush'] as const
+
+function stickerText(recipe: Recipe): string {
   const missing = recipe.missingIngredients.length
-  if (missing === 0) return 'ready to cook!'
-  return missing === 1 ? 'just 1 thing to grab' : `${String(missing)} things to grab`
+  if (missing === 0) return 'Ready to cook!'
+  return missing === 1 ? 'Just 1 thing to grab' : `${String(missing)} things to grab`
+}
+
+interface Spot {
+  x: number
+  y: number
+  size: number
+  rotate: number
+  depth: number
+}
+
+function SpreadFood({
+  kind,
+  spot,
+  order,
+  drift,
+  calm,
+}: {
+  kind: FoodKind
+  spot: Spot
+  order: number
+  drift: MotionValue<number>
+  calm: boolean
+}) {
+  const y = useTransform(drift, (value) => (calm ? 0 : value * spot.depth))
+  return (
+    <motion.div
+      className="spread__food"
+      style={{
+        left: `${String(spot.x)}%`,
+        top: `${String(spot.y)}%`,
+        width: `calc(${String(spot.size)}px * var(--spread-scale))`,
+        height: `calc(${String(spot.size)}px * var(--spread-scale))`,
+        y,
+        zIndex: Math.round(spot.depth * 10),
+      }}
+      // Pops in when the card's own reveal plays ('hidden' -> 'shown').
+      variants={{
+        hidden: { scale: 0, rotate: spot.rotate - 60 },
+        shown: {
+          scale: 1,
+          rotate: spot.rotate,
+          transition: { type: 'spring', stiffness: 160, damping: 12, delay: 0.35 + order * 0.12 },
+        },
+      }}
+      {...(calm ? { initial: false } : {})}
+    >
+      <Food kind={kind} size={spot.size} className="spread__food-art" />
+    </motion.div>
+  )
+}
+
+/** Where each food sits in the art block, by how many there are. */
+const LAYOUTS: Record<number, readonly Spot[]> = {
+  1: [{ x: 62, y: 55, size: 150, rotate: 8, depth: 1 }],
+  2: [
+    { x: 50, y: 58, size: 130, rotate: -8, depth: 1 },
+    { x: 80, y: 36, size: 92, rotate: 14, depth: 0.5 },
+  ],
+  3: [
+    { x: 52, y: 60, size: 124, rotate: -6, depth: 1 },
+    { x: 82, y: 34, size: 88, rotate: 16, depth: 0.55 },
+    { x: 84, y: 76, size: 76, rotate: -14, depth: 0.75 },
+  ],
 }
 
 export function RecipeCard({ recipe, index, defaultOpen = false }: RecipeCardProps) {
+  const calm = useReducedMotion() ?? false
   const ready = recipe.missingIngredients.length === 0
-  const cardRef = useRef<HTMLElement>(null)
-  const { scrollYProgress } = useScroll({ target: cardRef, offset: ['start end', 'end start'] })
-  const numberY = useTransform(scrollYProgress, [0, 1], [28, -28])
+  const color = SPREAD_COLORS[index % SPREAD_COLORS.length] ?? 'tomato'
+  const foods = recipeFoods(recipe)
+  const layout = LAYOUTS[foods.length] ?? LAYOUTS[1] ?? []
+
+  const artRef = useRef<HTMLDivElement>(null)
+  const { scrollYProgress } = useScroll({ target: artRef, offset: ['start end', 'end start'] })
+  const drift = useTransform(scrollYProgress, [0, 1], [40, -40])
 
   return (
-    <article className="recipe-card" ref={cardRef}>
-      <div className="recipe-card__top">
-        <motion.span
-          className="recipe-card__number tabular"
-          aria-hidden="true"
-          style={{ y: numberY }}
-        >
-          {String(index + 1).padStart(2, '0')}
-        </motion.span>
-        <span className={`hand recipe-card__note${ready ? ' recipe-card__note--ready' : ''}`}>
-          {handNote(recipe)}
+    <article className="recipe-card">
+      <div ref={artRef} className={`spread__art spread__art--${color}`} aria-hidden="true">
+        <span className="spread__number tabular">{String(index + 1).padStart(2, '0')}</span>
+        <span className={`spread__sticker${ready ? ' spread__sticker--ready' : ''}`}>
+          {stickerText(recipe)}
         </span>
+        {foods.map((kind, i) => {
+          const spot = layout[i]
+          return spot ? (
+            <SpreadFood key={kind} kind={kind} spot={spot} order={i} drift={drift} calm={calm} />
+          ) : null
+        })}
       </div>
+
+      <p className="recipe-card__meta kicker">
+        <span>
+          <Icon icon={Clock} size={16} />
+          {recipe.timeMinutes} min
+        </span>
+        <span>
+          <Icon icon={Users} size={16} />
+          Serves {recipe.servings}
+        </span>
+      </p>
 
       <header className="recipe-card__header">
         <h3>{recipe.title}</h3>
         {recipe.summary !== '' && <p className="recipe-card__summary">{recipe.summary}</p>}
       </header>
-
-      <dl className="recipe-card__meta">
-        <div>
-          <dt className="visually-hidden">Time</dt>
-          <Icon icon={Clock} size={16} />
-          <dd>{recipe.timeMinutes} min</dd>
-        </div>
-        <div>
-          <dt className="visually-hidden">Serves</dt>
-          <Icon icon={Users} size={16} />
-          <dd>
-            {recipe.servings} {recipe.servings === 1 ? 'serving' : 'servings'}
-          </dd>
-        </div>
-      </dl>
 
       {ready ? (
         <p className="recipe-card__status recipe-card__status--ready">You have everything</p>
@@ -81,13 +150,13 @@ export function RecipeCard({ recipe, index, defaultOpen = false }: RecipeCardPro
           <Icon icon={ChevronDown} className="recipe-card__chevron" />
         </summary>
         <div className="recipe-card__body">
-          <h4>Ingredients</h4>
+          <h4>You’ll need</h4>
           <ul>
             {recipe.ingredients.map((line, i) => (
               <li key={i}>{line}</li>
             ))}
           </ul>
-          <h4>Steps</h4>
+          <h4>Method</h4>
           <ol>
             {recipe.steps.map((line, i) => (
               <li key={i}>{line}</li>

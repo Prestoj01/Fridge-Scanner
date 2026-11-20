@@ -113,10 +113,12 @@ export default function RecipesScreen({
         {recipes.map((recipe, index) => (
           <motion.li
             key={recipe.id}
-            initial={
-              calm ? false : { opacity: 0, y: 70, clipPath: 'inset(14% 8% 0% 8% round 28px)' }
-            }
-            whileInView={{ opacity: 1, y: 0, clipPath: 'inset(0% 0% 0% 0% round 28px)' }}
+            variants={{
+              hidden: { opacity: 0, y: 70, clipPath: 'inset(0% 0% 100% 0%)' },
+              shown: { opacity: 1, y: 0, clipPath: 'inset(0% 0% 0% 0%)' },
+            }}
+            initial={calm ? false : 'hidden'}
+            whileInView="shown"
             viewport={{ once: true, amount: 'some' }}
             transition={{
               duration: 0.9,
