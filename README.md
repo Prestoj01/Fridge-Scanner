@@ -5,9 +5,9 @@ Snap a photo of your fridge or pantry and get healthy recipes, with steps, from 
 **Live demo:** <https://prestoj01.github.io/Fridge-Scanner/>
 
 <p>
-  <img src="docs/screenshots/upload.png" alt="Upload screen: a glowing orb above the headline Photograph your fridge to find recipes" width="260">
-  <img src="docs/screenshots/review.png" alt="Review screen: the orb in bloom beside six detected ingredients" width="260">
-  <img src="docs/screenshots/recipes.png" alt="Recipes screen: a numbered recipe card with a handwritten note" width="260">
+  <img src="docs/screenshots/upload.png" alt="Upload screen: a magazine masthead and a tomato-red cover with floating 3D foods" width="260">
+  <img src="docs/screenshots/review.png" alt="Review screen: detected ingredients as an editorial list, each with a 3D food" width="260">
+  <img src="docs/screenshots/recipes.png" alt="Recipes screen: a magazine spread with a big number, a sticker, and 3D foods" width="260">
 </p>
 
 ## How it works
@@ -20,11 +20,11 @@ The app also works with no backend at all. In **offline mode** you type your ing
 
 ## Design
 
-Fresh and organic: oat, sage, and peach by day and deep herb green at night, with Fraunces headlines, DM Sans body text, and small handwritten notes in Caveat. A sun/moon toggle switches themes with a circular reveal, and the app follows the device until you choose.
+The app is laid out like a food magazine: a masthead with an issue line, big black-weight Playfair Display headlines with italic emphasis, condensed Archivo kickers, hard rules, and bold spot colors (tomato, sunshine, cobalt, basil) on crisp paper or ink. A sun/moon toggle switches between light and dark with a circular reveal and otherwise follows the device.
 
-At the center is a living orb that reacts to what is happening. It breathes when idle, ripples while reading photos, swirls with orbiting seeds while recipes cook, blooms into petals on success, and wilts when something goes wrong. It glides from a large hero on the first screen to a compact companion beside later headlines.
+The illustrations are glossy, 3D-style foods drawn in SVG (17 of them, from tomatoes to salmon), matched to each ingredient by name. They float on the cover with pointer parallax, sit beside every ingredient in the list, illustrate each recipe spread, and tumble into a mixing bowl while recipes cook.
 
-Motion is cinematic: headlines resolve word by word, each screen's parts rise in sequence, photos open with a circular reveal, recipe cards reveal as you scroll, and soft color fields drift behind the page with parallax. With reduced motion turned on, everything appears in place without movement.
+Motion: an ingredient ticker scrolls under the masthead, a color panel wipes across between steps like a section opener, headlines reveal word by word, and recipe spreads open as you scroll. With reduced motion turned on, everything appears in place without movement.
 
 ## Architecture
 
@@ -45,7 +45,7 @@ Everything runs on free tiers: GitHub Pages, Cloudflare Workers, and the Gemini 
 ## Tech stack
 
 - [Vite](https://vite.dev/) + [React](https://react.dev/) + [TypeScript](https://www.typescriptlang.org/) (strict), plain CSS, React state only
-- [Motion](https://motion.dev/) for springs, morphing, layout and scroll animations; [Lucide](https://lucide.dev/) icons; Fraunces, DM Sans, and Caveat fonts, self-hosted
+- [Motion](https://motion.dev/) for springs, morphing, layout and scroll animations; [Lucide](https://lucide.dev/) icons; Playfair Display and Archivo fonts, self-hosted
 - [Cloudflare Workers](https://developers.cloudflare.com/workers/) for the API, with no runtime dependencies
 - [Gemini API](https://aistudio.google.com/) for image understanding and recipe generation
 - [Vitest](https://vitest.dev/) + [Testing Library](https://testing-library.com/), ESLint, Prettier
