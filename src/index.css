@@ -1199,3 +1199,99 @@ a {
     grid-template-columns: repeat(3, 1fr);
   }
 }
+
+/* ───────────── Cover ───────────── */
+
+.cover {
+  --cover-scale: 0.85;
+
+  position: relative;
+  aspect-ratio: 5 / 4;
+  overflow: hidden;
+  border-radius: var(--radius-sm);
+  background:
+    radial-gradient(circle at 50% 55%, rgb(255 255 255 / 22%), transparent 60%), var(--tomato);
+  isolation: isolate;
+}
+
+.cover__food {
+  position: absolute;
+  translate: -50% -50%;
+}
+
+.cover__food > div,
+.cover__art {
+  width: 100%;
+  height: 100%;
+}
+
+.cover__food > div {
+  cursor: grab;
+}
+
+.cover__kicker {
+  position: absolute;
+  top: var(--space-3);
+  left: var(--space-3);
+  z-index: 20;
+  color: var(--ink-on-color);
+}
+
+/* A magazine starburst sticker. */
+.cover__sticker {
+  position: absolute;
+  right: var(--space-3);
+  bottom: var(--space-3);
+  z-index: 20;
+  display: grid;
+  place-items: center;
+  width: 5.25rem;
+  height: 5.25rem;
+  background: var(--sunshine);
+  clip-path: polygon(
+    50% 0%,
+    61% 13%,
+    77% 6%,
+    80% 23%,
+    97% 26%,
+    90% 42%,
+    100% 55%,
+    86% 64%,
+    90% 82%,
+    72% 82%,
+    64% 98%,
+    50% 88%,
+    36% 98%,
+    28% 82%,
+    10% 82%,
+    14% 64%,
+    0% 55%,
+    10% 42%,
+    3% 26%,
+    20% 23%,
+    23% 6%,
+    39% 13%
+  );
+  color: var(--ink-on-color);
+  font-size: 0.75rem;
+  font-stretch: 75%;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  line-height: 1.05;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+@media (min-width: 40rem) {
+  .cover {
+    --cover-scale: 1.15;
+
+    aspect-ratio: 16 / 10;
+  }
+
+  .cover__sticker {
+    width: 6.5rem;
+    height: 6.5rem;
+    font-size: 0.9rem;
+  }
+}

@@ -1,6 +1,7 @@
 import { Camera, ImagePlus, X } from 'lucide-react'
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import { useRef, useState, type ChangeEvent, type DragEvent } from 'react'
+import { Cover } from '../components/Cover'
 import { Icon } from '../components/Icon'
 import { RevealText } from '../components/RevealText'
 import { Notice } from '../components/Notice'
@@ -25,6 +26,7 @@ export default function UploadScreen(props: UploadScreenProps) {
 function OfflineStart({ onEnterManually }: UploadScreenProps) {
   return (
     <section className="screen" aria-labelledby="upload-heading">
+      <Cover />
       <header className="screen__header">
         <h2 id="upload-heading">
           <RevealText text="Turn what you have into a *healthy meal*" />
@@ -83,6 +85,7 @@ function PhotoUpload({
 
   return (
     <section className="screen" aria-labelledby="upload-heading">
+      <Cover busy={busy} />
       <header className="screen__header">
         <h2 id="upload-heading">
           <RevealText text="Photograph your fridge to *find recipes*" />
