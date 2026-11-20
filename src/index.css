@@ -521,6 +521,11 @@ a {
   color: var(--color-accent);
 }
 
+.button--ghost:disabled {
+  border-color: transparent;
+  text-decoration-color: var(--color-rule-soft);
+}
+
 .back-link.button--ghost {
   text-decoration: none;
 }
