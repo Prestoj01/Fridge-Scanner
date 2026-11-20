@@ -4,12 +4,15 @@ import { EmptyState } from '../components/EmptyState'
 import { Icon } from '../components/Icon'
 import { Notice } from '../components/Notice'
 import { RevealText } from '../components/RevealText'
+import { MixingBowl } from '../components/MixingBowl'
 import { RecipeCard } from '../components/RecipeCard'
 import { RecipeSkeleton } from '../components/RecipeSkeleton'
 import type { AsyncState, Recipe } from '../types'
 
 interface RecipesScreenProps {
   recipes: readonly Recipe[]
+  /** The user's ingredient names, for the loading scene. */
+  ingredientNames: readonly string[]
   generation: AsyncState
   onRetry: () => void
   onUseLibrary: () => void
@@ -30,6 +33,7 @@ function summaryLine(recipes: readonly Recipe[]): string {
 
 export default function RecipesScreen({
   recipes,
+  ingredientNames,
   generation,
   onRetry,
   onUseLibrary,
@@ -48,8 +52,8 @@ export default function RecipesScreen({
             Matching your ingredients. This takes a few seconds.
           </p>
         </header>
+        <MixingBowl names={ingredientNames} />
         <div className="recipe-list">
-          <RecipeSkeleton />
           <RecipeSkeleton />
         </div>
       </section>

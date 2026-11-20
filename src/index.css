@@ -1507,3 +1507,32 @@ a {
   letter-spacing: 0.2em;
   text-transform: uppercase;
 }
+
+/* ───────────── Mixing bowl (recipe loading) ───────────── */
+
+.mixing-bowl {
+  position: relative;
+  display: grid;
+  place-items: end center;
+  height: 15rem;
+  overflow: hidden;
+  border-radius: var(--radius-sm);
+  background:
+    radial-gradient(circle at 50% 70%, rgb(255 255 255 / 30%), transparent 60%), var(--sunshine);
+}
+
+.mixing-bowl__food {
+  position: absolute;
+  bottom: 4.5rem;
+  left: 50%;
+  margin-left: -32px;
+  z-index: 1;
+}
+
+.mixing-bowl__bowl {
+  position: relative;
+  z-index: 2;
+  width: 13rem;
+  margin-bottom: -0.5rem;
+  overflow: visible;
+}

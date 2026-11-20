@@ -99,6 +99,7 @@ export default function App() {
                     {flow.step === 'recipes' && (
                       <RecipesScreen
                         recipes={flow.recipes}
+                        ingredientNames={flow.ingredients.map((item) => item.name)}
                         generation={flow.generation}
                         onRetry={() => void flow.findRecipes()}
                         onUseLibrary={flow.showLibraryRecipes}
