@@ -1,32 +1,23 @@
 import { ThemeToggle } from './ThemeToggle'
 
+const dateFormat = new Intl.DateTimeFormat('en-US', {
+  weekday: 'short',
+  month: 'short',
+  day: 'numeric',
+})
+
 export function Header() {
   return (
-    <header className="app-header">
-      <div className="container app-header__inner">
-        <h1 className="wordmark">
-          <svg
-            className="wordmark__mark"
-            viewBox="0 0 32 32"
-            width="28"
-            height="28"
-            aria-hidden="true"
-          >
-            <path
-              d="M16 29 C16 20 16 15 16 11"
-              stroke="currentColor"
-              strokeWidth="2.2"
-              strokeLinecap="round"
-              fill="none"
-            />
-            <path d="M16 17 C9 17 5 12 5 6 C12 6 16 10 16 17 Z" fill="var(--sage)" />
-            <path d="M16 13 C21 13 26 10 27 4 C21 4 16 7 16 13 Z" fill="var(--peach)" />
-          </svg>
-          <span>
-            fridge <em>scanner</em>
-          </span>
+    <header className="masthead">
+      <div className="container">
+        <div className="masthead__top kicker">
+          <span>No. 01 · Healthy cooking</span>
+          <span className="masthead__date">{dateFormat.format(new Date())}</span>
+          <ThemeToggle />
+        </div>
+        <h1 className="masthead__title">
+          Fridge <em>Scanner</em>
         </h1>
-        <ThemeToggle />
       </div>
     </header>
   )

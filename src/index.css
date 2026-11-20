@@ -245,38 +245,48 @@ a {
   padding-inline: var(--space-5);
 }
 
-.app-header {
-  padding-top: var(--space-4);
+/* Magazine masthead: issue line, big title, double rule. */
+.masthead {
+  padding-top: var(--space-3);
 }
 
-.app-header__inner {
+.masthead__top {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding-bottom: var(--space-3);
-  border-bottom: var(--rule);
+  gap: var(--space-3);
+  padding-bottom: var(--space-2);
+  border-bottom: var(--rule-thin);
+  color: var(--color-text-muted);
+  white-space: nowrap;
 }
 
-.wordmark {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  font-size: 1.5rem;
+.masthead__date {
+  margin-left: auto;
+}
+
+.masthead__title {
+  padding-block: var(--space-2) var(--space-3);
+  border-bottom: 6px double var(--color-rule);
+  font-size: clamp(2.5rem, 12.5vw, 5.5rem);
   font-weight: 900;
-  letter-spacing: -0.01em;
+  white-space: nowrap;
+  letter-spacing: -0.035em;
+  line-height: 0.9;
+  text-align: center;
 }
 
-.wordmark em {
+.masthead__title em {
   font-style: italic;
+  font-weight: 800;
   color: var(--color-accent);
 }
 
 .theme-toggle {
   display: grid;
   place-items: center;
-  width: var(--control-md);
-  height: var(--control-md);
-  margin-right: calc(var(--space-2) * -1);
+  width: var(--control-sm);
+  height: var(--control-sm);
+  margin: calc(var(--space-2) * -1) calc(var(--space-2) * -1) calc(var(--space-2) * -1) 0;
   padding: 0;
   border: 0;
   border-radius: 50%;
