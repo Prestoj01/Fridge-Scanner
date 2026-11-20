@@ -1,14 +1,14 @@
 import type { AsyncState, StepId } from '../types'
 
-export type OrbMood = 'idle' | 'hungry' | 'excited' | 'scanning' | 'thinking' | 'happy' | 'sad'
+export type Mood = 'idle' | 'hungry' | 'excited' | 'scanning' | 'thinking' | 'happy' | 'sad'
 
-export interface OrbState {
-  mood: OrbMood
-  /** One or more caption lines. Several lines rotate while the state lasts. */
+export interface StatusState {
+  mood: Mood
+  /** One or more status lines. Several lines rotate while the state lasts. */
   lines: readonly [string, ...string[]]
 }
 
-export interface OrbInputs {
+export interface StatusInputs {
   aiEnabled: boolean
   step: StepId
   photoCount: number
@@ -38,8 +38,8 @@ function plural(count: number, word: string): string {
   return `${String(count)} ${word}${count === 1 ? '' : 's'}`
 }
 
-/** Decides how the orb behaves and what its caption says for the current app state. */
-export function orbState(input: OrbInputs): OrbState {
+/** Decides the app's mood and what the status line says for the current state. */
+export function statusState(input: StatusInputs): StatusState {
   switch (input.step) {
     case 'upload': {
       if (input.detection.status === 'loading') return { mood: 'scanning', lines: SCANNING_LINES }

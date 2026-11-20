@@ -14,7 +14,7 @@ import RecipesScreen from './screens/RecipesScreen'
 import ReviewScreen from './screens/ReviewScreen'
 import UploadScreen from './screens/UploadScreen'
 import { useScanFlow } from './hooks/useScanFlow'
-import { orbState } from './lib/orb'
+import { statusState } from './lib/status'
 
 export default function App() {
   const flow = useScanFlow()
@@ -25,7 +25,7 @@ export default function App() {
   }, [flow.step])
 
   const calm = useReducedMotion() ?? false
-  const orb = orbState({
+  const status = statusState({
     aiEnabled: flow.aiEnabled,
     step: flow.step,
     photoCount: flow.photos.length,
@@ -35,7 +35,7 @@ export default function App() {
     detection: flow.detection,
     generation: flow.generation,
   })
-  const caption = useRotatingLine(orb.lines)
+  const caption = useRotatingLine(status.lines)
 
   return (
     <MotionConfig reducedMotion="user">

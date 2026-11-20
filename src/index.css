@@ -206,8 +206,7 @@ a {
 }
 
 /* Small condensed uppercase labels, as in a magazine. */
-.kicker,
-.hand {
+.kicker {
   font-family: var(--font-sans);
   font-size: var(--text-xs);
   font-stretch: 75%;
@@ -215,18 +214,6 @@ a {
   letter-spacing: 0.08em;
   line-height: 1.2;
   text-transform: uppercase;
-}
-
-.tint--sage {
-  --tint: var(--basil);
-}
-
-.tint--peach {
-  --tint: var(--tomato);
-}
-
-.tint--butter {
-  --tint: var(--sunshine);
 }
 
 /* ───────────── Layout ───────────── */
@@ -314,11 +301,6 @@ a {
 .app-footer .container {
   padding-top: var(--space-4);
   border-top: var(--rule);
-}
-
-.app-footer .hand {
-  margin-bottom: var(--space-2);
-  color: var(--color-text);
 }
 
 .app-footer__fine {
@@ -822,51 +804,6 @@ a {
 .input-group .button {
   align-self: center;
   min-height: var(--control-sm);
-}
-
-.chip-list {
-  position: relative;
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-2);
-  padding: 0;
-  list-style: none;
-}
-
-.chip {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  min-height: var(--control-sm);
-  padding: var(--space-1) var(--space-1) var(--space-1) var(--space-3);
-  border: var(--rule);
-  border-radius: var(--radius-pill);
-  font-weight: 600;
-}
-
-.chip__dot {
-  width: 0.625rem;
-  height: 0.625rem;
-  border-radius: 50%;
-  background: var(--tint);
-}
-
-.chip button {
-  display: grid;
-  place-items: center;
-  width: 2rem;
-  height: 2rem;
-  padding: 0;
-  border: 0;
-  border-radius: 50%;
-  background: transparent;
-  color: var(--color-text-muted);
-  cursor: pointer;
-}
-
-.chip button:hover {
-  background: var(--sunshine);
-  color: var(--ink-on-color);
 }
 
 .segmented {
