@@ -8,6 +8,15 @@ describe('foodKind', () => {
     expect(foodKind('baby spinach')).toBe('leaf')
     expect(foodKind('limes')).toBe('lemon')
     expect(foodKind('sweet potato')).toBe('carrot')
+    expect(foodKind('red bell pepper')).toBe('pepper')
+    expect(foodKind('cream cheese')).toBe('cheese')
+    expect(foodKind('greek yogurt')).toBe('milk')
+    expect(foodKind('chicken breast')).toBe('meat')
+    expect(foodKind('salmon fillet')).toBe('fish')
+    expect(foodKind('brown rice')).toBe('grain')
+    expect(foodKind('black beans')).toBe('grain')
+    expect(foodKind('garlic')).toBe('onion')
+    expect(foodKind('sourdough bread')).toBe('bread')
   })
 
   it('avoids false matches and falls back to a jar', () => {
