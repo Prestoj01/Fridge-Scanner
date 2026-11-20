@@ -1468,3 +1468,54 @@ a {
   margin-bottom: -0.5rem;
   overflow: visible;
 }
+
+/* ───────────── Wide screens: a full magazine page ───────────── */
+
+@media (min-width: 64rem) {
+  :root {
+    --max-width: 72rem;
+    --text-xl: clamp(4rem, 6vw, 6rem);
+  }
+
+  .masthead__title {
+    font-size: clamp(5rem, 9vw, 8rem);
+  }
+
+  /* Forms and running text keep a readable width on the wide page. */
+  .input-group,
+  .segmented,
+  .screen__actions,
+  .notice,
+  .dropzone,
+  .photo-panel,
+  .empty-state {
+    max-width: 44rem;
+  }
+
+  .screen__header h2 {
+    max-width: 52rem;
+  }
+
+  .cover {
+    aspect-ratio: 21 / 9;
+  }
+
+  .cover {
+    --cover-scale: 1.5;
+  }
+
+  .pantry {
+    grid-template-columns: repeat(3, 1fr);
+    max-width: none;
+  }
+
+  /* Recipes run as a two-up spread. */
+  .recipe-list {
+    grid-template-columns: 1fr 1fr;
+    column-gap: var(--space-6);
+  }
+
+  .spread__art {
+    aspect-ratio: 4 / 3;
+  }
+}
