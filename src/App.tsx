@@ -6,6 +6,7 @@ import { Footer } from './components/Footer'
 import { Icon } from './components/Icon'
 import { Header } from './components/Header'
 import { Loading } from './components/Loading'
+import { PageWipe } from './components/PageWipe'
 import { StatusLine } from './components/StatusLine'
 import { Stepper } from './components/Stepper'
 import { Ticker } from './components/Ticker'
@@ -35,6 +36,7 @@ export default function App() {
   return (
     <MotionConfig reducedMotion="user">
       <div className="app">
+        <PageWipe step={flow.step} />
         <Header />
         <Ticker names={flow.ingredients.map((item) => item.name)} />
         <main className="app-main">

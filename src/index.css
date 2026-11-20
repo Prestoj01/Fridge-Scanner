@@ -1478,3 +1478,32 @@ a {
 :root:not([data-theme='light']) .ticker {
   color: light-dark(var(--sunshine), #151312);
 }
+
+/* ───────────── Page wipe between steps ───────────── */
+
+.page-wipe {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  color: var(--ink-on-color);
+  pointer-events: none;
+}
+
+.page-wipe__number {
+  font-family: var(--font-display);
+  font-size: clamp(7rem, 40vw, 14rem);
+  font-style: italic;
+  font-weight: 900;
+  line-height: 0.85;
+}
+
+.page-wipe__label {
+  font-size: var(--text-lg);
+  font-stretch: 75%;
+  font-weight: 800;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
