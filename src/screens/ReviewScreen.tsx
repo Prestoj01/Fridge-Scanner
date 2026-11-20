@@ -4,7 +4,8 @@ import { useEffect, useState, type SyntheticEvent } from 'react'
 import { EmptyState } from '../components/EmptyState'
 import { Icon } from '../components/Icon'
 import { RevealText } from '../components/RevealText'
-import { tintFor } from '../lib/fun'
+import { Food } from '../components/food/Food'
+import { foodKind } from '../lib/foodKind'
 import type { Diet, Ingredient } from '../types'
 
 interface ReviewScreenProps {
@@ -107,37 +108,50 @@ export default function ReviewScreen({
           description="Start with a protein, a vegetable, and a grain for the best matches."
         />
       ) : (
-        <ul className="chip-list" aria-label="Your ingredients">
+        <ul className="pantry" aria-label="Your ingredients">
           <AnimatePresence mode="popLayout">
             {ingredients.map((ingredient, index) => (
               <motion.li
                 key={ingredient.id}
                 layout
-                className={`chip tint--${tintFor(ingredient.name)}`}
-                initial={calm ? false : { opacity: 0, scale: 0.85, filter: 'blur(6px)' }}
-                animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
-                exit={{
-                  opacity: 0,
-                  scale: 0.8,
-                  filter: 'blur(6px)',
-                  transition: { duration: 0.25 },
-                }}
+                className="pantry__item"
+                initial={calm ? false : { opacity: 0, y: 14 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, x: 40, transition: { duration: 0.25, ease: 'easeIn' } }}
                 transition={{
                   duration: 0.45,
                   ease: [0.2, 0.8, 0.2, 1],
-                  delay: settled ? 0 : index * 0.05,
+                  delay: settled ? 0 : index * 0.06,
                 }}
               >
-                <span className="chip__dot" aria-hidden="true" />
-                {ingredient.name}
+                <motion.span
+                  className="pantry__food"
+                  initial={calm ? false : { scale: 0, rotate: -45 }}
+                  animate={{ scale: 1, rotate: 0 }}
+                  transition={{
+                    type: 'spring',
+                    stiffness: 320,
+                    damping: 14,
+                    delay: (settled ? 0 : index * 0.06) + 0.1,
+                  }}
+                  whileHover={{
+                    rotate: [0, -14, 12, 0],
+                    scale: 1.15,
+                    transition: { duration: 0.5 },
+                  }}
+                >
+                  <Food kind={foodKind(ingredient.name)} size={44} shadow={false} />
+                </motion.span>
+                <span className="pantry__name">{ingredient.name}</span>
                 <button
                   type="button"
+                  className="pantry__remove"
                   aria-label={`Remove ${ingredient.name}`}
                   onClick={() => {
                     onRemoveIngredient(ingredient.id)
                   }}
                 >
-                  <Icon icon={X} size={16} />
+                  <Icon icon={X} size={20} />
                 </button>
               </motion.li>
             ))}
