@@ -2,7 +2,7 @@ export function Footer() {
   return (
     <footer className="app-footer">
       <div className="container">
-        <p className="hand">cook what you have</p>
+        <p className="kicker">Cook what you have</p>
         <p>
           A portfolio project.{' '}
           <a href="https://github.com/Prestoj01/Fridge-Scanner">Source on GitHub</a>
