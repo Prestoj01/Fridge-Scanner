@@ -1,3 +1,4 @@
+import type { Allergen, Cuisine } from '../types'
 /**
  * Built-in recipe library. Used when the API is not configured or is
  * unavailable, so the app always has something useful to show.
@@ -12,6 +13,9 @@ export interface CoreIngredient {
 
 export interface LibraryRecipe {
   title: string
+  cuisine: Exclude<Cuisine, 'any'>
+  /** Common allergens the recipe contains, for "leave out" filtering. */
+  allergens: readonly Allergen[]
   summary: string
   timeMinutes: number
   servings: number
@@ -27,6 +31,8 @@ export interface LibraryRecipe {
 export const LIBRARY: readonly LibraryRecipe[] = [
   {
     title: 'Spinach and tomato omelette',
+    cuisine: 'american',
+    allergens: ['eggs'],
     summary: 'A soft, veggie-packed omelette that is ready in ten minutes.',
     timeMinutes: 10,
     servings: 1,
@@ -49,6 +55,8 @@ export const LIBRARY: readonly LibraryRecipe[] = [
   },
   {
     title: 'Chicken and broccoli stir-fry',
+    cuisine: 'asian',
+    allergens: ['gluten', 'soy'],
     summary: 'Crisp vegetables and lean chicken in a light garlic soy sauce.',
     timeMinutes: 25,
     servings: 2,
@@ -80,6 +88,8 @@ export const LIBRARY: readonly LibraryRecipe[] = [
   },
   {
     title: 'Greek yogurt berry parfait',
+    cuisine: 'mediterranean',
+    allergens: ['dairy', 'gluten'],
     summary: 'Layers of creamy yogurt, fruit, and crunchy oats. No cooking needed.',
     timeMinutes: 5,
     servings: 1,
@@ -100,6 +110,8 @@ export const LIBRARY: readonly LibraryRecipe[] = [
   },
   {
     title: 'Black bean and corn tacos',
+    cuisine: 'mexican',
+    allergens: ['gluten'],
     summary: 'Smoky beans and sweet corn in warm tortillas with avocado.',
     timeMinutes: 15,
     servings: 2,
@@ -128,6 +140,8 @@ export const LIBRARY: readonly LibraryRecipe[] = [
   },
   {
     title: 'Simple lentil soup',
+    cuisine: 'mediterranean',
+    allergens: [],
     summary: 'A hearty one-pot soup that tastes even better the next day.',
     timeMinutes: 40,
     servings: 4,
@@ -158,6 +172,8 @@ export const LIBRARY: readonly LibraryRecipe[] = [
   },
   {
     title: 'Baked salmon with roasted vegetables',
+    cuisine: 'mediterranean',
+    allergens: ['fish'],
     summary: 'One tray, twenty minutes in the oven, and dinner is done.',
     timeMinutes: 25,
     servings: 2,
@@ -188,6 +204,8 @@ export const LIBRARY: readonly LibraryRecipe[] = [
   },
   {
     title: 'Chickpea cucumber salad',
+    cuisine: 'mediterranean',
+    allergens: [],
     summary: 'A crunchy, lemony salad that works as lunch or a side.',
     timeMinutes: 10,
     servings: 2,
@@ -216,6 +234,8 @@ export const LIBRARY: readonly LibraryRecipe[] = [
   },
   {
     title: 'Vegetable egg fried rice',
+    cuisine: 'asian',
+    allergens: ['eggs', 'gluten', 'soy'],
     summary: 'The best use for leftover rice: fast, colourful, and satisfying.',
     timeMinutes: 15,
     servings: 2,
@@ -245,6 +265,8 @@ export const LIBRARY: readonly LibraryRecipe[] = [
   },
   {
     title: 'Tomato garlic pasta',
+    cuisine: 'italian',
+    allergens: ['gluten'],
     summary: 'A fresh, light sauce that cooks in the time it takes to boil the pasta.',
     timeMinutes: 20,
     servings: 2,
@@ -274,6 +296,8 @@ export const LIBRARY: readonly LibraryRecipe[] = [
   },
   {
     title: 'Avocado toast with egg',
+    cuisine: 'american',
+    allergens: ['eggs', 'gluten'],
     summary: 'Creamy avocado and a runny egg on crisp toast.',
     timeMinutes: 10,
     servings: 1,
@@ -295,6 +319,8 @@ export const LIBRARY: readonly LibraryRecipe[] = [
   },
   {
     title: 'Banana oat pancakes',
+    cuisine: 'american',
+    allergens: ['eggs', 'gluten'],
     summary: 'Three-ingredient pancakes with no flour and no added sugar.',
     timeMinutes: 15,
     servings: 2,
@@ -316,6 +342,8 @@ export const LIBRARY: readonly LibraryRecipe[] = [
   },
   {
     title: 'Sheet-pan chicken and sweet potato',
+    cuisine: 'american',
+    allergens: [],
     summary: 'A hands-off dinner where the oven does all the work.',
     timeMinutes: 40,
     servings: 2,
@@ -344,6 +372,8 @@ export const LIBRARY: readonly LibraryRecipe[] = [
   },
   {
     title: 'Tuna lettuce wraps',
+    cuisine: 'american',
+    allergens: ['dairy', 'fish'],
     summary: 'A light, crunchy lunch with no cooking at all.',
     timeMinutes: 10,
     servings: 2,
@@ -370,6 +400,8 @@ export const LIBRARY: readonly LibraryRecipe[] = [
   },
   {
     title: 'Peanut butter banana oatmeal',
+    cuisine: 'american',
+    allergens: ['dairy', 'nuts'],
     summary: 'A warm, creamy bowl that keeps you going all morning.',
     timeMinutes: 10,
     servings: 1,
@@ -397,6 +429,8 @@ export const LIBRARY: readonly LibraryRecipe[] = [
   },
   {
     title: 'Tofu vegetable scramble',
+    cuisine: 'asian',
+    allergens: ['soy'],
     summary: 'A savoury plant-based take on scrambled eggs.',
     timeMinutes: 15,
     servings: 2,
@@ -427,6 +461,8 @@ export const LIBRARY: readonly LibraryRecipe[] = [
   },
   {
     title: 'Turkey and bean chili',
+    cuisine: 'mexican',
+    allergens: [],
     summary: 'A lean, warming chili that freezes well.',
     timeMinutes: 40,
     servings: 4,

@@ -1,6 +1,13 @@
 import { describe, expect, it } from 'vitest'
 import { LIBRARY } from '../data/recipes'
+import { DEFAULT_PREFERENCES, type Preferences } from '../types'
 import { matchesTerm, suggestFromLibrary } from './recipeLibrary'
+
+const prefs = (patch: Partial<Preferences> = {}): Preferences => ({
+  ...DEFAULT_PREFERENCES,
+  servings: 1,
+  ...patch,
+})
 import { parseRecipe } from './validate'
 
 describe('matchesTerm', () => {
@@ -14,21 +21,21 @@ describe('matchesTerm', () => {
 
 describe('suggestFromLibrary', () => {
   it('ranks full matches first and reports what is used and missing', () => {
-    const [first] = suggestFromLibrary(['eggs', 'baby spinach', 'cherry tomatoes'], 'any')
+    const [first] = suggestFromLibrary(['eggs', 'baby spinach', 'cherry tomatoes'], prefs())
     expect(first?.title).toBe('Spinach and tomato omelette')
     expect(first?.usedIngredients).toEqual(['eggs', 'baby spinach', 'cherry tomatoes'])
     expect(first?.missingIngredients).toEqual([])
   })
 
   it('lists missing core ingredients for partial matches', () => {
-    const results = suggestFromLibrary(['bread', 'avocado'], 'any')
+    const results = suggestFromLibrary(['bread', 'avocado'], prefs())
     const toast = results.find((recipe) => recipe.title === 'Avocado toast with egg')
     expect(toast?.missingIngredients).toEqual(['eggs'])
   })
 
   it('respects the diet', () => {
     const names = ['eggs', 'spinach', 'tomato', 'tofu', 'onion', 'chicken', 'broccoli']
-    const vegan = suggestFromLibrary(names, 'vegan')
+    const vegan = suggestFromLibrary(names, prefs({ diet: 'vegan' }))
     expect(vegan.length).toBeGreaterThan(0)
     expect(vegan.map((recipe) => recipe.title)).not.toContain('Spinach and tomato omelette')
     for (const recipe of vegan) {
@@ -37,8 +44,57 @@ describe('suggestFromLibrary', () => {
   })
 
   it('returns nothing when no recipe is at least half covered', () => {
-    expect(suggestFromLibrary(['ketchup'], 'any')).toEqual([])
-    expect(suggestFromLibrary([], 'any')).toEqual([])
+    expect(suggestFromLibrary(['ketchup'], prefs())).toEqual([])
+    expect(suggestFromLibrary([], prefs())).toEqual([])
+  })
+})
+
+describe('suggestFromLibrary preferences', () => {
+  const pantry = [
+    'eggs',
+    'spinach',
+    'tomato',
+    'bread',
+    'avocado',
+    'rice',
+    'pasta',
+    'garlic',
+    'chickpeas',
+    'cucumber',
+    'lemon',
+  ]
+
+  it('respects a time limit', () => {
+    const quick = suggestFromLibrary(pantry, prefs({ maxMinutes: 15 }))
+    expect(quick.length).toBeGreaterThan(0)
+    expect(quick.every((recipe) => recipe.timeMinutes <= 15)).toBe(true)
+  })
+
+  it('leaves out recipes with avoided allergens', () => {
+    const titles = suggestFromLibrary(pantry, prefs({ avoid: ['eggs', 'gluten'] })).map(
+      (r) => r.title,
+    )
+    expect(titles).not.toContain('Spinach and tomato omelette')
+    expect(titles).not.toContain('Tomato garlic pasta')
+    expect(titles).toContain('Chickpea cucumber salad')
+  })
+
+  it('ranks the chosen cuisine first', () => {
+    const [first] = suggestFromLibrary(pantry, prefs({ cuisine: 'italian' }))
+    expect(first?.title).toBe('Tomato garlic pasta')
+  })
+
+  it('scales ingredient amounts to the servings asked for', () => {
+    const omelette = suggestFromLibrary(['eggs', 'spinach', 'tomato'], prefs({ servings: 2 }))[0]
+    expect(omelette?.servings).toBe(2)
+    expect(omelette?.ingredients[0]).toBe('4 eggs')
+  })
+
+  it('skips excluded titles', () => {
+    const titles = suggestFromLibrary(['eggs', 'spinach', 'tomato'], prefs(), [
+      'Spinach and tomato omelette',
+    ]).map((r) => r.title)
+    expect(titles).not.toContain('Spinach and tomato omelette')
   })
 })
 

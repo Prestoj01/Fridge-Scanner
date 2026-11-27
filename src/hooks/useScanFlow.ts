@@ -142,7 +142,7 @@ export function useScanFlow(): ScanFlow {
   const showLibraryRecipes = () => {
     ticket.current += 1
     const names = ingredients.map((item) => item.name)
-    setRecipes(toRecipes(suggestFromLibrary(names, preferences.diet), 'library'))
+    setRecipes(toRecipes(suggestFromLibrary(names, preferences), 'library'))
     setGeneration(IDLE)
     setStep('recipes')
   }
