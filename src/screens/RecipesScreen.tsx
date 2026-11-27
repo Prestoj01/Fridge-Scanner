@@ -26,6 +26,9 @@ interface RecipesScreenProps {
   onMore: () => void
 }
 
+/** Matches the two-column recipe layout in index.css. */
+const TWO_UP = '(min-width: 64rem)'
+
 function summaryLine(recipes: readonly Recipe[]): string {
   const ready = recipes.filter((recipe) => recipe.missingIngredients.length === 0).length
   const readyText =
@@ -50,6 +53,8 @@ export default function RecipesScreen({
   onSwap,
   onMore,
 }: RecipesScreenProps) {
+  // In the two-up desktop spread, an open first card would leave a hole beside it.
+  const twoUp = typeof window.matchMedia === 'function' && window.matchMedia(TWO_UP).matches
   const headingRef = useScreenFocus<HTMLHeadingElement>(generation.status)
   const calm = useReducedMotion() ?? false
   if (generation.status === 'loading') {
@@ -146,7 +151,7 @@ export default function RecipesScreen({
             <RecipeCard
               recipe={recipe}
               index={index}
-              defaultOpen={index === 0}
+              defaultOpen={index === 0 && !twoUp}
               onSwap={() => {
                 onSwap(recipe.id)
               }}

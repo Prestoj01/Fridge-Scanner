@@ -60,10 +60,8 @@ export function statusState(input: StatusInputs): StatusState {
       if (input.ingredientCount === 0) {
         return { tone: 'neutral', lines: ['Start with a few favorites'] }
       }
-      if (input.detectedCount !== null) {
-        return { tone: 'good', lines: [`Spotted ${plural(input.detectedCount, 'ingredient')}`] }
-      }
-      return { tone: 'good', lines: [`${plural(input.ingredientCount, 'ingredient')} on the list`] }
+      // The headline already gives the count, so point to the next move.
+      return { tone: 'good', lines: ['Set your preferences, then find recipes'] }
     }
     case 'recipes': {
       if (input.generation.status === 'loading') return { tone: 'busy', lines: COOKING_LINES }

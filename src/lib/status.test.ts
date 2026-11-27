@@ -37,12 +37,10 @@ describe('statusState', () => {
     const review = { ...base, step: 'review' as const }
     expect(statusState({ ...review, detectedCount: 0 }).tone).toBe('problem')
     expect(statusState({ ...review, detectedCount: 1, ingredientCount: 1 }).lines[0]).toBe(
-      'Spotted 1 ingredient',
+      'Set your preferences, then find recipes',
     )
     expect(statusState(review).tone).toBe('neutral')
-    expect(statusState({ ...review, ingredientCount: 3 }).lines[0]).toBe(
-      '3 ingredients on the list',
-    )
+    expect(statusState({ ...review, ingredientCount: 3 }).tone).toBe('good')
   })
 
   it('works, succeeds, or flags a problem on the recipes step', () => {

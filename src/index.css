@@ -1509,6 +1509,13 @@ a {
     max-width: 52rem;
   }
 
+  /* Under the two-up spread, center the closing actions on the page. */
+  .recipe-list ~ .screen__actions,
+  .recipe-list ~ .notice {
+    width: 100%;
+    margin-inline: auto;
+  }
+
   .cover {
     aspect-ratio: 21 / 9;
   }
