@@ -21,6 +21,7 @@ import { Icon } from './Icon'
 import { NutritionBar } from './NutritionBar'
 import { SaveButton } from './SaveButton'
 import { ShareButton } from './ShareButton'
+import { ShareImageButton } from './ShareImageButton'
 
 interface RecipeCardProps {
   recipe: Recipe
@@ -225,7 +226,11 @@ export function RecipeCard({
         />
       )}
 
-      <ShareButton recipe={recipe} />
+      <div className="recipe-card__share">
+        <ShareButton recipe={recipe} />
+
+        <ShareImageButton recipe={recipe} index={index} />
+      </div>
 
       {onSwap && (
         <button

@@ -2387,3 +2387,14 @@ a {
 .shared__kicker {
   color: var(--color-accent);
 }
+
+.recipe-card__share {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-left: calc(var(--space-3) * -1);
+}
+
+.recipe-card__share .share-button {
+  margin-left: 0;
+}
