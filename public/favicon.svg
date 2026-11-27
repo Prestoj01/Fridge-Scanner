@@ -1,6 +1,23 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-  <rect width="32" height="32" rx="9" fill="#2f4a36" />
-  <path d="M16 28 C16 20 16 15 16 11" stroke="#f4efe4" stroke-width="2.2" stroke-linecap="round" fill="none" />
-  <path d="M16 17 C9 17 5 12 5 6 C12 6 16 10 16 17 Z" fill="#9bb58e" />
-  <path d="M16 13 C21 13 26 10 27 4 C21 4 16 7 16 13 Z" fill="#f2a07b" />
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="112" fill="#151312" />
+  <defs>
+    <radialGradient id="fruit" cx="36%" cy="30%" r="78%">
+      <stop offset="0" stop-color="#ff9466" />
+      <stop offset="0.45" stop-color="#f23d1c" />
+      <stop offset="1" stop-color="#9e1508" />
+    </radialGradient>
+    <radialGradient id="shine" cx="50%" cy="50%" r="50%">
+      <stop offset="0" stop-color="#fff" stop-opacity="0.9" />
+      <stop offset="1" stop-color="#fff" stop-opacity="0" />
+    </radialGradient>
+    <linearGradient id="leaf" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#6fd27a" />
+      <stop offset="1" stop-color="#1f7a3a" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="256" cy="430" rx="150" ry="20" fill="#000" opacity="0.35" />
+  <path d="M256 128 C372 128 428 196 428 284 C428 376 352 432 256 432 C160 432 84 376 84 284 C84 196 140 128 256 128 Z" fill="url(#fruit)" />
+  <path d="M256 150 L300 118 L292 152 L342 150 L298 172 L318 206 L266 180 L246 214 L238 176 L186 190 L222 160 L180 132 L232 142 Z" fill="url(#leaf)" />
+  <path d="M252 150 C250 124 256 100 272 84" stroke="#1f7a3a" stroke-width="14" stroke-linecap="round" fill="none" />
+  <ellipse cx="184" cy="232" rx="50" ry="26" transform="rotate(-32 184 232)" fill="url(#shine)" />
 </svg>

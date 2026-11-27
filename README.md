@@ -25,6 +25,7 @@ Snap a photo of your fridge or pantry and get healthy recipes, with steps, from 
 - **Shopping list.** Add a recipe's missing ingredients in one tap, check them off, and copy or share the list.
 - **Nutrition.** Estimated calories, protein, carbs, and fat per serving.
 - **Cooking mode.** A full-screen, high-contrast view with one step at a time, an ingredient checklist, step timers with a chime, and the screen kept awake.
+- **Installable.** Add it to your home screen. After the first visit the app opens and works without a connection (typed ingredients and the built-in recipe library).
 - **Sharing.** Share a recipe as a link (the whole recipe travels in the URL, no server needed) or as a magazine-style image.
 
 Everything you save stays in your browser.
@@ -156,14 +157,16 @@ Set both or neither. With only the secret, every AI request is refused. `<worker
 
 ```
 src/
-  components/   Shared UI: Header, Footer, Stepper, RecipeCard, Notice, EmptyState, Loading, ErrorBoundary
-  screens/      One component per step: Upload, Review, Recipes
-  hooks/        useScanFlow, which owns the flow state and async actions
-  lib/          API client, image resizing, validation, recipe matching
+  components/   Shared UI: masthead, recipe cards, cooking mode, food illustrations
+  screens/      One component per step (Upload, Review, Recipes) and page (Saved, List, Shared)
+  hooks/        useScanFlow, which owns the flow state and async actions, plus timers and routing
+  lib/          API client, image resizing, validation, recipe matching, sharing
   data/         Built-in recipe library
   types/        Shared types, including the API contract
+pwa/            Service worker template; the build adds the file list
+public/         Icons, manifest
 worker/
-  src/          Cloudflare Worker: routing, CORS, rate limit, prompts, Gemini client
+  src/          Cloudflare Worker: routing, CORS, rate limits, cache, bot check, prompts, Gemini client
 ```
 
 ## Privacy
