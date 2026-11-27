@@ -8,14 +8,14 @@ import {
   ShoppingBasket,
   Users,
 } from 'lucide-react'
-import { motion, useReducedMotion, useScroll, useTransform, type MotionValue } from 'motion/react'
-import { useRef, useState } from 'react'
+import { m, useReducedMotion, useScroll, useTransform, type MotionValue } from 'motion/react'
+import { Suspense, useRef, useState } from 'react'
 import type { FoodKind } from '../lib/foodKind'
+import { CookingMode } from '../lib/lazyViews'
 import { recipeFoods } from '../lib/recipeFoods'
 import { substitutesFor } from '../lib/substitutions'
 import type { Recipe } from '../types'
 import { AddToListButton } from './AddToListButton'
-import { CookingMode } from './CookingMode'
 import { Food } from './food/Food'
 import { Icon } from './Icon'
 import { NutritionBar } from './NutritionBar'
@@ -67,7 +67,7 @@ function SpreadFood({
 }) {
   const y = useTransform(drift, (value) => (calm ? 0 : value * spot.depth))
   return (
-    <motion.div
+    <m.div
       className="spread__food"
       style={{
         left: `${String(spot.x)}%`,
@@ -89,7 +89,7 @@ function SpreadFood({
       {...(calm ? { initial: false } : {})}
     >
       <Food kind={kind} size={spot.size} className="spread__food-art" />
-    </motion.div>
+    </m.div>
   )
 }
 
@@ -205,9 +205,9 @@ export function RecipeCard({
 
       <button
         type="button"
-
         className="button cook-button"
-
+        onMouseEnter={() => void CookingMode.preload()}
+        onFocus={() => void CookingMode.preload()}
         onClick={() => {
           setCooking(true)
         }}
@@ -217,13 +217,14 @@ export function RecipeCard({
       </button>
 
       {cooking && (
-        <CookingMode
-          recipe={recipe}
-
-          onClose={() => {
-            setCooking(false)
-          }}
-        />
+        <Suspense fallback={null}>
+          <CookingMode
+            recipe={recipe}
+            onClose={() => {
+              setCooking(false)
+            }}
+          />
+        </Suspense>
       )}
 
       <div className="recipe-card__share">

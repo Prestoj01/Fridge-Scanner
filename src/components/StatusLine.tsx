@@ -1,4 +1,4 @@
-import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
+import { AnimatePresence, m, useReducedMotion } from 'motion/react'
 
 interface StatusLineProps {
   text: string
@@ -13,7 +13,7 @@ export function StatusLine({ text, busy }: StatusLineProps) {
     <p className={`status-line kicker${busy ? ' status-line--busy' : ''}`} aria-hidden="true">
       <span className="status-line__dot" />
       <AnimatePresence mode="wait" initial={false}>
-        <motion.span
+        <m.span
           key={text}
           initial={calm ? false : { opacity: 0, y: '0.6em' }}
           animate={{ opacity: 1, y: '0em' }}
@@ -21,7 +21,7 @@ export function StatusLine({ text, busy }: StatusLineProps) {
           transition={{ duration: 0.3, ease: [0.2, 0.8, 0.2, 1] }}
         >
           {text}
-        </motion.span>
+        </m.span>
       </AnimatePresence>
     </p>
   )

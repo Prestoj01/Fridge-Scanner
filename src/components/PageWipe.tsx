@@ -1,4 +1,4 @@
-import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
+import { AnimatePresence, m, useReducedMotion } from 'motion/react'
 import { STEPS, stepIndex } from '../lib/steps'
 import type { StepId } from '../types'
 
@@ -17,7 +17,7 @@ export function PageWipe({ step }: { step: StepId }) {
   if (calm) return null
   return (
     <AnimatePresence initial={false}>
-      <motion.div
+      <m.div
         key={step}
         className="page-wipe"
         aria-hidden="true"
@@ -28,7 +28,7 @@ export function PageWipe({ step }: { step: StepId }) {
       >
         <span className="page-wipe__number">{String(stepIndex(step) + 1).padStart(2, '0')}</span>
         <span className="page-wipe__label">{STEPS[stepIndex(step)]?.label}</span>
-      </motion.div>
+      </m.div>
     </AnimatePresence>
   )
 }

@@ -1,4 +1,4 @@
-import { motion, useReducedMotion } from 'motion/react'
+import { m, useReducedMotion } from 'motion/react'
 import { Fragment } from 'react'
 import { splitWords } from '../lib/text'
 
@@ -22,14 +22,14 @@ export function RevealText({ text, delay = 0 }: RevealTextProps) {
     <>
       {words.map(({ word, emphasis }, index) => (
         <Fragment key={`${String(index)}-${word}`}>
-          <motion.span
+          <m.span
             className="reveal-word"
             initial={calm ? false : { opacity: 0, y: '0.45em', filter: 'blur(10px)' }}
             animate={{ opacity: 1, y: '0em', filter: 'blur(0px)' }}
             transition={{ duration: 0.8, ease: [0.2, 0.8, 0.2, 1], delay: delay + index * 0.07 }}
           >
             {emphasis ? <em>{word}</em> : word}
-          </motion.span>
+          </m.span>
           {index < words.length - 1 ? ' ' : ''}
         </Fragment>
       ))}

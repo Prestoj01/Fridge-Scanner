@@ -1,5 +1,5 @@
 import { RotateCcw } from 'lucide-react'
-import { motion, useReducedMotion } from 'motion/react'
+import { m, useReducedMotion } from 'motion/react'
 import { EmptyState } from '../components/EmptyState'
 import { Icon } from '../components/Icon'
 import { Notice } from '../components/Notice'
@@ -124,7 +124,7 @@ export default function RecipesScreen({
       </header>
       <ul className="recipe-list">
         {recipes.map((recipe, index) => (
-          <motion.li
+          <m.li
             key={recipe.id}
             variants={{
               hidden: { opacity: 0, y: 70, clipPath: 'inset(0% 0% 100% 0%)' },
@@ -149,7 +149,7 @@ export default function RecipesScreen({
               swapping={refining.kind === 'swap' && refining.id === recipe.id}
               busy={refining.kind !== 'idle'}
             />
-          </motion.li>
+          </m.li>
         ))}
       </ul>
       {refineNote !== null && <Notice>{refineNote}</Notice>}

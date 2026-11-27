@@ -1,5 +1,5 @@
 import { Camera, ImagePlus, X } from 'lucide-react'
-import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
+import { AnimatePresence, m, useReducedMotion } from 'motion/react'
 import { useEffect, useRef, useState, type ChangeEvent, type DragEvent } from 'react'
 import { Cover } from '../components/Cover'
 import { Icon } from '../components/Icon'
@@ -161,7 +161,7 @@ function PhotoUpload(props: UploadScreenProps) {
           <ul className="photo-grid">
             <AnimatePresence mode="popLayout">
               {photos.map((photo) => (
-                <motion.li
+                <m.li
                   key={photo.id}
                   layout
                   className="photo-tile"
@@ -170,14 +170,14 @@ function PhotoUpload(props: UploadScreenProps) {
                   exit={{ opacity: 0, scale: 0.85, transition: { duration: 0.25 } }}
                   transition={{ duration: 0.5, ease: [0.2, 0.8, 0.2, 1] }}
                 >
-                  <motion.span
+                  <m.span
                     className="photo-tile__frame"
                     initial={calm ? false : { clipPath: 'circle(0% at 50% 50%)' }}
                     animate={{ clipPath: 'circle(75% at 50% 50%)' }}
                     transition={{ duration: 0.9, ease: [0.65, 0, 0.35, 1] }}
                   >
                     <img src={photo.url} alt={photo.name} />
-                  </motion.span>
+                  </m.span>
                   <button
                     type="button"
                     className="photo-tile__remove"
@@ -189,11 +189,11 @@ function PhotoUpload(props: UploadScreenProps) {
                   >
                     <Icon icon={X} />
                   </button>
-                </motion.li>
+                </m.li>
               ))}
             </AnimatePresence>
             {!full && (
-              <motion.li layout key="add">
+              <m.li layout key="add">
                 <button
                   type="button"
                   className="photo-tile photo-tile--add"
@@ -203,7 +203,7 @@ function PhotoUpload(props: UploadScreenProps) {
                   <Icon icon={ImagePlus} size={24} />
                   Add more
                 </button>
-              </motion.li>
+              </m.li>
             )}
           </ul>
         </div>

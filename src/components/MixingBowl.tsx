@@ -1,4 +1,4 @@
-import { motion, useReducedMotion } from 'motion/react'
+import { m, useReducedMotion } from 'motion/react'
 import { foodKind, type FoodKind } from '../lib/foodKind'
 import { Food } from './food/Food'
 
@@ -20,7 +20,7 @@ export function MixingBowl({ names }: MixingBowlProps) {
   return (
     <div className="mixing-bowl" aria-hidden="true">
       {foods.map((kind, index) => (
-        <motion.div
+        <m.div
           key={kind}
           className="mixing-bowl__food"
           initial={{ y: -150, opacity: 0, rotate: -40 }}
@@ -49,9 +49,9 @@ export function MixingBowl({ names }: MixingBowlProps) {
           }
         >
           <Food kind={kind} size={64} shadow={false} />
-        </motion.div>
+        </m.div>
       ))}
-      <motion.svg
+      <m.svg
         viewBox="0 0 200 110"
         className="mixing-bowl__bowl"
         animate={calm ? { rotate: 0 } : { rotate: [-2, 2, -2], y: [0, 3, 0] }}
@@ -78,7 +78,7 @@ export function MixingBowl({ names }: MixingBowlProps) {
           strokeLinecap="round"
           fill="none"
         />
-      </motion.svg>
+      </m.svg>
     </div>
   )
 }

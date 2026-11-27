@@ -1,6 +1,6 @@
 import { ChevronLeft } from 'lucide-react'
-import { AnimatePresence, MotionConfig, motion, useReducedMotion } from 'motion/react'
-import { useEffect } from 'react'
+import { AnimatePresence, LazyMotion, MotionConfig, m, useReducedMotion } from 'motion/react'
+import { Suspense, useEffect } from 'react'
 import { ErrorBoundary } from './components/ErrorBoundary'
 import { Footer } from './components/Footer'
 import { Icon } from './components/Icon'
@@ -15,20 +15,23 @@ import { useHashView } from './hooks/useHashView'
 import { useRotatingLine } from './hooks/useRotatingLine'
 import RecipesScreen from './screens/RecipesScreen'
 import ReviewScreen from './screens/ReviewScreen'
-import SavedScreen from './screens/SavedScreen'
-import SharedScreen from './screens/SharedScreen'
-import ShoppingScreen from './screens/ShoppingScreen'
 import UploadScreen from './screens/UploadScreen'
 import { useScanFlow } from './hooks/useScanFlow'
+import { preloadViews, SavedScreen, SharedScreen, ShoppingScreen } from './lib/lazyViews'
 import { statusState } from './lib/status'
+
+const loadMotionFeatures = () => import('./lib/motionFeatures').then((module) => module.default)
 
 export default function App() {
   return (
-    <SavedProvider>
-      <ShoppingProvider>
-        <Kitchen />
-      </ShoppingProvider>
-    </SavedProvider>
+    // `strict` fails loudly if a full `motion.*` component sneaks back in.
+    <LazyMotion features={loadMotionFeatures} strict>
+      <SavedProvider>
+        <ShoppingProvider>
+          <Kitchen />
+        </ShoppingProvider>
+      </SavedProvider>
+    </LazyMotion>
   )
 }
 
@@ -40,6 +43,20 @@ function Kitchen() {
   useEffect(() => {
     window.scrollTo(0, 0)
   }, [flow.step, view])
+
+  // Fetch the other pages once the first screen has settled.
+  useEffect(() => {
+    if (typeof window.requestIdleCallback === 'function') {
+      const id = window.requestIdleCallback(preloadViews, { timeout: 4000 })
+      return () => {
+        window.cancelIdleCallback(id)
+      }
+    }
+    const id = window.setTimeout(preloadViews, 2000)
+    return () => {
+      window.clearTimeout(id)
+    }
+  }, [])
 
   const calm = useReducedMotion() ?? false
   const status = statusState({
@@ -64,28 +81,34 @@ function Kitchen() {
           <div className="container">
             {view === 'saved' ? (
               <ErrorBoundary>
-                <SavedScreen
-                  onClose={() => {
-                    open('flow')
-                  }}
-                />
+                <Suspense fallback={null}>
+                  <SavedScreen
+                    onClose={() => {
+                      open('flow')
+                    }}
+                  />
+                </Suspense>
               </ErrorBoundary>
             ) : view === 'shared' ? (
               <ErrorBoundary>
-                <SharedScreen
-                  hash={hash}
-                  onClose={() => {
-                    open('flow')
-                  }}
-                />
+                <Suspense fallback={null}>
+                  <SharedScreen
+                    hash={hash}
+                    onClose={() => {
+                      open('flow')
+                    }}
+                  />
+                </Suspense>
               </ErrorBoundary>
             ) : view === 'list' ? (
               <ErrorBoundary>
-                <ShoppingScreen
-                  onClose={() => {
-                    open('flow')
-                  }}
-                />
+                <Suspense fallback={null}>
+                  <ShoppingScreen
+                    onClose={() => {
+                      open('flow')
+                    }}
+                  />
+                </Suspense>
               </ErrorBoundary>
             ) : (
               <>
@@ -93,7 +116,7 @@ function Kitchen() {
                 <div className="back-slot">
                   <AnimatePresence initial={false}>
                     {flow.step !== 'upload' && (
-                      <motion.button
+                      <m.button
                         key="back"
                         type="button"
                         className="button button--ghost back-link"
@@ -104,7 +127,7 @@ function Kitchen() {
                       >
                         <Icon icon={ChevronLeft} />
                         {flow.step === 'review' ? 'Back' : 'Ingredients'}
-                      </motion.button>
+                      </m.button>
                     )}
                   </AnimatePresence>
                 </div>
@@ -114,7 +137,7 @@ function Kitchen() {
                 />
                 <ErrorBoundary>
                   <AnimatePresence mode="wait" initial={false}>
-                    <motion.div
+                    <m.div
                       key={flow.step}
                       initial={{ opacity: 1 }}
                       animate={{ opacity: 1 }}
@@ -162,7 +185,7 @@ function Kitchen() {
                           />
                         )}
                       </>
-                    </motion.div>
+                    </m.div>
                   </AnimatePresence>
                 </ErrorBoundary>
               </>

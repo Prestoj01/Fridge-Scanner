@@ -1,5 +1,5 @@
 import { ChevronLeft, ChevronRight, X } from 'lucide-react'
-import { AnimatePresence, motion, useReducedMotion, type PanInfo } from 'motion/react'
+import { AnimatePresence, m, useReducedMotion, type PanInfo } from 'motion/react'
 import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { useStepTimers } from '../hooks/useStepTimers'
@@ -11,7 +11,7 @@ import { Food } from './food/Food'
 import { Icon } from './Icon'
 import { StepTimer } from './StepTimer'
 
-interface CookingModeProps {
+export interface CookingModeProps {
   recipe: Recipe
   onClose: () => void
 }
@@ -97,7 +97,7 @@ export function CookingMode({ recipe, onClose }: CookingModeProps) {
     .sort((a, b) => a - b)
 
   return createPortal(
-    <motion.div
+    <m.div
       ref={dialogRef}
       className="cooking"
       role="dialog"
@@ -154,7 +154,7 @@ export function CookingMode({ recipe, onClose }: CookingModeProps) {
 
       <div className="cooking__stage">
         <AnimatePresence mode="wait" custom={direction} initial={false}>
-          <motion.div
+          <m.div
             key={page}
             className="cooking__page"
             custom={direction}
@@ -209,7 +209,7 @@ export function CookingMode({ recipe, onClose }: CookingModeProps) {
               <div className="cooking__done">
                 <div className="cooking__foods" aria-hidden="true">
                   {recipeFoods(recipe).map((kind, index) => (
-                    <motion.span
+                    <m.span
                       key={kind}
                       initial={calm ? false : { y: 30, opacity: 0, rotate: -20 }}
                       animate={{ y: 0, opacity: 1, rotate: 0 }}
@@ -221,7 +221,7 @@ export function CookingMode({ recipe, onClose }: CookingModeProps) {
                       }}
                     >
                       <Food kind={kind} size={88} />
-                    </motion.span>
+                    </m.span>
                   ))}
                 </div>
                 <h3 className="cooking__lead">
@@ -230,7 +230,7 @@ export function CookingMode({ recipe, onClose }: CookingModeProps) {
                 <p className="cooking__sub">Enjoy every bite.</p>
               </div>
             )}
-          </motion.div>
+          </m.div>
         </AnimatePresence>
       </div>
 
@@ -263,7 +263,7 @@ export function CookingMode({ recipe, onClose }: CookingModeProps) {
           </button>
         )}
       </footer>
-    </motion.div>,
+    </m.div>,
     document.body,
   )
 }

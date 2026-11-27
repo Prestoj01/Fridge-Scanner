@@ -1,5 +1,5 @@
 import {
-  motion,
+  m,
   useMotionValue,
   useReducedMotion,
   useSpring,
@@ -57,7 +57,7 @@ function FloatingFood({
   const sway = busy ? 360 : 8
 
   return (
-    <motion.div
+    <m.div
       className="cover__food"
       style={{
         left: `${String(placement.x)}%`,
@@ -72,7 +72,7 @@ function FloatingFood({
       animate={{ opacity: 1, scale: 1, rotate: placement.rotate }}
       transition={{ type: 'spring', stiffness: 180, damping: 14, delay: 0.15 + index * 0.08 }}
     >
-      <motion.div
+      <m.div
         animate={
           calm
             ? {}
@@ -88,8 +88,8 @@ function FloatingFood({
         whileHover={{ scale: 1.18, rotate: [0, -12, 10, 0], transition: { duration: 0.5 } }}
       >
         <Food kind={placement.kind} size={placement.size} className="cover__art" />
-      </motion.div>
-    </motion.div>
+      </m.div>
+    </m.div>
   )
 }
 
@@ -122,7 +122,7 @@ export function Cover({ busy = false }: CoverProps) {
   return (
     <div ref={ref} className="cover" aria-hidden="true">
       <span className="cover__kicker kicker">Fridge to table</span>
-      <motion.span
+      <m.span
         className="cover__sticker"
         animate={calm ? { rotate: -8 } : { rotate: [-12, -4, -12] }}
         transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
@@ -134,7 +134,7 @@ export function Cover({ busy = false }: CoverProps) {
           <br />
           fridge
         </span>
-      </motion.span>
+      </m.span>
       {PLACEMENTS.map((placement, index) => (
         <FloatingFood
           key={placement.kind}

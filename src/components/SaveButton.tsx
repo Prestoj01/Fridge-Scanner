@@ -1,5 +1,5 @@
 import { Heart } from 'lucide-react'
-import { motion, useReducedMotion } from 'motion/react'
+import { m, useReducedMotion } from 'motion/react'
 import { useSaved } from '../lib/savedContext'
 import type { Recipe } from '../types'
 
@@ -9,7 +9,7 @@ export function SaveButton({ recipe }: { recipe: Recipe }) {
   const calm = useReducedMotion() ?? false
   const saved = isSaved(recipe)
   return (
-    <motion.button
+    <m.button
       type="button"
       className={`save-button${saved ? ' save-button--on' : ''}`}
       aria-pressed={saved}
@@ -19,7 +19,7 @@ export function SaveButton({ recipe }: { recipe: Recipe }) {
       }}
       whileTap={calm ? {} : { scale: 0.85 }}
     >
-      <motion.span
+      <m.span
         key={saved ? 'on' : 'off'}
         initial={calm || !saved ? false : { scale: 0.4, rotate: -20 }}
         animate={{ scale: 1, rotate: 0 }}
@@ -31,8 +31,8 @@ export function SaveButton({ recipe }: { recipe: Recipe }) {
           fill={saved ? 'currentColor' : 'none'}
           aria-hidden="true"
         />
-      </motion.span>
+      </m.span>
       <span className="save-button__label">{saved ? 'Saved' : 'Save'}</span>
-    </motion.button>
+    </m.button>
   )
 }

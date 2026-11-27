@@ -1,4 +1,4 @@
-import { motion, useReducedMotion } from 'motion/react'
+import { m, useReducedMotion } from 'motion/react'
 import type { Nutrition } from '../types'
 
 const MACROS = [
@@ -17,7 +17,7 @@ export function NutritionBar({ nutrition }: { nutrition: Nutrition }) {
     <figure className="macros">
       <div className="macros__bar" aria-hidden="true">
         {MACROS.map((macro, index) => (
-          <motion.span
+          <m.span
             key={macro.key}
             className={`macros__segment macros__segment--${macro.key}`}
             style={{ flexGrow: energy[index] ?? 0, originX: 0 }}

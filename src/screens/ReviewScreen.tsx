@@ -1,5 +1,5 @@
 import { X } from 'lucide-react'
-import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
+import { AnimatePresence, m, useReducedMotion } from 'motion/react'
 import { useEffect, useState, type SyntheticEvent } from 'react'
 import { EmptyState } from '../components/EmptyState'
 import { Icon } from '../components/Icon'
@@ -106,7 +106,7 @@ export default function ReviewScreen({
         <ul className="pantry" aria-label="Your ingredients">
           <AnimatePresence mode="popLayout">
             {ingredients.map((ingredient, index) => (
-              <motion.li
+              <m.li
                 key={ingredient.id}
                 layout
                 className="pantry__item"
@@ -119,7 +119,7 @@ export default function ReviewScreen({
                   delay: settled ? 0 : index * 0.06,
                 }}
               >
-                <motion.span
+                <m.span
                   className="pantry__food"
                   initial={calm ? false : { scale: 0, rotate: -45 }}
                   animate={{ scale: 1, rotate: 0 }}
@@ -136,7 +136,7 @@ export default function ReviewScreen({
                   }}
                 >
                   <Food kind={foodKind(ingredient.name)} size={44} shadow={false} />
-                </motion.span>
+                </m.span>
                 <span className="pantry__name">{ingredient.name}</span>
                 <button
                   type="button"
@@ -148,7 +148,7 @@ export default function ReviewScreen({
                 >
                   <Icon icon={X} size={20} />
                 </button>
-              </motion.li>
+              </m.li>
             ))}
           </AnimatePresence>
         </ul>

@@ -1,4 +1,4 @@
-import { motion } from 'motion/react'
+import { m } from 'motion/react'
 
 interface SegmentedProps<T extends string | number> {
   legend: string
@@ -26,7 +26,7 @@ export function Segmented<T extends string | number>({
         {options.map((option) => (
           <label key={String(option.value)} className="segmented__option">
             {value === option.value && (
-              <motion.span
+              <m.span
                 layoutId={`${name}-thumb`}
                 className="segmented__thumb"
                 transition={{ type: 'spring', stiffness: 320, damping: 30 }}

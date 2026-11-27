@@ -1,6 +1,5 @@
 import { ImageDown } from 'lucide-react'
 import { useState } from 'react'
-import { imageFileName, renderRecipeImage } from '../lib/shareImage'
 import type { Recipe } from '../types'
 import { Icon } from './Icon'
 
@@ -13,6 +12,8 @@ export function ShareImageButton({ recipe, index }: { recipe: Recipe; index: num
     setBusy(true)
     setFailed(false)
     try {
+      // The canvas renderer is only needed here, so it loads on first use.
+      const { imageFileName, renderRecipeImage } = await import('../lib/shareImage')
       const blob = await renderRecipeImage(recipe, index)
       const file = new File([blob], imageFileName(recipe.title), { type: 'image/png' })
       if (typeof navigator.canShare === 'function' && navigator.canShare({ files: [file] })) {

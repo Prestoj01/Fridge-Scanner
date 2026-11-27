@@ -1,4 +1,4 @@
-import { motion } from 'motion/react'
+import { m } from 'motion/react'
 import { useTheme } from '../hooks/useTheme'
 
 /** Sun and moon in one drawing: the rays fold away and a shadow slides over to make a crescent. */
@@ -18,7 +18,7 @@ export function ThemeToggle() {
         toggle({ x: box.left + box.width / 2, y: box.top + box.height / 2 })
       }}
     >
-      <motion.svg
+      <m.svg
         viewBox="0 0 24 24"
         width="22"
         height="22"
@@ -28,14 +28,14 @@ export function ThemeToggle() {
       >
         <mask id="moon-mask">
           <rect x="0" y="0" width="24" height="24" fill="white" />
-          <motion.circle
+          <m.circle
             r="9"
             fill="black"
             animate={{ cx: dark ? 16 : 30, cy: dark ? 7 : 0 }}
             transition={spring}
           />
         </mask>
-        <motion.circle
+        <m.circle
           cx="12"
           cy="12"
           fill="currentColor"
@@ -43,7 +43,7 @@ export function ThemeToggle() {
           animate={{ r: dark ? 9 : 5 }}
           transition={spring}
         />
-        <motion.g
+        <m.g
           stroke="currentColor"
           strokeWidth="2"
           strokeLinecap="round"
@@ -52,8 +52,8 @@ export function ThemeToggle() {
           style={{ originX: '12px', originY: '12px' }}
         >
           <path d="M12 1.5v2.5M12 20v2.5M1.5 12H4M20 12h2.5M4.6 4.6l1.8 1.8M17.6 17.6l1.8 1.8M4.6 19.4l1.8-1.8M17.6 6.4l1.8-1.8" />
-        </motion.g>
-      </motion.svg>
+        </m.g>
+      </m.svg>
     </button>
   )
 }

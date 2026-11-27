@@ -1,5 +1,5 @@
 import { ChevronLeft } from 'lucide-react'
-import { motion } from 'motion/react'
+import { m } from 'motion/react'
 import { EmptyState } from '../components/EmptyState'
 import { Icon } from '../components/Icon'
 import { RecipeCard } from '../components/RecipeCard'
@@ -41,9 +41,9 @@ export default function SavedScreen({ onClose }: SavedScreenProps) {
       ) : (
         <ul className="recipe-list">
           {saved.map((recipe, index) => (
-            <motion.li key={recipe.id} layout>
+            <m.li key={recipe.id} layout>
               <RecipeCard recipe={recipe} index={index} />
-            </motion.li>
+            </m.li>
           ))}
         </ul>
       )}

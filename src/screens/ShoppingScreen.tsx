@@ -1,5 +1,5 @@
 import { Check, ChevronLeft, Copy, Share2, X } from 'lucide-react'
-import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
+import { AnimatePresence, m, useReducedMotion } from 'motion/react'
 import { useEffect, useState, type SyntheticEvent } from 'react'
 import { EmptyState } from '../components/EmptyState'
 import { Food } from '../components/food/Food'
@@ -99,7 +99,7 @@ export default function ShoppingScreen({ onClose }: ShoppingScreenProps) {
         <ul className="shopping" aria-label="Shopping list">
           <AnimatePresence mode="popLayout" initial={false}>
             {items.map((item) => (
-              <motion.li
+              <m.li
                 key={item.id}
                 layout
                 className={`shopping__item${item.checked ? ' shopping__item--checked' : ''}`}
@@ -136,7 +136,7 @@ export default function ShoppingScreen({ onClose }: ShoppingScreenProps) {
                 >
                   <Icon icon={X} size={20} />
                 </button>
-              </motion.li>
+              </m.li>
             ))}
           </AnimatePresence>
         </ul>

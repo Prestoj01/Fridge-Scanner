@@ -1,4 +1,4 @@
-import { motion } from 'motion/react'
+import { m } from 'motion/react'
 import { EmptyState } from '../components/EmptyState'
 import { RecipeCard } from '../components/RecipeCard'
 import { RevealText } from '../components/RevealText'
@@ -26,9 +26,9 @@ export default function SharedScreen({ hash, onClose }: SharedScreenProps) {
         )}
       </header>
       {recipe ? (
-        <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }}>
+        <m.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }}>
           <RecipeCard recipe={recipe} index={0} defaultOpen />
-        </motion.div>
+        </m.div>
       ) : (
         <EmptyState
           food="jar"

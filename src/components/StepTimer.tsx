@@ -1,5 +1,5 @@
 import { Pause, Play, RotateCcw, Timer } from 'lucide-react'
-import { motion, useReducedMotion } from 'motion/react'
+import { m, useReducedMotion } from 'motion/react'
 import type { StepTimers } from '../hooks/useStepTimers'
 import { formatClock, type StepTimer as Found } from '../lib/timers'
 import { Icon } from './Icon'
@@ -38,7 +38,7 @@ export function StepTimer({ step, found, timers }: StepTimerProps) {
 
   return (
     <div className={`timer${timer.done ? ' timer--done' : ''}`} role="timer" aria-live="off">
-      <motion.div
+      <m.div
         className="timer__dial"
         animate={timer.done && !calm ? { scale: [1, 1.06, 1] } : { scale: 1 }}
         transition={timer.done ? { duration: 0.6, repeat: Infinity } : { duration: 0.2 }}
@@ -55,7 +55,7 @@ export function StepTimer({ step, found, timers }: StepTimerProps) {
           />
         </svg>
         <span className="timer__clock tabular">{timer.done ? 'Done!' : formatClock(left)}</span>
-      </motion.div>
+      </m.div>
       <p className="visually-hidden" aria-live="assertive">
         {timer.done ? `Time is up for step ${String(step + 1)}.` : ''}
       </p>

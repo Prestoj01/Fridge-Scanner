@@ -1,4 +1,4 @@
-import { motion } from 'motion/react'
+import { m } from 'motion/react'
 import { STEPS, stepIndex } from '../lib/steps'
 import type { StepId } from '../types'
 
@@ -22,7 +22,7 @@ export function Stepper({ current }: StepperProps) {
               aria-current={state === 'current' ? 'step' : undefined}
             >
               {state === 'current' && (
-                <motion.span
+                <m.span
                   layoutId="stepper-pill"
                   className="stepper__pill"
                   transition={{ type: 'spring', stiffness: 260, damping: 28 }}
