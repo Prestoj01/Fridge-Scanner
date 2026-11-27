@@ -228,26 +228,24 @@ export function RecipeCard({
 
       <div className="recipe-card__share">
         <ShareButton recipe={recipe} />
-
         <ShareImageButton recipe={recipe} index={index} />
+        {onSwap && (
+          <button
+            type="button"
+            className="button button--ghost share-button"
+            disabled={busy}
+            aria-busy={swapping}
+            onClick={onSwap}
+          >
+            <Icon
+              icon={RefreshCw}
+              size={16}
+              {...(swapping ? { className: 'swap-button__spin' } : {})}
+            />
+            {swapping ? 'Finding another…' : 'Something different'}
+          </button>
+        )}
       </div>
-
-      {onSwap && (
-        <button
-          type="button"
-          className="button button--ghost swap-button"
-          disabled={busy}
-          aria-busy={swapping}
-          onClick={onSwap}
-        >
-          <Icon
-            icon={RefreshCw}
-            size={16}
-            {...(swapping ? { className: 'swap-button__spin' } : {})}
-          />
-          {swapping ? 'Finding another…' : 'Something different'}
-        </button>
-      )}
 
       <details open={defaultOpen}>
         <summary>
