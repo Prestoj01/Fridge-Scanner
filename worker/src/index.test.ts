@@ -124,6 +124,7 @@ describe('POST /recipes', () => {
     missingIngredients: [],
     steps: ['Whisk the eggs.', 'Cook with the spinach for 3 minutes.'],
     healthNote: 'High in protein.',
+    nutrition: { calories: 250, protein: 18, carbs: 6, fat: 16 },
   }
 
   it('returns validated recipes and passes the diet to the model', async () => {
