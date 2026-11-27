@@ -2,6 +2,7 @@ import { m } from 'motion/react'
 import { EmptyState } from '../components/EmptyState'
 import { RecipeCard } from '../components/RecipeCard'
 import { RevealText } from '../components/RevealText'
+import { useScreenFocus } from '../hooks/useScreenFocus'
 import { recipeFromHash } from '../lib/shareLink'
 
 interface SharedScreenProps {
@@ -11,12 +12,13 @@ interface SharedScreenProps {
 
 /** A recipe opened from a share link. */
 export default function SharedScreen({ hash, onClose }: SharedScreenProps) {
+  const headingRef = useScreenFocus<HTMLHeadingElement>()
   const recipe = recipeFromHash(hash)
   return (
     <section className="screen" aria-labelledby="shared-heading">
       <header className="screen__header">
         <p className="kicker shared__kicker">Shared with you</p>
-        <h2 id="shared-heading">
+        <h2 id="shared-heading" ref={headingRef} tabIndex={-1}>
           <RevealText text={recipe ? 'A recipe *for you*' : 'This link is *broken*'} />
         </h2>
         {recipe && (

@@ -118,7 +118,7 @@ export async function renderRecipeImage(recipe: Recipe, index: number): Promise<
   context.fillRect(0, ART_HEIGHT, WIDTH, HEIGHT - ART_HEIGHT)
   let y = ART_HEIGHT + 56
 
-  context.fillStyle = '#d93a10'
+  context.fillStyle = '#c8340c'
   context.font = `700 28px ${SANS}`
   const meta = [`${String(recipe.timeMinutes)} min`, `Serves ${String(recipe.servings)}`]
   if (recipe.nutrition) meta.push(`${String(recipe.nutrition.calories)} kcal`)
@@ -162,7 +162,7 @@ export async function renderRecipeImage(recipe: Recipe, index: number): Promise<
   context.textBaseline = 'alphabetic'
   context.fillText('Fridge', PAD, HEIGHT - 52)
   const fridge = context.measureText('Fridge ').width
-  context.fillStyle = '#d93a10'
+  context.fillStyle = '#c8340c'
   context.font = `italic 800 44px ${DISPLAY}`
   context.fillText('Scanner', PAD + fridge, HEIGHT - 52)
   context.fillStyle = '#5b5550'

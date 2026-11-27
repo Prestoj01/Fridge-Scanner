@@ -4,6 +4,7 @@ import { EmptyState } from '../components/EmptyState'
 import { Icon } from '../components/Icon'
 import { RecipeCard } from '../components/RecipeCard'
 import { RevealText } from '../components/RevealText'
+import { useScreenFocus } from '../hooks/useScreenFocus'
 import { useSaved } from '../lib/savedContext'
 
 interface SavedScreenProps {
@@ -11,6 +12,7 @@ interface SavedScreenProps {
 }
 
 export default function SavedScreen({ onClose }: SavedScreenProps) {
+  const headingRef = useScreenFocus<HTMLHeadingElement>()
   const { saved } = useSaved()
   return (
     <section className="screen" aria-labelledby="saved-heading">
@@ -19,7 +21,7 @@ export default function SavedScreen({ onClose }: SavedScreenProps) {
         Back to cooking
       </button>
       <header className="screen__header">
-        <h2 id="saved-heading">
+        <h2 id="saved-heading" ref={headingRef} tabIndex={-1}>
           <RevealText text="Your *saved* recipes" />
         </h2>
         {saved.length > 0 && (

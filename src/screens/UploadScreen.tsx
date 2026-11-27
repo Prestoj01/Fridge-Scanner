@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, type ChangeEvent, type DragEvent } from 'r
 import { Cover } from '../components/Cover'
 import { Icon } from '../components/Icon'
 import { RevealText } from '../components/RevealText'
+import { useScreenFocus } from '../hooks/useScreenFocus'
 import { Notice } from '../components/Notice'
 import { ResumeCard } from '../components/ResumeCard'
 import { pastedImages } from '../lib/clipboard'
@@ -35,13 +36,14 @@ export default function UploadScreen(props: UploadScreenProps) {
 
 /** Without a backend, photos cannot be read, so lead with typing instead. */
 function OfflineStart(props: UploadScreenProps) {
+  const headingRef = useScreenFocus<HTMLHeadingElement>()
   const { onEnterManually } = props
   return (
     <section className="screen" aria-labelledby="upload-heading">
       <Cover />
       <Resume {...props} />
       <header className="screen__header">
-        <h2 id="upload-heading">
+        <h2 id="upload-heading" ref={headingRef} tabIndex={-1}>
           <RevealText text="Turn what you have into a *healthy meal*" />
         </h2>
         <p className="screen__intro">
@@ -60,6 +62,7 @@ function OfflineStart(props: UploadScreenProps) {
 }
 
 function PhotoUpload(props: UploadScreenProps) {
+  const headingRef = useScreenFocus<HTMLHeadingElement>()
   const { photos, detection, onAddPhotos, onRemovePhoto, onDetect, onEnterManually } = props
   const inputRef = useRef<HTMLInputElement>(null)
   const [dragging, setDragging] = useState(false)
@@ -110,7 +113,7 @@ function PhotoUpload(props: UploadScreenProps) {
       <Cover busy={busy} />
       {photos.length === 0 && <Resume {...props} />}
       <header className="screen__header">
-        <h2 id="upload-heading">
+        <h2 id="upload-heading" ref={headingRef} tabIndex={-1}>
           <RevealText text="Photograph your fridge to *find recipes*" />
         </h2>
         <p className="screen__intro">

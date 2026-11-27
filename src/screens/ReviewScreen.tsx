@@ -5,6 +5,7 @@ import { EmptyState } from '../components/EmptyState'
 import { Icon } from '../components/Icon'
 import { PreferencesPanel } from '../components/PreferencesPanel'
 import { RevealText } from '../components/RevealText'
+import { useScreenFocus } from '../hooks/useScreenFocus'
 import { Food } from '../components/food/Food'
 import { foodKind } from '../lib/foodKind'
 import type { Ingredient, Preferences } from '../types'
@@ -49,6 +50,7 @@ export default function ReviewScreen({
   onPreferencesChange,
   onFindRecipes,
 }: ReviewScreenProps) {
+  const headingRef = useScreenFocus<HTMLHeadingElement>()
   const [draft, setDraft] = useState('')
   const calm = useReducedMotion() ?? false
   // Magnets present on arrival drop in one by one; later ones drop at once.
@@ -72,7 +74,7 @@ export default function ReviewScreen({
   return (
     <section className="screen" aria-labelledby="review-heading">
       <header className="screen__header">
-        <h2 id="review-heading">
+        <h2 id="review-heading" ref={headingRef} tabIndex={-1}>
           <RevealText text={headline(ingredients.length, detectedCount)} />
         </h2>
         <p className="screen__intro">{intro(detectedCount)}</p>

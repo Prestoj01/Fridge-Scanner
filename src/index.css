@@ -26,7 +26,7 @@
   --color-text-muted: light-dark(#5b5550, #bdb5aa);
   --color-rule: light-dark(#151312, #f6f1e9);
   --color-rule-soft: light-dark(rgb(21 19 18 / 14%), rgb(246 241 233 / 16%));
-  --color-accent: light-dark(#d93a10, #ff7a52);
+  --color-accent: light-dark(#c8340c, #ff7a52);
   --color-primary: light-dark(#151312, #f6f1e9);
   --color-on-primary: light-dark(#fffaf3, #151312);
   --color-focus: var(--cobalt);
@@ -2415,4 +2415,10 @@ a {
   .dropzone__hint--desktop {
     display: block;
   }
+}
+
+/* Headings take focus when a new screen appears, for screen readers. They
+   are not controls, so they do not need a focus ring. */
+h2[tabindex='-1']:focus {
+  outline: none;
 }

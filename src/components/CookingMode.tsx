@@ -46,6 +46,9 @@ export function CookingMode({ recipe, onClose }: CookingModeProps) {
     const previous = document.activeElement instanceof HTMLElement ? document.activeElement : null
     const overflow = document.body.style.overflow
     document.body.style.overflow = 'hidden'
+    // Hide the page behind from screen readers and keyboard focus.
+    const app = document.getElementById('root')
+    if (app) app.inert = true
     dialogRef.current?.focus()
 
     const onKey = (event: KeyboardEvent) => {
@@ -64,6 +67,7 @@ export function CookingMode({ recipe, onClose }: CookingModeProps) {
     return () => {
       window.removeEventListener('keydown', onKey)
       document.body.style.overflow = overflow
+      if (app) app.inert = false
       previous?.focus()
     }
   }, [lastPage, onClose])
@@ -108,7 +112,7 @@ export function CookingMode({ recipe, onClose }: CookingModeProps) {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.35, ease: [0.2, 0.8, 0.2, 1] }}
     >
-      <header className="cooking__top">
+      <div className="cooking__top">
         <div className="cooking__heading">
           <p className="kicker">Cooking mode</p>
           <h2 id="cooking-title">{recipe.title}</h2>
@@ -121,7 +125,7 @@ export function CookingMode({ recipe, onClose }: CookingModeProps) {
         >
           <Icon icon={X} size={24} />
         </button>
-      </header>
+      </div>
 
       <ol className="cooking__progress" aria-hidden="true">
         {Array.from({ length: lastPage + 1 }, (_, index) => (
@@ -234,7 +238,7 @@ export function CookingMode({ recipe, onClose }: CookingModeProps) {
         </AnimatePresence>
       </div>
 
-      <footer className="cooking__nav">
+      <div className="cooking__nav">
         <button
           type="button"
           className="cooking__back"
@@ -262,7 +266,7 @@ export function CookingMode({ recipe, onClose }: CookingModeProps) {
             Done
           </button>
         )}
-      </footer>
+      </div>
     </m.div>,
     document.body,
   )

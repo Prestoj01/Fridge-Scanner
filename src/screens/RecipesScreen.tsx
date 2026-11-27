@@ -4,6 +4,7 @@ import { EmptyState } from '../components/EmptyState'
 import { Icon } from '../components/Icon'
 import { Notice } from '../components/Notice'
 import { RevealText } from '../components/RevealText'
+import { useScreenFocus } from '../hooks/useScreenFocus'
 import { MixingBowl } from '../components/MixingBowl'
 import { RecipeCard } from '../components/RecipeCard'
 import { RecipeSkeleton } from '../components/RecipeSkeleton'
@@ -49,12 +50,13 @@ export default function RecipesScreen({
   onSwap,
   onMore,
 }: RecipesScreenProps) {
+  const headingRef = useScreenFocus<HTMLHeadingElement>(generation.status)
   const calm = useReducedMotion() ?? false
   if (generation.status === 'loading') {
     return (
       <section className="screen" aria-labelledby="recipes-heading" aria-busy="true">
         <header className="screen__header">
-          <h2 id="recipes-heading">
+          <h2 id="recipes-heading" ref={headingRef} tabIndex={-1}>
             <RevealText text="Finding *healthy* recipes…" />
           </h2>
           <p className="screen__intro" role="status">
@@ -73,7 +75,7 @@ export default function RecipesScreen({
     return (
       <section className="screen" aria-labelledby="recipes-heading">
         <header className="screen__header">
-          <h2 id="recipes-heading">
+          <h2 id="recipes-heading" ref={headingRef} tabIndex={-1}>
             <RevealText text="We could not *get recipes*" />
           </h2>
         </header>
@@ -94,7 +96,9 @@ export default function RecipesScreen({
     return (
       <section className="screen" aria-labelledby="recipes-heading">
         <header className="visually-hidden">
-          <h2 id="recipes-heading">Recipes</h2>
+          <h2 id="recipes-heading" ref={headingRef} tabIndex={-1}>
+            Recipes
+          </h2>
         </header>
         <EmptyState
           food="grain"
@@ -112,7 +116,7 @@ export default function RecipesScreen({
   return (
     <section className="screen" aria-labelledby="recipes-heading">
       <header className="screen__header">
-        <h2 id="recipes-heading">
+        <h2 id="recipes-heading" ref={headingRef} tabIndex={-1}>
           <RevealText
             text={`${String(recipes.length)} healthy *${recipes.length === 1 ? 'recipe' : 'recipes'}* for you`}
           />

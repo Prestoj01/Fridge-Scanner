@@ -5,6 +5,7 @@ import { EmptyState } from '../components/EmptyState'
 import { Food } from '../components/food/Food'
 import { Icon } from '../components/Icon'
 import { RevealText } from '../components/RevealText'
+import { useScreenFocus } from '../hooks/useScreenFocus'
 import { foodKind } from '../lib/foodKind'
 import { useShopping } from '../lib/shoppingContext'
 import { listAsText } from '../lib/shoppingList'
@@ -14,6 +15,7 @@ interface ShoppingScreenProps {
 }
 
 export default function ShoppingScreen({ onClose }: ShoppingScreenProps) {
+  const headingRef = useScreenFocus<HTMLHeadingElement>()
   const { items, add, toggle, remove, clearChecked } = useShopping()
   const calm = useReducedMotion() ?? false
   const [draft, setDraft] = useState('')
@@ -62,7 +64,7 @@ export default function ShoppingScreen({ onClose }: ShoppingScreenProps) {
         Back to cooking
       </button>
       <header className="screen__header">
-        <h2 id="list-heading">
+        <h2 id="list-heading" ref={headingRef} tabIndex={-1}>
           <RevealText text="Your *shopping* list" />
         </h2>
         {items.length > 0 && (
