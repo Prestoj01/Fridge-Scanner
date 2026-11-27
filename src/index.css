@@ -1637,3 +1637,127 @@ a {
     margin-left: auto;
   }
 }
+
+/* ───────────── Shopping list ───────────── */
+
+.add-to-list {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  justify-self: start;
+  gap: var(--space-2);
+  min-height: var(--control-sm);
+  padding: 0 var(--space-3);
+  border: var(--rule);
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--color-text);
+  font-size: var(--text-xs);
+  font-stretch: 75%;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-decoration: none;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background-color var(--duration-fast) var(--ease-out);
+}
+
+.add-to-list:hover {
+  background: var(--sunshine);
+  color: var(--ink-on-color);
+}
+
+.add-to-list--done {
+  border-color: transparent;
+  padding-left: 0;
+  color: var(--color-good);
+}
+
+.add-to-list--done:hover {
+  background: transparent;
+  color: var(--color-good);
+  text-decoration: underline;
+}
+
+.shopping {
+  position: relative;
+  display: grid;
+  padding: 0;
+  border-top: var(--rule);
+  list-style: none;
+}
+
+.shopping__item {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  border-bottom: var(--rule-thin);
+  background: var(--color-bg);
+}
+
+.shopping__check {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: 3.5rem;
+  cursor: pointer;
+}
+
+.shopping__check input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.shopping__box {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 1.5rem;
+  height: 1.5rem;
+  border: var(--rule);
+  border-radius: var(--radius-sm);
+  transition: background-color var(--duration-fast) var(--ease-out);
+}
+
+.shopping__check input:checked + .shopping__box {
+  border-color: var(--basil);
+  background: var(--basil);
+  color: #fffaf3;
+}
+
+.shopping__check input:focus-visible + .shopping__box {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+.shopping__name {
+  display: grid;
+  font-family: var(--font-display);
+  font-size: 1.375rem;
+  font-style: italic;
+  font-weight: 600;
+  line-height: 1.15;
+  text-transform: capitalize;
+  transition: color var(--duration-base) var(--ease-out);
+}
+
+.shopping__for {
+  color: var(--color-text-muted);
+  font-family: var(--font-sans);
+  font-style: normal;
+  text-transform: uppercase;
+}
+
+.shopping__item--checked .shopping__name {
+  color: var(--color-text-muted);
+  text-decoration: line-through;
+  text-decoration-color: var(--tomato);
+  text-decoration-thickness: 2px;
+}
+
+.shopping__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}

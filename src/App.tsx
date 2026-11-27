@@ -7,6 +7,7 @@ import { Icon } from './components/Icon'
 import { Header } from './components/Header'
 import { PageWipe } from './components/PageWipe'
 import { SavedProvider } from './components/SavedProvider'
+import { ShoppingProvider } from './components/ShoppingProvider'
 import { StatusLine } from './components/StatusLine'
 import { Stepper } from './components/Stepper'
 import { Ticker } from './components/Ticker'
@@ -15,6 +16,7 @@ import { useRotatingLine } from './hooks/useRotatingLine'
 import RecipesScreen from './screens/RecipesScreen'
 import ReviewScreen from './screens/ReviewScreen'
 import SavedScreen from './screens/SavedScreen'
+import ShoppingScreen from './screens/ShoppingScreen'
 import UploadScreen from './screens/UploadScreen'
 import { useScanFlow } from './hooks/useScanFlow'
 import { statusState } from './lib/status'
@@ -22,7 +24,9 @@ import { statusState } from './lib/status'
 export default function App() {
   return (
     <SavedProvider>
-      <Kitchen />
+      <ShoppingProvider>
+        <Kitchen />
+      </ShoppingProvider>
     </SavedProvider>
   )
 }
@@ -60,6 +64,14 @@ function Kitchen() {
             {view === 'saved' ? (
               <ErrorBoundary>
                 <SavedScreen
+                  onClose={() => {
+                    open('flow')
+                  }}
+                />
+              </ErrorBoundary>
+            ) : view === 'list' ? (
+              <ErrorBoundary>
+                <ShoppingScreen
                   onClose={() => {
                     open('flow')
                   }}

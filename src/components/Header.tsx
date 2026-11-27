@@ -1,4 +1,5 @@
 import { useSaved } from '../lib/savedContext'
+import { useShopping } from '../lib/shoppingContext'
 import { ThemeToggle } from './ThemeToggle'
 
 const dateFormat = new Intl.DateTimeFormat('en-US', {
@@ -9,6 +10,8 @@ const dateFormat = new Intl.DateTimeFormat('en-US', {
 
 export function Header() {
   const { saved } = useSaved()
+  const { items } = useShopping()
+  const toBuy = items.filter((item) => !item.checked).length
   return (
     <header className="masthead">
       <div className="container">
@@ -18,6 +21,10 @@ export function Header() {
           <a href="#saved" className="masthead__link">
             Saved
             {saved.length > 0 && <span className="masthead__count tabular">{saved.length}</span>}
+          </a>
+          <a href="#list" className="masthead__link">
+            List
+            {toBuy > 0 && <span className="masthead__count tabular">{toBuy}</span>}
           </a>
           <ThemeToggle />
         </div>

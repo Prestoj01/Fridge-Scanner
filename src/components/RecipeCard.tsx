@@ -4,6 +4,7 @@ import { useRef } from 'react'
 import type { FoodKind } from '../lib/foodKind'
 import { recipeFoods } from '../lib/recipeFoods'
 import type { Recipe } from '../types'
+import { AddToListButton } from './AddToListButton'
 import { Food } from './food/Food'
 import { Icon } from './Icon'
 import { SaveButton } from './SaveButton'
@@ -140,6 +141,7 @@ export function RecipeCard({ recipe, index, defaultOpen = false }: RecipeCardPro
           Need {recipe.missingIngredients.join(', ')}
         </p>
       )}
+      {!ready && <AddToListButton names={recipe.missingIngredients} recipeTitle={recipe.title} />}
 
       {recipe.healthNote !== '' && (
         <p className="recipe-card__health">

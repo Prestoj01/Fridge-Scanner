@@ -20,6 +20,7 @@ export function PageWipe({ step }: { step: StepId }) {
       <motion.div
         key={step}
         className="page-wipe"
+        aria-hidden="true"
         style={{ background: COLORS[step] }}
         initial={{ clipPath: 'inset(0 100% 0 0)' }}
         animate={{ clipPath: ['inset(0 100% 0 0)', 'inset(0 0% 0 0)', 'inset(0 0 0 100%)'] }}

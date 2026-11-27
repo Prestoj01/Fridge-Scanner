@@ -127,3 +127,24 @@ it('saves a recipe and shows it on the Saved page', async () => {
     await screen.findByRole('heading', { name: /healthy recipes for you/ }),
   ).toBeInTheDocument()
 })
+
+it('adds missing ingredients to a shopping list and checks them off', async () => {
+  const user = userEvent.setup()
+  render(<App />)
+
+  await user.click(await screen.findByRole('button', { name: 'Type your ingredients' }))
+  await user.type(await screen.findByLabelText('Ingredient name'), 'bread, avocado{Enter}')
+  await user.click(screen.getByRole('button', { name: 'Find recipes' }))
+
+  await user.click(await screen.findByRole('button', { name: 'Add it to shopping list' }))
+  await user.click(screen.getByRole('link', { name: 'On your shopping list' }))
+
+  const list = await screen.findByRole('list', { name: 'Shopping list' })
+  expect(within(list).getByText('eggs')).toBeInTheDocument()
+  await user.click(within(list).getByRole('checkbox'))
+  expect(within(list).getByRole('checkbox')).toBeChecked()
+  expect(screen.getByText('All done. Nice shopping.')).toBeInTheDocument()
+
+  await user.click(screen.getByRole('button', { name: 'Clear checked' }))
+  expect(await screen.findByText('Nothing to buy')).toBeInTheDocument()
+})

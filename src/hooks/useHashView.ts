@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react'
 
-export type View = 'flow' | 'saved'
+export type View = 'flow' | 'saved' | 'list'
 
 function viewFromHash(hash: string): View {
-  return hash === '#saved' ? 'saved' : 'flow'
+  if (hash === '#saved') return 'saved'
+  if (hash === '#list') return 'list'
+  return 'flow'
 }
 
 /**
