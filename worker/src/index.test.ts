@@ -138,6 +138,31 @@ describe('POST /recipes', () => {
     const sent = JSON.parse(init.body as string) as { input: { text: string }[] }
     expect(sent.input[0]?.text).toContain('- eggs')
     expect(sent.input[0]?.text).toContain('must be vegetarian')
+    expect(sent.input[0]?.text).toContain('for 2 servings')
+  })
+
+  it('passes time, avoided foods, cuisine, servings, and seen titles to the model', async () => {
+    const fetchMock = mockGemini({ recipes: [] })
+    await worker.fetch(
+      post('/recipes', {
+        ingredients: ['rice'],
+        diet: 'any',
+        maxMinutes: 15,
+        avoid: ['nuts', 'dairy', 'plutonium'],
+        cuisine: 'indian',
+        servings: 4,
+        exclude: ['Fried rice', 42, ''],
+      }),
+      env,
+    )
+    const [, init] = fetchMock.mock.calls[0] as unknown as [string, RequestInit]
+    const text = (JSON.parse(init.body as string) as { input: { text: string }[] }).input[0]?.text
+    expect(text).toContain('15 minutes or less')
+    expect(text).toContain('Do not use any dairy, nuts')
+    expect(text).not.toContain('plutonium')
+    expect(text).toContain('Indian cooking')
+    expect(text).toContain('for 4 servings')
+    expect(text).toContain('- Fried rice')
   })
 
   it('requires at least one ingredient', async () => {

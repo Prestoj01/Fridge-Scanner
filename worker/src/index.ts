@@ -5,7 +5,12 @@
  *   POST /detect   photos -> ingredient names
  *   POST /recipes  ingredient names -> healthy recipes
  */
-import { isRecord, parseDiet, parseIngredientNames, parseRecipes } from '../../src/lib/validate'
+import {
+  isRecord,
+  parseIngredientNames,
+  parsePreferences,
+  parseRecipes,
+} from '../../src/lib/validate'
 import {
   API_LIMITS,
   type ApiErrorBody,
@@ -167,12 +172,19 @@ async function handleRecipes(request: Request, env: Env): Promise<RecipesRespons
   if (ingredients.length === 0) {
     throw new HttpError(400, 'bad_request', 'Send at least one ingredient.')
   }
-  const diet = parseDiet(body.diet)
+  const preferences = parsePreferences(body)
+  const exclude = Array.isArray(body.exclude)
+    ? body.exclude
+        .filter((title): title is string => typeof title === 'string')
+        .map((title) => title.replace(/\s+/g, ' ').trim().slice(0, 120))
+        .filter((title) => title !== '')
+        .slice(0, 12)
+    : []
   const result = await generateJson({
     apiKey: requireApiKey(env),
     model: env.GEMINI_MODEL ?? DEFAULT_MODEL,
     system: RECIPES_SYSTEM,
-    prompt: recipesPrompt(ingredients, diet),
+    prompt: recipesPrompt(ingredients, preferences, exclude),
     schema: RECIPES_SCHEMA,
   })
   return { recipes: parseRecipes(isRecord(result) ? result.recipes : null) }
