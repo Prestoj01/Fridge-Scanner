@@ -51,6 +51,7 @@ renders recipes      ◀────────────────── h
 
 - The API key lives only in the Worker. It never reaches the browser.
 - The Worker allows only listed origins, caps request sizes, rate limits each client and the app as a whole (with Cloudflare's free Rate Limiting bindings), and validates everything the model returns before passing it on.
+- Recipe replies are cached for a day in Cloudflare's edge cache, and for the session in the browser, so asking again with the same pantry and preferences costs no model quota.
 - Request and response types are shared between the app and the Worker ([src/types/api.ts](src/types/api.ts)).
 
 Everything runs on free tiers: GitHub Pages, Cloudflare Workers, and the Gemini API.

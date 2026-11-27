@@ -1,6 +1,7 @@
 import type { Preferences, RecipeContent } from '../types'
 import type { ApiErrorCode, ApiImage, DetectRequest, RecipesRequest } from '../types/api'
 import { API_URL } from './config'
+import { recipeCacheKey } from './recipeCacheKey'
 import { isRecord, parseIngredientNames, parseRecipes } from './validate'
 
 const TIMEOUT_MS = 60_000
@@ -73,6 +74,39 @@ export async function detectIngredients(images: ApiImage[]): Promise<string[]> {
   return parseIngredientNames(body.ingredients)
 }
 
+/**
+ * Recent recipe replies for this tab, so going back and asking again is
+ * instant and free. Session storage clears when the tab closes.
+ */
+const SESSION_KEY = 'fridge-scanner:recipe-cache'
+const SESSION_MAX = 12
+
+function readSessionCache(): [string, RecipeContent[]][] {
+  try {
+    const raw = sessionStorage.getItem(SESSION_KEY)
+    const parsed: unknown = raw === null ? [] : JSON.parse(raw)
+    if (!Array.isArray(parsed)) return []
+    return parsed.flatMap((entry): [string, RecipeContent[]][] =>
+      Array.isArray(entry) && typeof entry[0] === 'string'
+        ? [[entry[0], parseRecipes(entry[1])]]
+        : [],
+    )
+  } catch {
+    return []
+  }
+}
+
+function writeSessionCache(key: string, recipes: RecipeContent[]): void {
+  if (recipes.length === 0) return
+  const entries = readSessionCache().filter(([existing]) => existing !== key)
+  entries.push([key, recipes])
+  try {
+    sessionStorage.setItem(SESSION_KEY, JSON.stringify(entries.slice(-SESSION_MAX)))
+  } catch {
+    // Storage full or unavailable: skip caching.
+  }
+}
+
 /** Asks the API for healthy recipes based on the given ingredients. */
 export async function fetchRecipes(
   ingredients: string[],
@@ -80,6 +114,10 @@ export async function fetchRecipes(
   /** Titles already shown, so the model suggests something different. */
   exclude: readonly string[] = [],
 ): Promise<RecipeContent[]> {
+  const key = recipeCacheKey(ingredients, preferences, exclude)
+  const cached = readSessionCache().find(([existing]) => existing === key)
+  if (cached && cached[1].length > 0) return cached[1]
+
   const payload: RecipesRequest = {
     ingredients,
     ...preferences,
@@ -87,5 +125,7 @@ export async function fetchRecipes(
   }
   const body = await post('/recipes', payload)
   if (!isRecord(body) || !Array.isArray(body.recipes)) throw new ApiError('bad_response')
-  return parseRecipes(body.recipes)
+  const recipes = parseRecipes(body.recipes)
+  writeSessionCache(key, recipes)
+  return recipes
 }

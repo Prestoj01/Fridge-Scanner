@@ -45,6 +45,20 @@ describe('fetchRecipes', () => {
     })
   })
 
+  it('reuses a recent reply for the same request in this tab', async () => {
+    const recipe = { title: 'Toast', ingredients: ['2 slices bread'], steps: ['Toast it.'] }
+    const fetchMock = mockFetch({ recipes: [recipe] })
+    await fetchRecipes(['Bread', 'butter'], DEFAULT_PREFERENCES)
+    const again = await fetchRecipes(['butter', 'bread'], DEFAULT_PREFERENCES)
+    expect(again.map((item) => item.title)).toEqual(['Toast'])
+    expect(fetchMock).toHaveBeenCalledTimes(1)
+
+    // Different preferences or seen titles ask again.
+    await fetchRecipes(['bread', 'butter'], { ...DEFAULT_PREFERENCES, diet: 'vegan' })
+    await fetchRecipes(['bread', 'butter'], DEFAULT_PREFERENCES, ['Toast'])
+    expect(fetchMock).toHaveBeenCalledTimes(3)
+  })
+
   it('surfaces the error code and message from the API', async () => {
     mockFetch({ error: { code: 'rate_limited', message: 'Slow down.' } }, 429)
     const error = await fetchRecipes(['bread'], DEFAULT_PREFERENCES).catch(

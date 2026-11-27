@@ -19,6 +19,9 @@ import {
   type DetectResponse,
   type RecipesResponse,
 } from '../../src/types/api'
+import { recipeCacheKey } from '../../src/lib/recipeCacheKey'
+import type { Preferences } from '../../src/types'
+import { readCachedRecipes, writeCachedRecipes } from './cache'
 import { generateJson, UpstreamError } from './gemini'
 import { checkLimits, type LimitBindings } from './limits'
 import {
@@ -129,8 +132,7 @@ function requireApiKey(env: Env): string {
   return env.GEMINI_API_KEY
 }
 
-async function handleDetect(request: Request, env: Env): Promise<DetectResponse> {
-  const body = await readJsonBody(request)
+async function handleDetect(body: Record<string, unknown>, env: Env): Promise<DetectResponse> {
   const images = parseImages(body.images)
   const result = await generateJson({
     apiKey: requireApiKey(env),
@@ -143,13 +145,17 @@ async function handleDetect(request: Request, env: Env): Promise<DetectResponse>
   return { ingredients: parseIngredientNames(isRecord(result) ? result.ingredients : null) }
 }
 
-async function handleRecipes(request: Request, env: Env): Promise<RecipesResponse> {
-  const body = await readJsonBody(request)
+interface RecipesInput {
+  ingredients: string[]
+  preferences: Preferences
+  exclude: string[]
+}
+
+function parseRecipesInput(body: Record<string, unknown>): RecipesInput {
   const ingredients = parseIngredientNames(body.ingredients)
   if (ingredients.length === 0) {
     throw new HttpError(400, 'bad_request', 'Send at least one ingredient.')
   }
-  const preferences = parsePreferences(body)
   const exclude = Array.isArray(body.exclude)
     ? body.exclude
         .filter((title): title is string => typeof title === 'string')
@@ -157,11 +163,15 @@ async function handleRecipes(request: Request, env: Env): Promise<RecipesRespons
         .filter((title) => title !== '')
         .slice(0, 12)
     : []
+  return { ingredients, preferences: parsePreferences(body), exclude }
+}
+
+async function generateRecipes(input: RecipesInput, env: Env): Promise<RecipesResponse> {
   const result = await generateJson({
     apiKey: requireApiKey(env),
     model: env.GEMINI_MODEL ?? DEFAULT_MODEL,
     system: RECIPES_SYSTEM,
-    prompt: recipesPrompt(ingredients, preferences, exclude),
+    prompt: recipesPrompt(input.ingredients, input.preferences, input.exclude),
     schema: RECIPES_SCHEMA,
   })
   return { recipes: parseRecipes(isRecord(result) ? result.recipes : null) }
@@ -179,8 +189,24 @@ async function route(request: Request, env: Env): Promise<unknown> {
   }
   if (request.method !== 'POST') throw new HttpError(400, 'bad_request', 'Use POST.')
 
-  const clientId = request.headers.get('CF-Connecting-IP') ?? 'unknown'
   const endpoint = path === '/detect' ? 'detect' : 'recipes'
+  const body = await readJsonBody(request)
+
+  // A cached recipe reply costs no model quota, so it skips the rate limits.
+  let recipesInput: RecipesInput | null = null
+  let cacheKey = ''
+  if (endpoint === 'recipes') {
+    recipesInput = parseRecipesInput(body)
+    cacheKey = recipeCacheKey(
+      recipesInput.ingredients,
+      recipesInput.preferences,
+      recipesInput.exclude,
+    )
+    const cached = await readCachedRecipes(cacheKey)
+    if (cached) return cached
+  }
+
+  const clientId = request.headers.get('CF-Connecting-IP') ?? 'unknown'
   const limit = await checkLimits(env, clientId, endpoint, Date.now())
   if (limit === 'client') {
     throw new HttpError(429, 'rate_limited', 'Too many requests. Try again in a few minutes.')
@@ -192,7 +218,10 @@ async function route(request: Request, env: Env): Promise<unknown> {
       'The kitchen is busy right now. Try again in a minute.',
     )
   }
-  return endpoint === 'detect' ? handleDetect(request, env) : handleRecipes(request, env)
+  if (!recipesInput) return handleDetect(body, env)
+  const fresh = await generateRecipes(recipesInput, env)
+  await writeCachedRecipes(cacheKey, fresh)
+  return fresh
 }
 
 export default {

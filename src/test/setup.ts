@@ -10,6 +10,7 @@ afterEach(() => {
   cleanup()
   // Remembered ingredients and saved recipes must not leak between tests.
   if (typeof localStorage !== 'undefined') localStorage.clear()
+  if (typeof sessionStorage !== 'undefined') sessionStorage.clear()
   if (typeof window !== 'undefined') window.history.replaceState(null, '', window.location.pathname)
 })
 

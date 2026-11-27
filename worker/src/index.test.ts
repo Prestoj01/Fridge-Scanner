@@ -187,6 +187,63 @@ describe('POST /recipes', () => {
   })
 })
 
+describe('recipe cache', () => {
+  const recipe = {
+    title: 'Rice bowl',
+    summary: '',
+    timeMinutes: 10,
+    servings: 2,
+    ingredients: ['1 cup rice'],
+    usedIngredients: ['rice'],
+    missingIngredients: [],
+    steps: ['Cook the rice.'],
+    healthNote: '',
+    nutrition: { calories: 300, protein: 6, carbs: 60, fat: 2 },
+  }
+
+  function memoryCache() {
+    const store = new Map<string, string>()
+    return {
+      store,
+      match: (url: string) =>
+        Promise.resolve(store.has(url) ? new Response(store.get(url)) : undefined),
+      put: async (url: string, response: Response) => {
+        store.set(url, await response.text())
+      },
+    }
+  }
+
+  it('answers the same request from the cache without calling Gemini again', async () => {
+    const cache = memoryCache()
+    vi.stubGlobal('caches', { default: cache })
+    const fetchMock = mockGemini({ recipes: [recipe] })
+
+    const first = await worker.fetch(post('/recipes', { ingredients: ['Rice', 'eggs'] }), env)
+    expect(await first.json()).toEqual({ recipes: [recipe] })
+    // Same pantry in a different order and case is the same request.
+    const second = await worker.fetch(post('/recipes', { ingredients: ['eggs', 'rice'] }), env)
+    expect(await second.json()).toEqual({ recipes: [recipe] })
+    expect(fetchMock).toHaveBeenCalledTimes(1)
+    expect(cache.store.size).toBe(1)
+  })
+
+  it('treats different preferences as a different request', async () => {
+    vi.stubGlobal('caches', { default: memoryCache() })
+    const fetchMock = mockGemini({ recipes: [recipe] })
+    await worker.fetch(post('/recipes', { ingredients: ['rice'] }), env)
+    await worker.fetch(post('/recipes', { ingredients: ['rice'], diet: 'vegan' }), env)
+    expect(fetchMock).toHaveBeenCalledTimes(2)
+  })
+
+  it('does not cache empty replies', async () => {
+    const cache = memoryCache()
+    vi.stubGlobal('caches', { default: cache })
+    mockGemini({ recipes: [] })
+    await worker.fetch(post('/recipes', { ingredients: ['rice'] }), env)
+    expect(cache.store.size).toBe(0)
+  })
+})
+
 describe('rate limiting', () => {
   it('blocks a client after 20 requests in the window, then recovers', () => {
     for (let i = 0; i < 20; i++) expect(isRateLimited('1.2.3.4', 1_000)).toBe(false)
