@@ -13,8 +13,21 @@ Snap a photo of your fridge or pantry and get healthy recipes, with steps, from 
 ## How it works
 
 1. **Photos.** Add up to four photos. They are downscaled in the browser before upload.
-2. **Ingredients.** A vision model lists the food it can see. You confirm, add, or remove items and can pick a diet.
+2. **Ingredients.** A vision model lists the food it can see. You confirm, add, or remove items, then set preferences: diet, how long you have, foods to leave out, cuisine, and servings.
 3. **Recipes.** The model suggests healthy recipes that use what you have, shows what you would still need to buy, and gives step-by-step instructions.
+
+## Features
+
+- **Saved recipes.** Heart any recipe to keep it on the Saved page.
+- **Remembers your fridge.** Your ingredient list and preferences come back on your next visit.
+- **Something different.** Swap any recipe for a new one, or ask for more ideas.
+- **Ingredient swaps.** Missing something? Each recipe suggests what to use instead.
+- **Shopping list.** Add a recipe's missing ingredients in one tap, check them off, and copy or share the list.
+- **Nutrition.** Estimated calories, protein, carbs, and fat per serving.
+- **Cooking mode.** A full-screen, high-contrast view with one step at a time, an ingredient checklist, step timers with a chime, and the screen kept awake.
+- **Sharing.** Share a recipe as a link (the whole recipe travels in the URL, no server needed) or as a magazine-style image.
+
+Everything you save stays in your browser.
 
 The app also works with no backend at all. In **offline mode** you type your ingredients and recipes come from a built-in library, matched against what you have. If the AI service fails or hits its quota, the app offers the same library as a fallback.
 
