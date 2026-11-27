@@ -2405,3 +2405,14 @@ a {
   z-index: 60;
   transform: translateX(-50%);
 }
+
+/* Drag and paste only make sense with a mouse and keyboard. */
+.dropzone__hint--desktop {
+  display: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .dropzone__hint--desktop {
+    display: block;
+  }
+}

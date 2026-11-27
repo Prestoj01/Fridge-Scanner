@@ -1,11 +1,12 @@
 import { Camera, ImagePlus, X } from 'lucide-react'
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
-import { useRef, useState, type ChangeEvent, type DragEvent } from 'react'
+import { useEffect, useRef, useState, type ChangeEvent, type DragEvent } from 'react'
 import { Cover } from '../components/Cover'
 import { Icon } from '../components/Icon'
 import { RevealText } from '../components/RevealText'
 import { Notice } from '../components/Notice'
 import { ResumeCard } from '../components/ResumeCard'
+import { pastedImages } from '../lib/clipboard'
 import type { AsyncState, Photo } from '../types'
 import { API_LIMITS } from '../types/api'
 
@@ -74,6 +75,21 @@ function PhotoUpload(props: UploadScreenProps) {
 
   const openPicker = () => inputRef.current?.click()
 
+  // Paste a photo or screenshot anywhere on the page (Ctrl+V / ⌘V).
+  useEffect(() => {
+    if (busy || full) return
+    const handlePaste = (event: ClipboardEvent) => {
+      const files = pastedImages(event.clipboardData)
+      if (files.length === 0) return
+      event.preventDefault()
+      onAddPhotos(files)
+    }
+    document.addEventListener('paste', handlePaste)
+    return () => {
+      document.removeEventListener('paste', handlePaste)
+    }
+  }, [busy, full, onAddPhotos])
+
   const dropHandlers = {
     onDragOver: (event: DragEvent) => {
       event.preventDefault()
@@ -128,6 +144,9 @@ function PhotoUpload(props: UploadScreenProps) {
           <span className="dropzone__title">Add photos</span>
           <span className="dropzone__hint">
             Take a photo or choose up to {API_LIMITS.maxImages} from your library
+          </span>
+          <span className="dropzone__hint dropzone__hint--desktop">
+            You can also drop photos here or paste them
           </span>
         </button>
       ) : (

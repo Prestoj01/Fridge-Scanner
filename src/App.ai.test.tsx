@@ -1,4 +1,4 @@
-import { render, screen, within } from '@testing-library/react'
+import { act, render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { beforeEach, expect, it, vi } from 'vitest'
 import App from './App'
@@ -41,6 +41,21 @@ beforeEach(() => {
   // jsdom does not implement object URLs.
   URL.createObjectURL = vi.fn(() => 'blob:preview')
   URL.revokeObjectURL = vi.fn()
+})
+
+it('adds a photo pasted from the clipboard', async () => {
+  render(<App />)
+  await screen.findByRole('button', { name: /Add photos/ })
+  const screenshot = new File(['x'], 'image.png', { type: 'image/png' })
+  const text = { kind: 'string', type: 'text/plain', getAsFile: () => null }
+  const image = { kind: 'file', type: 'image/png', getAsFile: () => screenshot }
+  const event = new Event('paste', { bubbles: true, cancelable: true })
+  Object.defineProperty(event, 'clipboardData', { value: { items: [text, image] } })
+  act(() => {
+    document.dispatchEvent(event)
+  })
+  expect(await screen.findByAltText('Pasted photo')).toBeInTheDocument()
+  expect(event.defaultPrevented).toBe(true)
 })
 
 it('detects ingredients from a photo and shows AI recipes', async () => {

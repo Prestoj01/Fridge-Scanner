@@ -12,7 +12,7 @@ Snap a photo of your fridge or pantry and get healthy recipes, with steps, from 
 
 ## How it works
 
-1. **Photos.** Add up to four photos. They are downscaled in the browser before upload.
+1. **Photos.** Add up to four photos, or drop or paste them on desktop. They are downscaled in the browser before upload.
 2. **Ingredients.** A vision model lists the food it can see. You confirm, add, or remove items, then set preferences: diet, how long you have, foods to leave out, cuisine, and servings.
 3. **Recipes.** The model suggests healthy recipes that use what you have, shows what you would still need to buy, and gives step-by-step instructions.
 
