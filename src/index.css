@@ -1896,3 +1896,21 @@ a {
     max-width: 44rem;
   }
 }
+
+/* ───────────── Ingredient swaps ───────────── */
+
+.swaps {
+  display: grid;
+  gap: var(--space-1);
+  padding: var(--space-3) var(--space-4);
+  border-left: 4px solid var(--sunshine);
+  background: var(--color-surface);
+  font-size: var(--text-sm);
+  list-style: none;
+}
+
+.swaps__label {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 700;
+}

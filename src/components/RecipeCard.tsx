@@ -3,6 +3,7 @@ import { motion, useReducedMotion, useScroll, useTransform, type MotionValue } f
 import { useRef } from 'react'
 import type { FoodKind } from '../lib/foodKind'
 import { recipeFoods } from '../lib/recipeFoods'
+import { substitutesFor } from '../lib/substitutions'
 import type { Recipe } from '../types'
 import { AddToListButton } from './AddToListButton'
 import { Food } from './food/Food'
@@ -88,6 +89,23 @@ const LAYOUTS: Record<number, readonly Spot[]> = {
   ],
 }
 
+/** "No soy sauce? Try tamari…" for each missing ingredient with a known stand-in. */
+function Swaps({ missing }: { missing: readonly string[] }) {
+  const swaps = missing
+    .map((name) => ({ name, options: substitutesFor(name) }))
+    .filter((swap) => swap.options.length > 0)
+  if (swaps.length === 0) return null
+  return (
+    <ul className="swaps">
+      {swaps.map((swap) => (
+        <li key={swap.name}>
+          <span className="swaps__label">No {swap.name}?</span> Try {swap.options.join(', or ')}.
+        </li>
+      ))}
+    </ul>
+  )
+}
+
 export function RecipeCard({ recipe, index, defaultOpen = false }: RecipeCardProps) {
   const calm = useReducedMotion() ?? false
   const ready = recipe.missingIngredients.length === 0
@@ -141,6 +159,7 @@ export function RecipeCard({ recipe, index, defaultOpen = false }: RecipeCardPro
           Need {recipe.missingIngredients.join(', ')}
         </p>
       )}
+      {!ready && <Swaps missing={recipe.missingIngredients} />}
       {!ready && <AddToListButton names={recipe.missingIngredients} recipeTitle={recipe.title} />}
 
       {recipe.healthNote !== '' && (
