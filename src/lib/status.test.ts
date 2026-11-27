@@ -13,35 +13,45 @@ const base: StatusInputs = {
 }
 
 describe('statusState', () => {
-  it('invites photos, gets excited, then scans', () => {
-    expect(statusState(base).mood).toBe('hungry')
-    expect(statusState({ ...base, photoCount: 2 }).mood).toBe('excited')
+  it('invites photos, counts them, then scans', () => {
+    expect(statusState(base)).toEqual({
+      tone: 'neutral',
+      lines: ['Start with a photo of your shelves'],
+    })
+    expect(statusState({ ...base, photoCount: 2 })).toEqual({
+      tone: 'good',
+      lines: ['2 photos ready to scan'],
+    })
     const scanning = statusState({ ...base, photoCount: 2, detection: { status: 'loading' } })
-    expect(scanning).toEqual({ mood: 'scanning', lines: SCANNING_LINES })
+    expect(scanning).toEqual({ tone: 'busy', lines: SCANNING_LINES })
   })
 
-  it('is calm in offline mode and wilts on errors', () => {
-    expect(statusState({ ...base, aiEnabled: false }).mood).toBe('idle')
-    expect(statusState({ ...base, detection: { status: 'error', message: 'x' } }).mood).toBe('sad')
+  it('asks a question in offline mode and flags errors', () => {
+    expect(statusState({ ...base, aiEnabled: false }).tone).toBe('neutral')
+    expect(statusState({ ...base, detection: { status: 'error', message: 'x' } }).tone).toBe(
+      'problem',
+    )
   })
 
   it('reacts to detection results on the review step', () => {
     const review = { ...base, step: 'review' as const }
-    expect(statusState({ ...review, detectedCount: 0 }).mood).toBe('sad')
+    expect(statusState({ ...review, detectedCount: 0 }).tone).toBe('problem')
     expect(statusState({ ...review, detectedCount: 1, ingredientCount: 1 }).lines[0]).toBe(
-      'found 1 good thing',
+      'Spotted 1 ingredient',
     )
-    expect(statusState(review).mood).toBe('idle')
-    expect(statusState({ ...review, ingredientCount: 3 }).mood).toBe('excited')
+    expect(statusState(review).tone).toBe('neutral')
+    expect(statusState({ ...review, ingredientCount: 3 }).lines[0]).toBe(
+      '3 ingredients on the list',
+    )
   })
 
-  it('thinks, blooms, or wilts on the recipes step', () => {
+  it('works, succeeds, or flags a problem on the recipes step', () => {
     const recipes = { ...base, step: 'recipes' as const }
     expect(statusState({ ...recipes, generation: { status: 'loading' } }).lines).toBe(COOKING_LINES)
     expect(statusState({ ...recipes, recipeCount: 5 })).toEqual({
-      mood: 'happy',
-      lines: ['dinner’s sorted: 5 ideas'],
+      tone: 'good',
+      lines: ['Dinner’s sorted: 5 ideas'],
     })
-    expect(statusState(recipes).mood).toBe('sad')
+    expect(statusState(recipes).tone).toBe('problem')
   })
 })

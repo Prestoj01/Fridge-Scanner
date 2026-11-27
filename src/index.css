@@ -403,6 +403,18 @@ a {
   animation: pulse 0.9s var(--ease-in-out) infinite alternate;
 }
 
+.status-line--good .status-line__dot {
+  background: var(--color-good);
+}
+
+.status-line--problem {
+  color: var(--color-danger);
+}
+
+.status-line--problem .status-line__dot {
+  background: var(--color-danger);
+}
+
 /* ───────────── Screen ───────────── */
 
 .screen {

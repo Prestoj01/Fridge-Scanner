@@ -131,10 +131,7 @@ function Kitchen() {
                     )}
                   </AnimatePresence>
                 </div>
-                <StatusLine
-                  text={caption}
-                  busy={flow.detection.status === 'loading' || flow.generation.status === 'loading'}
-                />
+                <StatusLine text={caption} tone={status.tone} />
                 <ErrorBoundary>
                   <AnimatePresence mode="wait" initial={false}>
                     <m.div

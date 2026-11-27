@@ -1,16 +1,17 @@
 import { AnimatePresence, m, useReducedMotion } from 'motion/react'
+import type { Tone } from '../lib/status'
 
 interface StatusLineProps {
   text: string
-  /** Pulses the dot while something is in progress. */
-  busy: boolean
+  /** Pulses the dot while working; colors it when done or on a problem. */
+  tone: Tone
 }
 
 /** A small live kicker that says what the app is doing. */
-export function StatusLine({ text, busy }: StatusLineProps) {
+export function StatusLine({ text, tone }: StatusLineProps) {
   const calm = useReducedMotion() ?? false
   return (
-    <p className={`status-line kicker${busy ? ' status-line--busy' : ''}`} aria-hidden="true">
+    <p className={`status-line status-line--${tone} kicker`} aria-hidden="true">
       <span className="status-line__dot" />
       <AnimatePresence mode="wait" initial={false}>
         <m.span
