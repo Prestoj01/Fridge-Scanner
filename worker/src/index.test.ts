@@ -1,7 +1,8 @@
 // @vitest-environment node
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { extractText, parseJsonLoosely } from './gemini'
-import worker, { isRateLimited, resetRateLimit, type Env } from './index'
+import worker, { type Env } from './index'
+import { checkLimits, isRateLimited, resetRateLimit, type RateLimiter } from './limits'
 
 const ORIGIN = 'https://example.github.io'
 const env: Env = { GEMINI_API_KEY: 'test-key', ALLOWED_ORIGINS: ORIGIN }
@@ -192,6 +193,57 @@ describe('rate limiting', () => {
     expect(isRateLimited('1.2.3.4', 2_000)).toBe(true)
     expect(isRateLimited('5.6.7.8', 2_000)).toBe(false)
     expect(isRateLimited('1.2.3.4', 1_000 + 10 * 60_000)).toBe(false)
+  })
+
+  it('gives photo detection a smaller budget than recipes', () => {
+    for (let i = 0; i < 10; i++) expect(isRateLimited('1.2.3.4', 1_000, 'detect')).toBe(false)
+    expect(isRateLimited('1.2.3.4', 1_000, 'detect')).toBe(true)
+    expect(isRateLimited('1.2.3.4', 1_000, 'recipes')).toBe(false)
+  })
+
+  const limiter = (success: boolean): RateLimiter & { keys: string[] } => {
+    const keys: string[] = []
+    return {
+      keys,
+      limit: ({ key }) => {
+        keys.push(key)
+        return Promise.resolve({ success })
+      },
+    }
+  }
+
+  it('uses the Cloudflare limiters per client and for everyone', async () => {
+    const client = limiter(true)
+    const global = limiter(false)
+    const result = await checkLimits(
+      { CLIENT_LIMITER: client, GLOBAL_LIMITER: global },
+      '9.9.9.9',
+      'recipes',
+      1_000,
+    )
+    expect(result).toBe('global')
+    expect(client.keys).toEqual(['9.9.9.9'])
+    expect(global.keys).toEqual(['all'])
+  })
+
+  it('only checks the detect limiter for photos', async () => {
+    const detect = limiter(false)
+    expect(await checkLimits({ DETECT_LIMITER: detect }, 'a', 'recipes', 1_000)).toBe('ok')
+    expect(await checkLimits({ DETECT_LIMITER: detect }, 'a', 'detect', 1_000)).toBe('client')
+  })
+
+  it('lets requests through if a limiter fails', async () => {
+    const broken: RateLimiter = { limit: () => Promise.reject(new Error('down')) }
+    expect(await checkLimits({ CLIENT_LIMITER: broken }, 'a', 'recipes', 1_000)).toBe('ok')
+  })
+
+  it('returns 429 from the endpoint when a limiter refuses', async () => {
+    const response = await worker.fetch(post('/recipes', { ingredients: ['eggs'] }), {
+      ...env,
+      GLOBAL_LIMITER: limiter(false),
+    })
+    expect(response.status).toBe(429)
+    expect(await errorCode(response)).toBe('rate_limited')
   })
 })
 

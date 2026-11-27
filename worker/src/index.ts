@@ -20,6 +20,7 @@ import {
   type RecipesResponse,
 } from '../../src/types/api'
 import { generateJson, UpstreamError } from './gemini'
+import { checkLimits, type LimitBindings } from './limits'
 import {
   DETECT_PROMPT,
   DETECT_SCHEMA,
@@ -29,7 +30,7 @@ import {
   recipesPrompt,
 } from './prompts'
 
-export interface Env {
+export interface Env extends LimitBindings {
   GEMINI_API_KEY?: string
   GEMINI_MODEL?: string
   ALLOWED_ORIGINS?: string
@@ -49,30 +50,6 @@ class HttpError extends Error {
     this.status = status
     this.code = code
   }
-}
-
-/**
- * Best-effort rate limit. State lives in one Worker isolate, so it slows down
- * a single abusive client but is not a hard guarantee. The free Gemini quota
- * is the real ceiling.
- */
-const RATE_LIMIT = { windowMs: 10 * 60_000, maxRequests: 20 }
-const hits = new Map<string, number[]>()
-
-export function isRateLimited(clientId: string, now: number): boolean {
-  const recent = (hits.get(clientId) ?? []).filter((time) => now - time < RATE_LIMIT.windowMs)
-  if (recent.length >= RATE_LIMIT.maxRequests) {
-    hits.set(clientId, recent)
-    return true
-  }
-  recent.push(now)
-  hits.set(clientId, recent)
-  if (hits.size > 5_000) hits.clear()
-  return false
-}
-
-export function resetRateLimit(): void {
-  hits.clear()
 }
 
 function allowedOrigins(env: Env): string[] {
@@ -203,10 +180,19 @@ async function route(request: Request, env: Env): Promise<unknown> {
   if (request.method !== 'POST') throw new HttpError(400, 'bad_request', 'Use POST.')
 
   const clientId = request.headers.get('CF-Connecting-IP') ?? 'unknown'
-  if (isRateLimited(clientId, Date.now())) {
+  const endpoint = path === '/detect' ? 'detect' : 'recipes'
+  const limit = await checkLimits(env, clientId, endpoint, Date.now())
+  if (limit === 'client') {
     throw new HttpError(429, 'rate_limited', 'Too many requests. Try again in a few minutes.')
   }
-  return path === '/detect' ? handleDetect(request, env) : handleRecipes(request, env)
+  if (limit === 'global') {
+    throw new HttpError(
+      429,
+      'rate_limited',
+      'The kitchen is busy right now. Try again in a minute.',
+    )
+  }
+  return endpoint === 'detect' ? handleDetect(request, env) : handleRecipes(request, env)
 }
 
 export default {
