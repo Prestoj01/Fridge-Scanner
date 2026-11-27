@@ -12,6 +12,7 @@ import {
   type Allergen,
   type Cuisine,
   type Diet,
+  type Nutrition,
   type Preferences,
   type RecipeContent,
 } from '../types'
@@ -57,12 +58,31 @@ export function parseDiet(value: unknown): Diet {
 }
 
 /** Returns a clean recipe, or null if it lacks a title, ingredients, or steps. */
+/** Reads a per-serving nutrition estimate; null if any value is missing or implausible. */
+export function parseNutrition(value: unknown): Nutrition | null {
+  if (!isRecord(value)) return null
+  const read = (key: string, max: number): number | null => {
+    const raw = value[key]
+    if (typeof raw !== 'number' || !Number.isFinite(raw) || raw < 0 || raw > max) return null
+    return Math.round(raw)
+  }
+  const calories = read('calories', 3000)
+  const protein = read('protein', 300)
+  const carbs = read('carbs', 500)
+  const fat = read('fat', 300)
+  if (calories === null || protein === null || carbs === null || fat === null || calories === 0) {
+    return null
+  }
+  return { calories, protein, carbs, fat }
+}
+
 export function parseRecipe(value: unknown): RecipeContent | null {
   if (!isRecord(value)) return null
   const title = cleanText(value.title, 120)
   const ingredients = cleanTextList(value.ingredients, 30, 160)
   const steps = cleanTextList(value.steps, 20, 600)
   if (title === '' || ingredients.length === 0 || steps.length === 0) return null
+  const nutrition = parseNutrition(value.nutrition)
 
   return {
     title,
@@ -74,6 +94,7 @@ export function parseRecipe(value: unknown): RecipeContent | null {
     missingIngredients: cleanTextList(value.missingIngredients, 15, 60),
     steps,
     healthNote: cleanText(value.healthNote, 300),
+    ...(nutrition ? { nutrition } : {}),
   }
 }
 

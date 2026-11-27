@@ -1,4 +1,4 @@
-import { ChevronDown, Clock, Leaf, RefreshCw, ShoppingBasket, Users } from 'lucide-react'
+import { ChevronDown, Clock, Flame, Leaf, RefreshCw, ShoppingBasket, Users } from 'lucide-react'
 import { motion, useReducedMotion, useScroll, useTransform, type MotionValue } from 'motion/react'
 import { useRef } from 'react'
 import type { FoodKind } from '../lib/foodKind'
@@ -8,6 +8,7 @@ import type { Recipe } from '../types'
 import { AddToListButton } from './AddToListButton'
 import { Food } from './food/Food'
 import { Icon } from './Icon'
+import { NutritionBar } from './NutritionBar'
 import { SaveButton } from './SaveButton'
 
 interface RecipeCardProps {
@@ -156,6 +157,12 @@ export function RecipeCard({
           <Icon icon={Users} size={16} />
           Serves {recipe.servings}
         </span>
+        {recipe.nutrition && (
+          <span>
+            <Icon icon={Flame} size={16} />
+            {recipe.nutrition.calories} kcal
+          </span>
+        )}
       </p>
 
       <header className="recipe-card__header">
@@ -180,6 +187,8 @@ export function RecipeCard({
           {recipe.healthNote}
         </p>
       )}
+
+      {recipe.nutrition && <NutritionBar nutrition={recipe.nutrition} />}
 
       {onSwap && (
         <button

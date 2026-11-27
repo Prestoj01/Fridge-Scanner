@@ -1,4 +1,4 @@
-import type { Allergen, Cuisine } from '../types'
+import type { Allergen, Cuisine, Nutrition } from '../types'
 /**
  * Built-in recipe library. Used when the API is not configured or is
  * unavailable, so the app always has something useful to show.
@@ -14,6 +14,8 @@ export interface CoreIngredient {
 export interface LibraryRecipe {
   title: string
   cuisine: Exclude<Cuisine, 'any'>
+  /** Rough per-serving estimate. */
+  nutrition: Nutrition
   /** Common allergens the recipe contains, for "leave out" filtering. */
   allergens: readonly Allergen[]
   summary: string
@@ -31,6 +33,7 @@ export interface LibraryRecipe {
 export const LIBRARY: readonly LibraryRecipe[] = [
   {
     title: 'Spinach and tomato omelette',
+    nutrition: { calories: 210, protein: 14, carbs: 5, fat: 15 },
     cuisine: 'american',
     allergens: ['eggs'],
     summary: 'A soft, veggie-packed omelette that is ready in ten minutes.',
@@ -55,6 +58,7 @@ export const LIBRARY: readonly LibraryRecipe[] = [
   },
   {
     title: 'Chicken and broccoli stir-fry',
+    nutrition: { calories: 330, protein: 42, carbs: 14, fat: 11 },
     cuisine: 'asian',
     allergens: ['gluten', 'soy'],
     summary: 'Crisp vegetables and lean chicken in a light garlic soy sauce.',
@@ -88,6 +92,7 @@ export const LIBRARY: readonly LibraryRecipe[] = [
   },
   {
     title: 'Greek yogurt berry parfait',
+    nutrition: { calories: 330, protein: 24, carbs: 42, fat: 8 },
     cuisine: 'mediterranean',
     allergens: ['dairy', 'gluten'],
     summary: 'Layers of creamy yogurt, fruit, and crunchy oats. No cooking needed.',
@@ -110,6 +115,7 @@ export const LIBRARY: readonly LibraryRecipe[] = [
   },
   {
     title: 'Black bean and corn tacos',
+    nutrition: { calories: 520, protein: 18, carbs: 78, fat: 17 },
     cuisine: 'mexican',
     allergens: ['gluten'],
     summary: 'Smoky beans and sweet corn in warm tortillas with avocado.',
@@ -140,6 +146,7 @@ export const LIBRARY: readonly LibraryRecipe[] = [
   },
   {
     title: 'Simple lentil soup',
+    nutrition: { calories: 230, protein: 14, carbs: 36, fat: 4 },
     cuisine: 'mediterranean',
     allergens: [],
     summary: 'A hearty one-pot soup that tastes even better the next day.',
@@ -172,6 +179,7 @@ export const LIBRARY: readonly LibraryRecipe[] = [
   },
   {
     title: 'Baked salmon with roasted vegetables',
+    nutrition: { calories: 430, protein: 36, carbs: 16, fat: 25 },
     cuisine: 'mediterranean',
     allergens: ['fish'],
     summary: 'One tray, twenty minutes in the oven, and dinner is done.',
@@ -204,6 +212,7 @@ export const LIBRARY: readonly LibraryRecipe[] = [
   },
   {
     title: 'Chickpea cucumber salad',
+    nutrition: { calories: 300, protein: 12, carbs: 38, fat: 11 },
     cuisine: 'mediterranean',
     allergens: [],
     summary: 'A crunchy, lemony salad that works as lunch or a side.',
@@ -234,6 +243,7 @@ export const LIBRARY: readonly LibraryRecipe[] = [
   },
   {
     title: 'Vegetable egg fried rice',
+    nutrition: { calories: 380, protein: 13, carbs: 56, fat: 11 },
     cuisine: 'asian',
     allergens: ['eggs', 'gluten', 'soy'],
     summary: 'The best use for leftover rice: fast, colourful, and satisfying.',
@@ -265,6 +275,7 @@ export const LIBRARY: readonly LibraryRecipe[] = [
   },
   {
     title: 'Tomato garlic pasta',
+    nutrition: { calories: 420, protein: 14, carbs: 72, fat: 9 },
     cuisine: 'italian',
     allergens: ['gluten'],
     summary: 'A fresh, light sauce that cooks in the time it takes to boil the pasta.',
@@ -296,6 +307,7 @@ export const LIBRARY: readonly LibraryRecipe[] = [
   },
   {
     title: 'Avocado toast with egg',
+    nutrition: { calories: 640, protein: 24, carbs: 50, fat: 40 },
     cuisine: 'american',
     allergens: ['eggs', 'gluten'],
     summary: 'Creamy avocado and a runny egg on crisp toast.',
@@ -319,6 +331,7 @@ export const LIBRARY: readonly LibraryRecipe[] = [
   },
   {
     title: 'Banana oat pancakes',
+    nutrition: { calories: 330, protein: 12, carbs: 54, fat: 8 },
     cuisine: 'american',
     allergens: ['eggs', 'gluten'],
     summary: 'Three-ingredient pancakes with no flour and no added sugar.',
@@ -342,6 +355,7 @@ export const LIBRARY: readonly LibraryRecipe[] = [
   },
   {
     title: 'Sheet-pan chicken and sweet potato',
+    nutrition: { calories: 470, protein: 36, carbs: 40, fat: 18 },
     cuisine: 'american',
     allergens: [],
     summary: 'A hands-off dinner where the oven does all the work.',
@@ -372,6 +386,7 @@ export const LIBRARY: readonly LibraryRecipe[] = [
   },
   {
     title: 'Tuna lettuce wraps',
+    nutrition: { calories: 130, protein: 21, carbs: 4, fat: 3 },
     cuisine: 'american',
     allergens: ['dairy', 'fish'],
     summary: 'A light, crunchy lunch with no cooking at all.',
@@ -400,6 +415,7 @@ export const LIBRARY: readonly LibraryRecipe[] = [
   },
   {
     title: 'Peanut butter banana oatmeal',
+    nutrition: { calories: 560, protein: 19, carbs: 82, fat: 18 },
     cuisine: 'american',
     allergens: ['dairy', 'nuts'],
     summary: 'A warm, creamy bowl that keeps you going all morning.',
@@ -429,6 +445,7 @@ export const LIBRARY: readonly LibraryRecipe[] = [
   },
   {
     title: 'Tofu vegetable scramble',
+    nutrition: { calories: 270, protein: 22, carbs: 12, fat: 16 },
     cuisine: 'asian',
     allergens: ['soy'],
     summary: 'A savoury plant-based take on scrambled eggs.',
@@ -461,6 +478,7 @@ export const LIBRARY: readonly LibraryRecipe[] = [
   },
   {
     title: 'Turkey and bean chili',
+    nutrition: { calories: 380, protein: 33, carbs: 28, fat: 15 },
     cuisine: 'mexican',
     allergens: [],
     summary: 'A lean, warming chili that freezes well.',

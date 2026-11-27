@@ -94,3 +94,26 @@ describe('parsePreferences', () => {
     expect(parsePreferences(null).servings).toBe(2)
   })
 })
+
+describe('nutrition', () => {
+  const base = { title: 'Toast', ingredients: ['bread'], steps: ['Toast it.'] }
+
+  it('keeps a plausible estimate, rounded', () => {
+    expect(
+      parseRecipe({ ...base, nutrition: { calories: 410.6, protein: 20, carbs: 50.2, fat: 12 } })
+        ?.nutrition,
+    ).toEqual({ calories: 411, protein: 20, carbs: 50, fat: 12 })
+  })
+
+  it('drops missing or implausible estimates', () => {
+    expect(parseRecipe(base)?.nutrition).toBeUndefined()
+    expect(
+      parseRecipe({ ...base, nutrition: { calories: 99999, protein: 1, carbs: 1, fat: 1 } })
+        ?.nutrition,
+    ).toBeUndefined()
+    expect(
+      parseRecipe({ ...base, nutrition: { calories: 300, protein: '20g', carbs: 1, fat: 1 } })
+        ?.nutrition,
+    ).toBeUndefined()
+  })
+})

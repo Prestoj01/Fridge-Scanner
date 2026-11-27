@@ -58,6 +58,14 @@ export const DEFAULT_PREFERENCES: Preferences = {
 export const TIME_LIMITS = [15, 30, 45] as const
 export const MAX_SERVINGS = 8
 
+/** Estimated nutrition for one serving. Grams except calories. */
+export interface Nutrition {
+  calories: number
+  protein: number
+  carbs: number
+  fat: number
+}
+
 /** Recipe content, as produced by the API or the built-in library. */
 export interface RecipeContent {
   title: string
@@ -72,6 +80,8 @@ export interface RecipeContent {
   missingIngredients: string[]
   steps: string[]
   healthNote: string
+  /** Per-serving estimate, when known. */
+  nutrition?: Nutrition
 }
 
 export interface Recipe extends RecipeContent {

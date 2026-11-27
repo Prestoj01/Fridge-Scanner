@@ -1929,3 +1929,65 @@ a {
 .recipe-card__body ul {
   list-style: disc;
 }
+
+/* ───────────── Nutrition ───────────── */
+
+.macros {
+  display: grid;
+  gap: var(--space-2);
+  margin: 0;
+}
+
+.macros__bar {
+  display: flex;
+  gap: 3px;
+  height: 0.625rem;
+  overflow: hidden;
+  border-radius: var(--radius-pill);
+}
+
+.macros__segment {
+  flex-basis: 0;
+}
+
+.macros__segment--protein {
+  background: var(--basil);
+}
+
+.macros__segment--carbs {
+  background: var(--sunshine);
+}
+
+.macros__segment--fat {
+  background: var(--tomato);
+}
+
+.macros__legend {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-1) var(--space-4);
+  font-size: var(--text-xs);
+  font-stretch: 85%;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.macros__legend > span {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.macros__dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+}
+
+.macros__note {
+  margin-left: auto;
+  color: var(--color-text-muted);
+  font-weight: 500;
+}

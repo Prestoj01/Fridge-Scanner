@@ -91,5 +91,6 @@ export function suggestFromLibrary(
       missingIngredients: missing,
       steps: [...recipe.steps],
       healthNote: recipe.healthNote,
+      nutrition: { ...recipe.nutrition },
     }))
 }
