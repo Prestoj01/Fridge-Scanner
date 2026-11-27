@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event'
 import { beforeEach, expect, it, vi } from 'vitest'
 import App from './App'
 import { ApiError, detectIngredients, fetchRecipes } from './lib/api'
-import type { RecipeContent } from './types'
+import { DEFAULT_PREFERENCES, type RecipeContent } from './types'
 
 // AI mode: a backend URL is configured. Network and canvas work are mocked.
 vi.mock('./lib/config', () => ({ API_URL: 'https://api.test' }))
@@ -77,7 +77,7 @@ it('detects ingredients from a photo and shows AI recipes', async () => {
   expect(screen.getByRole('heading', { name: '1 healthy recipe for you' })).toBeInTheDocument()
   expect(screen.getByText('Need soy sauce')).toBeInTheDocument()
   expect(screen.getByText('Cook the chicken for 6 minutes.')).toBeInTheDocument()
-  expect(fetchRecipes).toHaveBeenCalledWith(['chicken', 'broccoli'], 'any')
+  expect(fetchRecipes).toHaveBeenCalledWith(['chicken', 'broccoli'], DEFAULT_PREFERENCES)
 })
 
 it('shows a busy state while detecting, then an error with retry', async () => {
@@ -112,10 +112,20 @@ it('falls back to built-in recipes when the AI request fails', async () => {
   await user.click(await screen.findByRole('button', { name: 'Type ingredients instead' }))
   await user.type(await screen.findByLabelText('Ingredient name'), 'bread, avocado, eggs{Enter}')
   await user.click(screen.getByRole('radio', { name: 'Vegetarian' }))
+  await user.click(screen.getByRole('radio', { name: '30 min' }))
+  await user.click(screen.getByRole('checkbox', { name: 'Nuts' }))
+  await user.click(screen.getByRole('radio', { name: 'Italian' }))
+  await user.click(screen.getByRole('button', { name: 'More servings' }))
   await user.click(screen.getByRole('button', { name: 'Find recipes' }))
 
   expect(await screen.findByRole('alert')).toHaveTextContent('not set up yet')
-  expect(fetchRecipes).toHaveBeenCalledWith(['bread', 'avocado', 'eggs'], 'vegetarian')
+  expect(fetchRecipes).toHaveBeenCalledWith(['bread', 'avocado', 'eggs'], {
+    diet: 'vegetarian',
+    maxMinutes: 30,
+    avoid: ['nuts'],
+    cuisine: 'italian',
+    servings: 3,
+  })
 
   await user.click(screen.getByRole('button', { name: 'Use built-in recipes' }))
   expect(await screen.findByRole('heading', { name: 'Avocado toast with egg' })).toBeInTheDocument()

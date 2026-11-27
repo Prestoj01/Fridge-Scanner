@@ -129,10 +129,10 @@ function Kitchen() {
                           <ReviewScreen
                             ingredients={flow.ingredients}
                             detectedCount={flow.detectedCount}
-                            diet={flow.diet}
+                            preferences={flow.preferences}
                             onAddIngredient={flow.addIngredient}
                             onRemoveIngredient={flow.removeIngredient}
-                            onDietChange={flow.setDiet}
+                            onPreferencesChange={flow.setPreferences}
                             onFindRecipes={() => void flow.findRecipes()}
                           />
                         )}

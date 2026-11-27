@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'vitest'
-import { parseDiet, parseIngredientNames, parseRecipe, parseRecipes } from './validate'
+import {
+  parseDiet,
+  parseIngredientNames,
+  parsePreferences,
+  parseRecipe,
+  parseRecipes,
+} from './validate'
 
 describe('parseIngredientNames', () => {
   it('normalizes, de-duplicates, and drops non-strings', () => {
@@ -55,5 +61,36 @@ describe('parseRecipes', () => {
     const good = { title: 'Toast', ingredients: ['bread'], steps: ['Toast it.'] }
     expect(parseRecipes([good, null, { title: 'Broken' }])).toHaveLength(1)
     expect(parseRecipes({})).toEqual([])
+  })
+})
+
+describe('parsePreferences', () => {
+  it('keeps valid values and drops the rest', () => {
+    expect(
+      parsePreferences({
+        diet: 'vegan',
+        maxMinutes: 30,
+        avoid: ['nuts', 'bacon', 'soy'],
+        cuisine: 'indian',
+        servings: 4,
+      }),
+    ).toEqual({
+      diet: 'vegan',
+      maxMinutes: 30,
+      avoid: ['nuts', 'soy'],
+      cuisine: 'indian',
+      servings: 4,
+    })
+  })
+
+  it('falls back to defaults', () => {
+    expect(parsePreferences({ maxMinutes: 17, cuisine: 'martian', servings: 99 })).toEqual({
+      diet: 'any',
+      maxMinutes: null,
+      avoid: [],
+      cuisine: 'any',
+      servings: 8,
+    })
+    expect(parsePreferences(null).servings).toBe(2)
   })
 })

@@ -1,4 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
+import { DEFAULT_PREFERENCES } from '../types'
 import { ApiError, detectIngredients, fetchRecipes } from './api'
 
 vi.mock('./config', () => ({ API_URL: 'https://api.test' }))
@@ -34,20 +35,30 @@ describe('fetchRecipes', () => {
   it('returns only valid recipes', async () => {
     const recipe = { title: 'Toast', ingredients: ['2 slices bread'], steps: ['Toast it.'] }
     mockFetch({ recipes: [recipe, { title: 'Broken' }] })
-    const recipes = await fetchRecipes(['bread'], 'any')
+    const fetchMock = vi.mocked(fetch)
+    const recipes = await fetchRecipes(['bread'], { ...DEFAULT_PREFERENCES, maxMinutes: 15 })
     expect(recipes.map((item) => item.title)).toEqual(['Toast'])
+    const [, init] = fetchMock.mock.calls[0] as unknown as [string, RequestInit]
+    expect(JSON.parse(init.body as string)).toMatchObject({
+      ingredients: ['bread'],
+      maxMinutes: 15,
+    })
   })
 
   it('surfaces the error code and message from the API', async () => {
     mockFetch({ error: { code: 'rate_limited', message: 'Slow down.' } }, 429)
-    const error = await fetchRecipes(['bread'], 'any').catch((caught: unknown) => caught)
+    const error = await fetchRecipes(['bread'], DEFAULT_PREFERENCES).catch(
+      (caught: unknown) => caught,
+    )
     expect(error).toBeInstanceOf(ApiError)
     expect(error).toMatchObject({ code: 'rate_limited', message: 'Slow down.' })
   })
 
   it('maps an unknown error body to upstream_error', async () => {
     mockFetch({ message: 'bad gateway' }, 502)
-    await expect(fetchRecipes(['bread'], 'any')).rejects.toMatchObject({ code: 'upstream_error' })
+    await expect(fetchRecipes(['bread'], DEFAULT_PREFERENCES)).rejects.toMatchObject({
+      code: 'upstream_error',
+    })
   })
 
   it('maps a network failure to a friendly error', async () => {
@@ -55,6 +66,8 @@ describe('fetchRecipes', () => {
       'fetch',
       vi.fn(() => Promise.reject(new TypeError('Failed to fetch'))),
     )
-    await expect(fetchRecipes(['bread'], 'any')).rejects.toMatchObject({ code: 'network' })
+    await expect(fetchRecipes(['bread'], DEFAULT_PREFERENCES)).rejects.toMatchObject({
+      code: 'network',
+    })
   })
 })

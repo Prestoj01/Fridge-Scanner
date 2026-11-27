@@ -1,4 +1,4 @@
-import type { Diet, RecipeContent } from '../types'
+import type { Preferences, RecipeContent } from '../types'
 import type { ApiErrorCode, ApiImage, DetectRequest, RecipesRequest } from '../types/api'
 import { API_URL } from './config'
 import { isRecord, parseIngredientNames, parseRecipes } from './validate'
@@ -74,8 +74,11 @@ export async function detectIngredients(images: ApiImage[]): Promise<string[]> {
 }
 
 /** Asks the API for healthy recipes based on the given ingredients. */
-export async function fetchRecipes(ingredients: string[], diet: Diet): Promise<RecipeContent[]> {
-  const payload: RecipesRequest = { ingredients, diet }
+export async function fetchRecipes(
+  ingredients: string[],
+  preferences: Preferences,
+): Promise<RecipeContent[]> {
+  const payload: RecipesRequest = { ingredients, ...preferences }
   const body = await post('/recipes', payload)
   if (!isRecord(body) || !Array.isArray(body.recipes)) throw new ApiError('bad_response')
   return parseRecipes(body.recipes)

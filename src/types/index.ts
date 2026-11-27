@@ -22,6 +22,42 @@ export interface Ingredient {
 
 export type Diet = 'any' | 'vegetarian' | 'vegan'
 
+export const ALLERGENS = ['dairy', 'eggs', 'gluten', 'nuts', 'fish', 'soy'] as const
+export type Allergen = (typeof ALLERGENS)[number]
+
+export const CUISINES = [
+  'any',
+  'italian',
+  'mexican',
+  'asian',
+  'mediterranean',
+  'american',
+  'indian',
+] as const
+export type Cuisine = (typeof CUISINES)[number]
+
+/** How the user wants their recipes. */
+export interface Preferences {
+  diet: Diet
+  /** Longest acceptable total time, or null for no limit. */
+  maxMinutes: number | null
+  /** Ingredients to leave out entirely. */
+  avoid: Allergen[]
+  cuisine: Cuisine
+  servings: number
+}
+
+export const DEFAULT_PREFERENCES: Preferences = {
+  diet: 'any',
+  maxMinutes: null,
+  avoid: [],
+  cuisine: 'any',
+  servings: 2,
+}
+
+export const TIME_LIMITS = [15, 30, 45] as const
+export const MAX_SERVINGS = 8
+
 /** Recipe content, as produced by the API or the built-in library. */
 export interface RecipeContent {
   title: string

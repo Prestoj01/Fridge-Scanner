@@ -3,7 +3,18 @@
  * and by the web app on API responses, so neither trusts the other blindly.
  */
 import { API_LIMITS } from '../types/api'
-import type { Diet, RecipeContent } from '../types'
+import {
+  ALLERGENS,
+  CUISINES,
+  DEFAULT_PREFERENCES,
+  MAX_SERVINGS,
+  TIME_LIMITS,
+  type Allergen,
+  type Cuisine,
+  type Diet,
+  type Preferences,
+  type RecipeContent,
+} from '../types'
 import { normalizeIngredientName } from './ingredients'
 
 export function isRecord(value: unknown): value is Record<string, unknown> {
@@ -72,4 +83,19 @@ export function parseRecipes(value: unknown): RecipeContent[] {
     .map(parseRecipe)
     .filter((recipe): recipe is RecipeContent => recipe !== null)
     .slice(0, API_LIMITS.maxRecipes)
+}
+
+/** Reads preferences from untrusted input, falling back to defaults field by field. */
+export function parsePreferences(value: unknown): Preferences {
+  if (!isRecord(value)) return { ...DEFAULT_PREFERENCES, avoid: [] }
+  const maxMinutes = TIME_LIMITS.find((limit) => limit === value.maxMinutes) ?? null
+  const avoid = Array.isArray(value.avoid)
+    ? ALLERGENS.filter((allergen: Allergen) => (value.avoid as unknown[]).includes(allergen))
+    : []
+  const cuisine: Cuisine = CUISINES.find((option) => option === value.cuisine) ?? 'any'
+  const servings =
+    typeof value.servings === 'number' && Number.isInteger(value.servings)
+      ? Math.min(Math.max(value.servings, 1), MAX_SERVINGS)
+      : DEFAULT_PREFERENCES.servings
+  return { diet: parseDiet(value.diet), maxMinutes, avoid, cuisine, servings }
 }

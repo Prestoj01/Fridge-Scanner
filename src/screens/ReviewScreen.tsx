@@ -3,27 +3,22 @@ import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import { useEffect, useState, type SyntheticEvent } from 'react'
 import { EmptyState } from '../components/EmptyState'
 import { Icon } from '../components/Icon'
+import { PreferencesPanel } from '../components/PreferencesPanel'
 import { RevealText } from '../components/RevealText'
 import { Food } from '../components/food/Food'
 import { foodKind } from '../lib/foodKind'
-import type { Diet, Ingredient } from '../types'
+import type { Ingredient, Preferences } from '../types'
 
 interface ReviewScreenProps {
   ingredients: readonly Ingredient[]
   /** How many ingredients the last photo detection found, or null if none ran. */
   detectedCount: number | null
-  diet: Diet
+  preferences: Preferences
   onAddIngredient: (name: string) => void
   onRemoveIngredient: (id: string) => void
-  onDietChange: (diet: Diet) => void
+  onPreferencesChange: (preferences: Preferences) => void
   onFindRecipes: () => void
 }
-
-const DIETS: readonly { value: Diet; label: string }[] = [
-  { value: 'any', label: 'Anything' },
-  { value: 'vegetarian', label: 'Vegetarian' },
-  { value: 'vegan', label: 'Vegan' },
-]
 
 function plural(count: number, word: string): string {
   return `${String(count)} ${word}${count === 1 ? '' : 's'}`
@@ -48,10 +43,10 @@ function intro(detectedCount: number | null): string {
 export default function ReviewScreen({
   ingredients,
   detectedCount,
-  diet,
+  preferences,
   onAddIngredient,
   onRemoveIngredient,
-  onDietChange,
+  onPreferencesChange,
   onFindRecipes,
 }: ReviewScreenProps) {
   const [draft, setDraft] = useState('')
@@ -159,33 +154,7 @@ export default function ReviewScreen({
         </ul>
       )}
 
-      <fieldset className="segmented">
-        <legend>Diet</legend>
-        <div className="segmented__options">
-          {DIETS.map((option) => (
-            <label key={option.value} className="segmented__option">
-              {diet === option.value && (
-                <motion.span
-                  layoutId="diet-thumb"
-                  className="segmented__thumb"
-                  transition={{ type: 'spring', stiffness: 320, damping: 30 }}
-                />
-              )}
-              <input
-                type="radio"
-                name="diet"
-                value={option.value}
-                checked={diet === option.value}
-                className="visually-hidden"
-                onChange={() => {
-                  onDietChange(option.value)
-                }}
-              />
-              <span className="segmented__label">{option.label}</span>
-            </label>
-          ))}
-        </div>
-      </fieldset>
+      <PreferencesPanel preferences={preferences} onChange={onPreferencesChange} />
 
       <div className="screen__actions">
         <button

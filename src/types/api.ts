@@ -2,7 +2,7 @@
  * Request and response shapes shared by the web app and the Worker in
  * `worker/`. Keep both sides in sync by importing from here.
  */
-import type { Diet, RecipeContent } from './index'
+import type { Allergen, Cuisine, Diet, RecipeContent } from './index'
 
 export interface ApiImage {
   mimeType: 'image/jpeg' | 'image/png' | 'image/webp'
@@ -21,6 +21,12 @@ export interface DetectResponse {
 export interface RecipesRequest {
   ingredients: string[]
   diet: Diet
+  maxMinutes?: number | null
+  avoid?: Allergen[]
+  cuisine?: Cuisine
+  servings?: number
+  /** Titles already shown, so the model suggests something different. */
+  exclude?: string[]
 }
 
 export interface RecipesResponse {

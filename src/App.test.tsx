@@ -90,7 +90,7 @@ it('remembers ingredients between visits and offers to continue', async () => {
 it('clears the remembered list', async () => {
   localStorage.setItem(
     'fridge-scanner:pantry',
-    JSON.stringify({ ingredients: [{ id: 'a', name: 'eggs', source: 'manual' }], diet: 'any' }),
+    JSON.stringify({ ingredients: [{ id: 'a', name: 'eggs', source: 'manual' }] }),
   )
   const user = userEvent.setup()
   render(<App />)

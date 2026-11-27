@@ -6,7 +6,15 @@ import { addIngredients } from '../lib/ingredients'
 import { loadPantry, savePantry } from '../lib/pantry'
 import { suggestFromLibrary } from '../lib/recipeLibrary'
 import { previousStep } from '../lib/steps'
-import type { AsyncState, Diet, Ingredient, Photo, Recipe, RecipeContent, StepId } from '../types'
+import type {
+  AsyncState,
+  Ingredient,
+  Photo,
+  Preferences,
+  Recipe,
+  RecipeContent,
+  StepId,
+} from '../types'
 import { API_LIMITS } from '../types/api'
 
 export interface ScanFlow {
@@ -16,7 +24,7 @@ export interface ScanFlow {
   photos: readonly Photo[]
   ingredients: readonly Ingredient[]
   recipes: readonly Recipe[]
-  diet: Diet
+  preferences: Preferences
   detection: AsyncState
   /** How many ingredients the last detection found, or null if none has run. */
   detectedCount: number | null
@@ -28,7 +36,7 @@ export interface ScanFlow {
   enterManually: () => void
   addIngredient: (name: string) => void
   removeIngredient: (id: string) => void
-  setDiet: (diet: Diet) => void
+  setPreferences: (preferences: Preferences) => void
   findRecipes: () => Promise<void>
   showLibraryRecipes: () => void
   clearIngredients: () => void
@@ -52,18 +60,18 @@ export function useScanFlow(): ScanFlow {
 
   const [step, setStep] = useState<StepId>('upload')
   const [photos, setPhotos] = useState<readonly Photo[]>([])
-  // The ingredient list and diet persist between visits.
+  // The ingredient list and preferences persist between visits.
   const [pantry] = useState(loadPantry)
   const [ingredients, setIngredients] = useState<readonly Ingredient[]>(pantry.ingredients)
   const [recipes, setRecipes] = useState<readonly Recipe[]>([])
-  const [diet, setDiet] = useState<Diet>(pantry.diet)
+  const [preferences, setPreferences] = useState<Preferences>(pantry.preferences)
   const [detection, setDetection] = useState<AsyncState>(IDLE)
   const [detectedCount, setDetectedCount] = useState<number | null>(null)
   const [generation, setGeneration] = useState<AsyncState>(IDLE)
 
   useEffect(() => {
-    savePantry({ ingredients: [...ingredients], diet })
-  }, [ingredients, diet])
+    savePantry({ ingredients: [...ingredients], preferences })
+  }, [ingredients, preferences])
 
   // Each async action takes a ticket. A result is ignored if a newer action
   // (or a reset) has started since, so stale replies never overwrite state.
@@ -134,7 +142,7 @@ export function useScanFlow(): ScanFlow {
   const showLibraryRecipes = () => {
     ticket.current += 1
     const names = ingredients.map((item) => item.name)
-    setRecipes(toRecipes(suggestFromLibrary(names, diet), 'library'))
+    setRecipes(toRecipes(suggestFromLibrary(names, preferences.diet), 'library'))
     setGeneration(IDLE)
     setStep('recipes')
   }
@@ -152,7 +160,7 @@ export function useScanFlow(): ScanFlow {
     try {
       const contents = await fetchRecipes(
         ingredients.map((item) => item.name),
-        diet,
+        preferences,
       )
       if (mine !== ticket.current) return
       setRecipes(toRecipes(contents, 'ai'))
@@ -186,7 +194,7 @@ export function useScanFlow(): ScanFlow {
     photos,
     ingredients,
     recipes,
-    diet,
+    preferences,
     detection,
     detectedCount,
     generation,
@@ -197,7 +205,7 @@ export function useScanFlow(): ScanFlow {
     enterManually,
     addIngredient,
     removeIngredient,
-    setDiet,
+    setPreferences,
     findRecipes,
     showLibraryRecipes,
     clearIngredients,
