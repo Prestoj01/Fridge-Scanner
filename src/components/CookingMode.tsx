@@ -2,11 +2,14 @@ import { ChevronLeft, ChevronRight, X } from 'lucide-react'
 import { AnimatePresence, motion, useReducedMotion, type PanInfo } from 'motion/react'
 import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
+import { useStepTimers } from '../hooks/useStepTimers'
 import { useWakeLock } from '../hooks/useWakeLock'
 import { recipeFoods } from '../lib/recipeFoods'
+import { findTimer, formatClock } from '../lib/timers'
 import type { Recipe } from '../types'
 import { Food } from './food/Food'
 import { Icon } from './Icon'
+import { StepTimer } from './StepTimer'
 
 interface CookingModeProps {
   recipe: Recipe
@@ -31,6 +34,7 @@ export function CookingMode({ recipe, onClose }: CookingModeProps) {
   const dialogRef = useRef<HTMLDivElement>(null)
 
   useWakeLock()
+  const timers = useStepTimers()
 
   const go = (delta: number) => {
     setDirection(delta)
@@ -86,6 +90,11 @@ export function CookingMode({ recipe, onClose }: CookingModeProps) {
 
   const stepIndex = page - 1
   const step = steps[stepIndex]
+  const found = step === undefined ? null : findTimer(step)
+  // Timers still going on other steps, so the cook can jump back to them.
+  const elsewhere = [...timers.timers.keys()]
+    .filter((index) => index !== stepIndex)
+    .sort((a, b) => a - b)
 
   return createPortal(
     <motion.div
@@ -119,6 +128,29 @@ export function CookingMode({ recipe, onClose }: CookingModeProps) {
           <li key={index} className={index <= page ? 'is-done' : undefined} />
         ))}
       </ol>
+
+      {elsewhere.length > 0 && (
+        <div className="cooking__timers">
+          {elsewhere.map((index) => {
+            const left = timers.secondsLeft(index) ?? 0
+            const done = timers.timers.get(index)?.done ?? false
+            return (
+              <button
+                key={index}
+                type="button"
+                className={`timer-chip${done ? ' timer-chip--done' : ''}`}
+                onClick={() => {
+                  setDirection(index + 1 > page ? 1 : -1)
+                  setPage(index + 1)
+                }}
+              >
+                Step {index + 1} ·{' '}
+                <span className="tabular">{done ? 'Done!' : formatClock(left)}</span>
+              </button>
+            )
+          })}
+        </div>
+      )}
 
       <div className="cooking__stage">
         <AnimatePresence mode="wait" custom={direction} initial={false}>
@@ -169,6 +201,7 @@ export function CookingMode({ recipe, onClose }: CookingModeProps) {
                   {stepIndex + 1}
                 </span>
                 <p className="cooking__step">{step}</p>
+                {found && <StepTimer step={stepIndex} found={found} timers={timers} />}
               </>
             )}
 

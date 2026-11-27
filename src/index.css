@@ -2017,8 +2017,8 @@ a {
   position: fixed;
   inset: 0;
   z-index: 200;
-  display: grid;
-  grid-template-rows: auto auto 1fr auto;
+  display: flex;
+  flex-direction: column;
   max-width: 100vw;
   padding: max(var(--space-4), env(safe-area-inset-top)) var(--space-5)
     max(var(--space-4), env(safe-area-inset-bottom));
@@ -2081,6 +2081,7 @@ a {
 
 .cooking__stage {
   position: relative;
+  flex: 1;
   min-height: 0;
   overflow-y: auto;
   padding-block: var(--space-5);
@@ -2251,4 +2252,127 @@ a {
 .cooking__next,
 .cooking__back {
   white-space: nowrap;
+}
+
+/* ───────────── Cooking timers ───────────── */
+
+.timer-start {
+  display: inline-flex;
+  align-items: center;
+  justify-self: start;
+  gap: var(--space-2);
+  min-height: var(--control-lg);
+  margin-top: var(--space-2);
+  padding: 0 var(--space-5);
+  border: 2px solid var(--sunshine);
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--sunshine);
+  font-size: var(--text-md);
+  font-stretch: 85%;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.timer-start:hover {
+  background: var(--sunshine);
+  color: #151312;
+}
+
+.timer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-5);
+  margin-top: var(--space-2);
+}
+
+.timer__dial {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 9rem;
+  height: 9rem;
+}
+
+.timer__dial svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.timer__track {
+  fill: none;
+  stroke: var(--cook-line);
+  stroke-width: 8;
+}
+
+.timer__ring {
+  fill: none;
+  stroke: var(--sunshine);
+  stroke-linecap: round;
+  stroke-width: 8;
+  transition: stroke-dashoffset 0.25s linear;
+}
+
+.timer__clock {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 800;
+  font-variant-numeric: lining-nums tabular-nums;
+}
+
+.timer--done .timer__ring {
+  stroke: var(--tomato);
+}
+
+.timer--done .timer__clock {
+  color: var(--tomato);
+}
+
+.timer__controls {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.timer__controls button,
+.timer-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--control-md);
+  padding: 0 var(--space-4);
+  border: 2px solid var(--cook-line);
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--cook-text);
+  font-size: var(--text-sm);
+  font-stretch: 85%;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.cooking__timers {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+}
+
+.timer-chip {
+  min-height: var(--control-sm);
+  border-color: var(--sunshine);
+  color: var(--sunshine);
+}
+
+.timer-chip--done {
+  border-color: var(--tomato);
+  background: var(--tomato);
+  color: #151312;
 }
