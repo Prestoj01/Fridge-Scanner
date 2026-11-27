@@ -1,10 +1,12 @@
+import { isRecipeHash } from '../lib/shareLink'
 import { useEffect, useState } from 'react'
 
-export type View = 'flow' | 'saved' | 'list'
+export type View = 'flow' | 'saved' | 'list' | 'shared'
 
 function viewFromHash(hash: string): View {
   if (hash === '#saved') return 'saved'
   if (hash === '#list') return 'list'
+  if (isRecipeHash(hash)) return 'shared'
   return 'flow'
 }
 
@@ -12,12 +14,13 @@ function viewFromHash(hash: string): View {
  * Which page is showing, kept in the URL hash so the browser back button
  * and links like #saved work.
  */
-export function useHashView(): { view: View; open: (view: View) => void } {
-  const [view, setView] = useState<View>(() => viewFromHash(window.location.hash))
+export function useHashView(): { view: View; hash: string; open: (view: View) => void } {
+  const [hash, setHash] = useState(() => window.location.hash)
+  const view = viewFromHash(hash)
 
   useEffect(() => {
     const onChange = () => {
-      setView(viewFromHash(window.location.hash))
+      setHash(window.location.hash)
     }
     window.addEventListener('hashchange', onChange)
     return () => {
@@ -29,11 +32,12 @@ export function useHashView(): { view: View; open: (view: View) => void } {
     if (next === 'flow') {
       // Drop the hash without leaving a "#" behind.
       history.pushState(null, '', window.location.pathname + window.location.search)
+      setHash('')
     } else {
       history.pushState(null, '', `#${next}`)
+      setHash(`#${next}`)
     }
-    setView(next)
   }
 
-  return { view, open }
+  return { view, hash, open }
 }

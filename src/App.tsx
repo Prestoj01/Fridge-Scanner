@@ -16,6 +16,7 @@ import { useRotatingLine } from './hooks/useRotatingLine'
 import RecipesScreen from './screens/RecipesScreen'
 import ReviewScreen from './screens/ReviewScreen'
 import SavedScreen from './screens/SavedScreen'
+import SharedScreen from './screens/SharedScreen'
 import ShoppingScreen from './screens/ShoppingScreen'
 import UploadScreen from './screens/UploadScreen'
 import { useScanFlow } from './hooks/useScanFlow'
@@ -33,7 +34,7 @@ export default function App() {
 
 function Kitchen() {
   const flow = useScanFlow()
-  const { view, open } = useHashView()
+  const { view, hash, open } = useHashView()
 
   // Each step and page starts at the top; the page wipe hides the jump.
   useEffect(() => {
@@ -64,6 +65,15 @@ function Kitchen() {
             {view === 'saved' ? (
               <ErrorBoundary>
                 <SavedScreen
+                  onClose={() => {
+                    open('flow')
+                  }}
+                />
+              </ErrorBoundary>
+            ) : view === 'shared' ? (
+              <ErrorBoundary>
+                <SharedScreen
+                  hash={hash}
                   onClose={() => {
                     open('flow')
                   }}

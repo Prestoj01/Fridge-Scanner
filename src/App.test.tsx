@@ -2,6 +2,7 @@ import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { expect, it, vi } from 'vitest'
 import App from './App'
+import { recipeFromHash, recipeHash } from './lib/shareLink'
 
 // Offline mode: no backend URL configured.
 vi.mock('./lib/config', () => ({ API_URL: '' }))
@@ -201,4 +202,46 @@ it('walks through a recipe in cooking mode', async () => {
 
   await user.keyboard('{Escape}')
   expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+})
+
+it('opens a recipe from a share link', async () => {
+  window.location.hash = recipeHash({
+    title: 'Shared lentil soup',
+    summary: 'Warming.',
+    timeMinutes: 40,
+    servings: 4,
+    ingredients: ['1 cup lentils'],
+    usedIngredients: ['lentils'],
+    missingIngredients: [],
+    steps: ['Simmer for 25 minutes.'],
+    healthNote: 'Fibre.',
+  })
+  render(<App />)
+  expect(await screen.findByRole('heading', { name: 'A recipe for you' })).toBeInTheDocument()
+  expect(screen.getByRole('heading', { name: 'Shared lentil soup' })).toBeInTheDocument()
+})
+
+it('explains a broken share link', async () => {
+  window.location.hash = '#recipe=broken'
+  render(<App />)
+  expect(await screen.findByText('We couldn’t read that recipe')).toBeInTheDocument()
+})
+
+it('copies a share link when the device has no share sheet', async () => {
+  const user = userEvent.setup()
+  render(<App />)
+
+  await user.click(await screen.findByRole('button', { name: 'Type your ingredients' }))
+  await user.type(await screen.findByLabelText('Ingredient name'), 'eggs, spinach, tomato{Enter}')
+  await user.click(screen.getByRole('button', { name: 'Find recipes' }))
+
+  const [share] = await screen.findAllByRole('button', { name: 'Share' })
+  if (!share) throw new Error('expected a Share button')
+  await user.click(share)
+  expect(await screen.findByRole('button', { name: 'Link copied' })).toBeInTheDocument()
+  const copied = await navigator.clipboard.readText()
+  expect(copied).toContain('#recipe=')
+  expect(recipeFromHash(copied.slice(copied.indexOf('#')))?.title).toBe(
+    'Spinach and tomato omelette',
+  )
 })

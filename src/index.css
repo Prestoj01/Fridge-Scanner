@@ -2376,3 +2376,14 @@ a {
   background: var(--tomato);
   color: #151312;
 }
+
+/* ───────────── Sharing ───────────── */
+
+.share-button {
+  justify-self: start;
+  margin-left: calc(var(--space-3) * -1);
+}
+
+.shared__kicker {
+  color: var(--color-accent);
+}

@@ -20,6 +20,7 @@ import { Food } from './food/Food'
 import { Icon } from './Icon'
 import { NutritionBar } from './NutritionBar'
 import { SaveButton } from './SaveButton'
+import { ShareButton } from './ShareButton'
 
 interface RecipeCardProps {
   recipe: Recipe
@@ -223,6 +224,8 @@ export function RecipeCard({
           }}
         />
       )}
+
+      <ShareButton recipe={recipe} />
 
       {onSwap && (
         <button
