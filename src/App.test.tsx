@@ -98,3 +98,32 @@ it('clears the remembered list', async () => {
   expect(screen.queryByText('From last time')).not.toBeInTheDocument()
   expect(localStorage.getItem('fridge-scanner:pantry')).toBeNull()
 })
+
+it('saves a recipe and shows it on the Saved page', async () => {
+  const user = userEvent.setup()
+  render(<App />)
+
+  await user.click(await screen.findByRole('button', { name: 'Type your ingredients' }))
+  await user.type(await screen.findByLabelText('Ingredient name'), 'eggs, spinach, tomato{Enter}')
+  await user.click(screen.getByRole('button', { name: 'Find recipes' }))
+
+  const save = await screen.findByRole('button', { name: 'Save Spinach and tomato omelette' })
+  await user.click(save)
+  expect(
+    screen.getByRole('button', { name: 'Remove Spinach and tomato omelette from saved' }),
+  ).toHaveAttribute('aria-pressed', 'true')
+
+  await user.click(screen.getByRole('link', { name: /Saved/ }))
+  expect(await screen.findByRole('heading', { name: 'Your saved recipes' })).toBeInTheDocument()
+  expect(screen.getByRole('heading', { name: 'Spinach and tomato omelette' })).toBeInTheDocument()
+
+  await user.click(
+    screen.getByRole('button', { name: 'Remove Spinach and tomato omelette from saved' }),
+  )
+  expect(await screen.findByText('Nothing saved yet')).toBeInTheDocument()
+
+  await user.click(screen.getByRole('button', { name: 'Back to cooking' }))
+  expect(
+    await screen.findByRole('heading', { name: /healthy recipes for you/ }),
+  ).toBeInTheDocument()
+})

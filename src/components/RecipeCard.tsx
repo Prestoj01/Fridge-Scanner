@@ -6,6 +6,7 @@ import { recipeFoods } from '../lib/recipeFoods'
 import type { Recipe } from '../types'
 import { Food } from './food/Food'
 import { Icon } from './Icon'
+import { SaveButton } from './SaveButton'
 
 interface RecipeCardProps {
   recipe: Recipe
@@ -99,17 +100,20 @@ export function RecipeCard({ recipe, index, defaultOpen = false }: RecipeCardPro
 
   return (
     <article className="recipe-card">
-      <div ref={artRef} className={`spread__art spread__art--${color}`} aria-hidden="true">
-        <span className="spread__number tabular">{String(index + 1).padStart(2, '0')}</span>
-        <span className={`spread__sticker${ready ? ' spread__sticker--ready' : ''}`}>
-          {stickerText(recipe)}
-        </span>
-        {foods.map((kind, i) => {
-          const spot = layout[i]
-          return spot ? (
-            <SpreadFood key={kind} kind={kind} spot={spot} order={i} drift={drift} calm={calm} />
-          ) : null
-        })}
+      <div className="spread__frame">
+        <div ref={artRef} className={`spread__art spread__art--${color}`} aria-hidden="true">
+          <span className="spread__number tabular">{String(index + 1).padStart(2, '0')}</span>
+          <span className={`spread__sticker${ready ? ' spread__sticker--ready' : ''}`}>
+            {stickerText(recipe)}
+          </span>
+          {foods.map((kind, i) => {
+            const spot = layout[i]
+            return spot ? (
+              <SpreadFood key={kind} kind={kind} spot={spot} order={i} drift={drift} calm={calm} />
+            ) : null
+          })}
+        </div>
+        <SaveButton recipe={recipe} />
       </div>
 
       <p className="recipe-card__meta kicker">

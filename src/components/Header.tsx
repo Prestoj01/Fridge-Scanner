@@ -1,3 +1,4 @@
+import { useSaved } from '../lib/savedContext'
 import { ThemeToggle } from './ThemeToggle'
 
 const dateFormat = new Intl.DateTimeFormat('en-US', {
@@ -7,12 +8,17 @@ const dateFormat = new Intl.DateTimeFormat('en-US', {
 })
 
 export function Header() {
+  const { saved } = useSaved()
   return (
     <header className="masthead">
       <div className="container">
         <div className="masthead__top kicker">
           <span>No. 01 · Healthy cooking</span>
           <span className="masthead__date">{dateFormat.format(new Date())}</span>
+          <a href="#saved" className="masthead__link">
+            Saved
+            {saved.length > 0 && <span className="masthead__count tabular">{saved.length}</span>}
+          </a>
           <ThemeToggle />
         </div>
         <h1 className="masthead__title">
