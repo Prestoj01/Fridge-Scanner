@@ -1,4 +1,4 @@
-import { ChevronDown, Clock, Leaf, ShoppingBasket, Users } from 'lucide-react'
+import { ChevronDown, Clock, Leaf, RefreshCw, ShoppingBasket, Users } from 'lucide-react'
 import { motion, useReducedMotion, useScroll, useTransform, type MotionValue } from 'motion/react'
 import { useRef } from 'react'
 import type { FoodKind } from '../lib/foodKind'
@@ -16,6 +16,11 @@ interface RecipeCardProps {
   index: number
   /** Open the first card so the user sees a full recipe right away. */
   defaultOpen?: boolean
+  /** Offers "Something different" when provided. */
+  onSwap?: () => void
+  swapping?: boolean
+  /** Disables the swap button while another change is running. */
+  busy?: boolean
 }
 
 const SPREAD_COLORS = ['tomato', 'sunshine', 'cobalt', 'basil', 'blush'] as const
@@ -106,7 +111,14 @@ function Swaps({ missing }: { missing: readonly string[] }) {
   )
 }
 
-export function RecipeCard({ recipe, index, defaultOpen = false }: RecipeCardProps) {
+export function RecipeCard({
+  recipe,
+  index,
+  defaultOpen = false,
+  onSwap,
+  swapping = false,
+  busy = false,
+}: RecipeCardProps) {
   const calm = useReducedMotion() ?? false
   const ready = recipe.missingIngredients.length === 0
   const color = SPREAD_COLORS[index % SPREAD_COLORS.length] ?? 'tomato'
@@ -167,6 +179,23 @@ export function RecipeCard({ recipe, index, defaultOpen = false }: RecipeCardPro
           <Icon icon={Leaf} size={16} />
           {recipe.healthNote}
         </p>
+      )}
+
+      {onSwap && (
+        <button
+          type="button"
+          className="button button--ghost swap-button"
+          disabled={busy}
+          aria-busy={swapping}
+          onClick={onSwap}
+        >
+          <Icon
+            icon={RefreshCw}
+            size={16}
+            {...(swapping ? { className: 'swap-button__spin' } : {})}
+          />
+          {swapping ? 'Finding another…' : 'Something different'}
+        </button>
       )}
 
       <details open={defaultOpen}>

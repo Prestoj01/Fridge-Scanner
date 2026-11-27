@@ -1,4 +1,4 @@
-import { render, screen, within } from '@testing-library/react'
+import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { expect, it, vi } from 'vitest'
 import App from './App'
@@ -147,4 +147,32 @@ it('adds missing ingredients to a shopping list and checks them off', async () =
 
   await user.click(screen.getByRole('button', { name: 'Clear checked' }))
   expect(await screen.findByText('Nothing to buy')).toBeInTheDocument()
+})
+
+it('swaps a recipe for something different and finds more ideas', async () => {
+  const user = userEvent.setup()
+  render(<App />)
+
+  await user.click(await screen.findByRole('button', { name: 'Type your ingredients' }))
+  await user.type(
+    await screen.findByLabelText('Ingredient name'),
+    'eggs, spinach, tomato, bread, avocado, rice, pasta, garlic, chickpeas, cucumber, lemon{Enter}',
+  )
+  await user.click(screen.getByRole('button', { name: 'Find recipes' }))
+
+  const titles = () => screen.getAllByRole('heading', { level: 3 }).map((h) => h.textContent)
+  await screen.findByRole('heading', { name: /healthy recipes for you/ })
+  const before = titles()
+  const [firstSwap] = screen.getAllByRole('button', { name: 'Something different' })
+  if (!firstSwap) throw new Error('expected a swap button')
+  await user.click(firstSwap)
+  await waitFor(() => {
+    expect(titles()[0]).not.toBe(before[0])
+  })
+  expect(new Set(titles()).size).toBe(titles().length)
+
+  await user.click(screen.getByRole('button', { name: 'More ideas' }))
+  await waitFor(() => {
+    expect(titles().length).toBeGreaterThan(before.length)
+  })
 })

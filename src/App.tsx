@@ -145,6 +145,10 @@ function Kitchen() {
                             onUseLibrary={flow.showLibraryRecipes}
                             onBack={flow.goBack}
                             onReset={flow.reset}
+                            refining={flow.refining}
+                            refineNote={flow.refineNote}
+                            onSwap={(id) => void flow.swapRecipe(id)}
+                            onMore={() => void flow.moreRecipes()}
                           />
                         )}
                       </>

@@ -90,6 +90,12 @@ describe('suggestFromLibrary preferences', () => {
     expect(omelette?.ingredients[0]).toBe('4 eggs')
   })
 
+  it('can loosen the match threshold for alternatives', () => {
+    const strict = suggestFromLibrary(['eggs'], prefs())
+    const loose = suggestFromLibrary(['eggs'], prefs(), [], 0.25)
+    expect(loose.length).toBeGreaterThan(strict.length)
+  })
+
   it('skips excluded titles', () => {
     const titles = suggestFromLibrary(['eggs', 'spinach', 'tomato'], prefs(), [
       'Spinach and tomato omelette',

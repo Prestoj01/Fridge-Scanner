@@ -7,6 +7,7 @@ import { RevealText } from '../components/RevealText'
 import { MixingBowl } from '../components/MixingBowl'
 import { RecipeCard } from '../components/RecipeCard'
 import { RecipeSkeleton } from '../components/RecipeSkeleton'
+import type { Refining } from '../hooks/useScanFlow'
 import type { AsyncState, Recipe } from '../types'
 
 interface RecipesScreenProps {
@@ -18,6 +19,10 @@ interface RecipesScreenProps {
   onUseLibrary: () => void
   onBack: () => void
   onReset: () => void
+  refining: Refining
+  refineNote: string | null
+  onSwap: (id: string) => void
+  onMore: () => void
 }
 
 function summaryLine(recipes: readonly Recipe[]): string {
@@ -39,6 +44,10 @@ export default function RecipesScreen({
   onUseLibrary,
   onBack,
   onReset,
+  refining,
+  refineNote,
+  onSwap,
+  onMore,
 }: RecipesScreenProps) {
   const calm = useReducedMotion() ?? false
   if (generation.status === 'loading') {
@@ -130,11 +139,37 @@ export default function RecipesScreen({
               delay: index < 2 ? 0.35 + index * 0.15 : 0,
             }}
           >
-            <RecipeCard recipe={recipe} index={index} defaultOpen={index === 0} />
+            <RecipeCard
+              recipe={recipe}
+              index={index}
+              defaultOpen={index === 0}
+              onSwap={() => {
+                onSwap(recipe.id)
+              }}
+              swapping={refining.kind === 'swap' && refining.id === recipe.id}
+              busy={refining.kind !== 'idle'}
+            />
           </motion.li>
         ))}
       </ul>
+      {refineNote !== null && <Notice>{refineNote}</Notice>}
       <div className="screen__actions">
+        <button
+          type="button"
+          className="button button--primary"
+          disabled={refining.kind !== 'idle'}
+          aria-busy={refining.kind === 'more'}
+          onClick={onMore}
+        >
+          {refining.kind === 'more' ? (
+            <>
+              <span className="spinner" aria-hidden="true" />
+              Finding more…
+            </>
+          ) : (
+            'More ideas'
+          )}
+        </button>
         <button type="button" className="button button--ghost" onClick={onReset}>
           <Icon icon={RotateCcw} size={16} />
           Start over

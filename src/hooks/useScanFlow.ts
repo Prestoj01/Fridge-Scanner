@@ -38,11 +38,20 @@ export interface ScanFlow {
   removeIngredient: (id: string) => void
   setPreferences: (preferences: Preferences) => void
   findRecipes: () => Promise<void>
+  /** What "something different" is doing right now, if anything. */
+  refining: Refining
+  /** A short note when no different recipe could be found. */
+  refineNote: string | null
+  swapRecipe: (id: string) => Promise<void>
+  moreRecipes: () => Promise<void>
   showLibraryRecipes: () => void
   clearIngredients: () => void
   reset: () => void
 }
 
+export type Refining = { kind: 'idle' } | { kind: 'swap'; id: string } | { kind: 'more' }
+
+const NOT_REFINING: Refining = { kind: 'idle' }
 const IDLE: AsyncState = { status: 'idle' }
 const LOADING: AsyncState = { status: 'loading' }
 
@@ -68,6 +77,8 @@ export function useScanFlow(): ScanFlow {
   const [detection, setDetection] = useState<AsyncState>(IDLE)
   const [detectedCount, setDetectedCount] = useState<number | null>(null)
   const [generation, setGeneration] = useState<AsyncState>(IDLE)
+  const [refining, setRefining] = useState<Refining>(NOT_REFINING)
+  const [refineNote, setRefineNote] = useState<string | null>(null)
 
   useEffect(() => {
     savePantry({ ingredients: [...ingredients], preferences })
@@ -79,6 +90,8 @@ export function useScanFlow(): ScanFlow {
 
   const goBack = () => {
     ticket.current += 1
+    setRefining(NOT_REFINING)
+    setRefineNote(null)
     setDetection(IDLE)
     setGeneration(IDLE)
     setStep((current) => previousStep(current) ?? current)
@@ -143,6 +156,7 @@ export function useScanFlow(): ScanFlow {
     ticket.current += 1
     const names = ingredients.map((item) => item.name)
     setRecipes(toRecipes(suggestFromLibrary(names, preferences), 'library'))
+    setRefineNote(null)
     setGeneration(IDLE)
     setStep('recipes')
   }
@@ -155,6 +169,7 @@ export function useScanFlow(): ScanFlow {
     }
     const mine = ++ticket.current
     setRecipes([])
+    setRefineNote(null)
     setGeneration(LOADING)
     setStep('recipes')
     try {
@@ -175,6 +190,54 @@ export function useScanFlow(): ScanFlow {
   const clearIngredients = () => {
     setIngredients([])
   }
+
+  /** New recipes that differ from the ones on screen, from the API or the library. */
+  const differentRecipes = async (): Promise<RecipeContent[]> => {
+    const names = ingredients.map((item) => item.name)
+    const shown = recipes.map((recipe) => recipe.title)
+    const seen = new Set(shown.map((title) => title.toLowerCase()))
+    const fresh = (list: RecipeContent[]) =>
+      list.filter((item) => !seen.has(item.title.toLowerCase()))
+    // Alternatives may ask for a little more shopping than the first picks.
+    if (!aiEnabled) return fresh(suggestFromLibrary(names, preferences, shown, 0.25))
+    return fresh(await fetchRecipes(names, preferences, shown))
+  }
+
+  const refine = async (mode: Refining, apply: (found: RecipeContent[]) => void): Promise<void> => {
+    const mine = ++ticket.current
+    setRefining(mode)
+    setRefineNote(null)
+    try {
+      const found = await differentRecipes()
+      if (mine !== ticket.current) return
+      if (found.length === 0) {
+        setRefineNote(
+          aiEnabled
+            ? 'No new ideas came back. Try adding an ingredient or loosening a preference.'
+            : 'That is every match in the built-in library. Add ingredients for new ideas.',
+        )
+      } else {
+        apply(found)
+      }
+    } catch (error) {
+      if (mine !== ticket.current) return
+      setRefineNote(errorMessage(error))
+    } finally {
+      if (mine === ticket.current) setRefining(NOT_REFINING)
+    }
+  }
+
+  const swapRecipe = (id: string) =>
+    refine({ kind: 'swap', id }, (found) => {
+      const [next] = toRecipes(found.slice(0, 1), aiEnabled ? 'ai' : 'library')
+      if (!next) return
+      setRecipes((current) => current.map((recipe) => (recipe.id === id ? next : recipe)))
+    })
+
+  const moreRecipes = () =>
+    refine({ kind: 'more' }, (found) => {
+      setRecipes((current) => [...current, ...toRecipes(found, aiEnabled ? 'ai' : 'library')])
+    })
 
   const reset = () => {
     ticket.current += 1
@@ -207,6 +270,10 @@ export function useScanFlow(): ScanFlow {
     removeIngredient,
     setPreferences,
     findRecipes,
+    refining,
+    refineNote,
+    swapRecipe,
+    moreRecipes,
     showLibraryRecipes,
     clearIngredients,
     reset,

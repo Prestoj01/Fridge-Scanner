@@ -77,8 +77,14 @@ export async function detectIngredients(images: ApiImage[]): Promise<string[]> {
 export async function fetchRecipes(
   ingredients: string[],
   preferences: Preferences,
+  /** Titles already shown, so the model suggests something different. */
+  exclude: readonly string[] = [],
 ): Promise<RecipeContent[]> {
-  const payload: RecipesRequest = { ingredients, ...preferences }
+  const payload: RecipesRequest = {
+    ingredients,
+    ...preferences,
+    ...(exclude.length > 0 ? { exclude: [...exclude] } : {}),
+  }
   const body = await post('/recipes', payload)
   if (!isRecord(body) || !Array.isArray(body.recipes)) throw new ApiError('bad_response')
   return parseRecipes(body.recipes)

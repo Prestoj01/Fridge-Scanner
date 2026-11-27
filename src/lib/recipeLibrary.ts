@@ -32,6 +32,8 @@ export function suggestFromLibrary(
   preferences: Preferences,
   /** Titles already shown, to skip when asking for something different. */
   exclude: readonly string[] = [],
+  /** Share of a recipe's core ingredients the user must have. */
+  minScore = 0.5,
 ): RecipeContent[] {
   const skip = new Set(exclude.map((title) => title.trim().toLowerCase()))
   const eligible = LIBRARY.filter(
@@ -69,7 +71,7 @@ export function suggestFromLibrary(
   })
 
   return scored
-    .filter((entry) => entry.score >= 0.5)
+    .filter((entry) => entry.score >= minScore)
     .sort(
       (a, b) =>
         Number(b.cuisineMatch) - Number(a.cuisineMatch) ||
