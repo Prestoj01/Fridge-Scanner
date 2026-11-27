@@ -2396,3 +2396,12 @@ a {
 .recipe-card__share .share-button {
   margin-left: 0;
 }
+
+/* Turnstile only shows itself when a visitor needs to solve a challenge. */
+.turnstile-slot {
+  position: fixed;
+  bottom: var(--space-3);
+  left: 50%;
+  z-index: 60;
+  transform: translateX(-50%);
+}

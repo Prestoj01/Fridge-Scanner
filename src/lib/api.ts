@@ -2,6 +2,7 @@ import type { Preferences, RecipeContent } from '../types'
 import type { ApiErrorCode, ApiImage, DetectRequest, RecipesRequest } from '../types/api'
 import { API_URL } from './config'
 import { recipeCacheKey } from './recipeCacheKey'
+import { turnstileToken } from './turnstile'
 import { isRecord, parseIngredientNames, parseRecipes } from './validate'
 
 const TIMEOUT_MS = 60_000
@@ -43,11 +44,21 @@ function errorFromBody(body: unknown): ApiError {
 }
 
 async function post(path: string, payload: unknown): Promise<unknown> {
+  let token: string | null
+  try {
+    token = await turnstileToken()
+  } catch {
+    throw new ApiError('forbidden', 'Could not confirm this is a real visit. Reload and try again.')
+  }
+
   let response: Response
   try {
     response = await fetch(`${API_URL}${path}`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token === null ? {} : { 'X-Turnstile-Token': token }),
+      },
       body: JSON.stringify(payload),
       signal: AbortSignal.timeout(TIMEOUT_MS),
     })

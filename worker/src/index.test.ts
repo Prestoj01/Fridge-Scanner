@@ -46,7 +46,7 @@ afterEach(() => {
 describe('routing and CORS', () => {
   it('reports health and whether a key is configured', async () => {
     const response = await worker.fetch(new Request('https://api.test/health'), {})
-    expect(await response.json()).toEqual({ ok: true, configured: false })
+    expect(await response.json()).toEqual({ ok: true, configured: false, botCheck: false })
   })
 
   it('answers preflight for an allowed origin', async () => {
@@ -184,6 +184,64 @@ describe('POST /recipes', () => {
     const response = await worker.fetch(post('/recipes', { ingredients: ['eggs'] }), env)
     expect(response.status).toBe(502)
     expect(await errorCode(response)).toBe('upstream_error')
+  })
+})
+
+describe('Turnstile bot check', () => {
+  const recipe = {
+    title: 'Rice bowl',
+    ingredients: ['1 cup rice'],
+    steps: ['Cook the rice.'],
+  }
+
+  /** Answers siteverify with the given verdict and Gemini with one recipe. */
+  function mockUpstreams(success: boolean) {
+    const fetchMock = vi.fn((url: string) =>
+      Promise.resolve(
+        url.includes('siteverify')
+          ? new Response(JSON.stringify({ success }))
+          : new Response(JSON.stringify({ output_text: JSON.stringify({ recipes: [recipe] }) })),
+      ),
+    )
+    vi.stubGlobal('fetch', fetchMock)
+    return fetchMock
+  }
+
+  function withToken(token: string | null): Request {
+    const request = post('/recipes', { ingredients: ['rice'] })
+    if (token !== null) request.headers.set('X-Turnstile-Token', token)
+    return request
+  }
+
+  const guarded: Env = { ...env, TURNSTILE_SECRET: 'secret' }
+
+  it('rejects requests without a token when a secret is set', async () => {
+    const fetchMock = mockUpstreams(true)
+    const response = await worker.fetch(withToken(null), guarded)
+    expect(response.status).toBe(403)
+    expect(fetchMock).not.toHaveBeenCalled()
+  })
+
+  it('rejects a token that Turnstile does not accept', async () => {
+    mockUpstreams(false)
+    const response = await worker.fetch(withToken('bad'), guarded)
+    expect(response.status).toBe(403)
+  })
+
+  it('passes a valid token through to the model', async () => {
+    const fetchMock = mockUpstreams(true)
+    const response = await worker.fetch(withToken('good'), guarded)
+    expect(response.status).toBe(200)
+    expect(fetchMock).toHaveBeenCalledTimes(2)
+  })
+
+  it('allows the token header in CORS preflight', async () => {
+    const request = new Request('https://api.test/recipes', {
+      method: 'OPTIONS',
+      headers: { Origin: ORIGIN },
+    })
+    const response = await worker.fetch(request, guarded)
+    expect(response.headers.get('Access-Control-Allow-Headers')).toContain('X-Turnstile-Token')
   })
 })
 

@@ -31,6 +31,8 @@ jobs:
           VITE_BASE: /${{ github.event.repository.name }}/
           # Set this repository variable to the Worker URL to turn on AI features.
           VITE_API_URL: ${{ vars.VITE_API_URL }}
+          # Optional: a Cloudflare Turnstile site key to turn on the bot check.
+          VITE_TURNSTILE_SITE_KEY: ${{ vars.VITE_TURNSTILE_SITE_KEY }}
       - uses: actions/upload-pages-artifact@v5
         if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
         with:

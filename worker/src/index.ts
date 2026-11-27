@@ -24,6 +24,7 @@ import type { Preferences } from '../../src/types'
 import { readCachedRecipes, writeCachedRecipes } from './cache'
 import { generateJson, UpstreamError } from './gemini'
 import { checkLimits, type LimitBindings } from './limits'
+import { TOKEN_HEADER, verifyTurnstile } from './turnstile'
 import {
   DETECT_PROMPT,
   DETECT_SCHEMA,
@@ -37,6 +38,8 @@ export interface Env extends LimitBindings {
   GEMINI_API_KEY?: string
   GEMINI_MODEL?: string
   ALLOWED_ORIGINS?: string
+  /** Turnstile secret key. When set, model requests need a Turnstile token. */
+  TURNSTILE_SECRET?: string
 }
 
 const DEFAULT_MODEL = 'gemini-3.5-flash-lite'
@@ -67,7 +70,7 @@ function corsHeaders(origin: string | null, env: Env): Record<string, string> {
   return {
     'Access-Control-Allow-Origin': origin,
     'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Allow-Headers': `Content-Type, ${TOKEN_HEADER}`,
     'Access-Control-Max-Age': '86400',
     Vary: 'Origin',
   }
@@ -182,7 +185,11 @@ async function route(request: Request, env: Env): Promise<unknown> {
   const path = pathname.replace(/\/+$/, '') || '/'
 
   if (request.method === 'GET' && (path === '/' || path === '/health')) {
-    return { ok: true, configured: Boolean(env.GEMINI_API_KEY) }
+    return {
+      ok: true,
+      configured: Boolean(env.GEMINI_API_KEY),
+      botCheck: Boolean(env.TURNSTILE_SECRET),
+    }
   }
   if (path !== '/detect' && path !== '/recipes') {
     throw new HttpError(404, 'not_found', 'Not found.')
@@ -217,6 +224,16 @@ async function route(request: Request, env: Env): Promise<unknown> {
       'rate_limited',
       'The kitchen is busy right now. Try again in a minute.',
     )
+  }
+  if (env.TURNSTILE_SECRET) {
+    const token = request.headers.get(TOKEN_HEADER)
+    if (!(await verifyTurnstile(env.TURNSTILE_SECRET, token, clientId))) {
+      throw new HttpError(
+        403,
+        'forbidden',
+        'Could not confirm this is a real visit. Reload and try again.',
+      )
+    }
   }
   if (!recipesInput) return handleDetect(body, env)
   const fresh = await generateRecipes(recipesInput, env)

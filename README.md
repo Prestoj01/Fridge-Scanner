@@ -50,7 +50,7 @@ renders recipes      ◀────────────────── h
 ```
 
 - The API key lives only in the Worker. It never reaches the browser.
-- The Worker allows only listed origins, caps request sizes, rate limits each client and the app as a whole (with Cloudflare's free Rate Limiting bindings), and validates everything the model returns before passing it on.
+- The Worker allows only listed origins, caps request sizes, can require a [Turnstile](https://developers.cloudflare.com/turnstile/) bot check, rate limits each client and the app as a whole (with Cloudflare's free Rate Limiting bindings), and validates everything the model returns before passing it on.
 - Recipe replies are cached for a day in Cloudflare's edge cache, and for the session in the browser, so asking again with the same pantry and preferences costs no model quota.
 - Request and response types are shared between the app and the Worker ([src/types/api.ts](src/types/api.ts)).
 
@@ -120,7 +120,23 @@ If you fork this project, change `ALLOWED_ORIGINS` in [worker/wrangler.toml](wor
 
 1. In the repository, go to **Settings → Pages** and set **Source** to **GitHub Actions**.
 2. Go to **Settings → Secrets and variables → Actions → Variables** and add a repository variable named `VITE_API_URL` with the Worker URL. Skip this to deploy in offline mode.
-3. Push to `main`. The workflow in [.github/workflows/deploy.yml](.github/workflows/deploy.yml) lints, tests, builds, and deploys.
+3. Optional: add a `VITE_TURNSTILE_SITE_KEY` variable to turn on the bot check (see below).
+4. Push to `main`. The workflow in [.github/workflows/deploy.yml](.github/workflows/deploy.yml) lints, tests, builds, and deploys.
+
+### 3. Bot protection (optional)
+
+[Cloudflare Turnstile](https://developers.cloudflare.com/turnstile/) is free and stops scripts from spending your Gemini quota. Most visitors never see a challenge.
+
+1. In the Cloudflare dashboard, open **Turnstile → Add widget**. Add your GitHub Pages hostname (and `localhost` if you want to test locally) and choose **Invisible**.
+2. Give the secret key to the Worker:
+
+   ```bash
+   npx wrangler secret put TURNSTILE_SECRET --config worker/wrangler.toml
+   ```
+
+3. Add the site key as a repository variable named `VITE_TURNSTILE_SITE_KEY`, then push to rebuild the site.
+
+Set both or neither. With only the secret, every AI request is refused. `<worker-url>/health` shows `"botCheck": true` once the secret is set.
 
 ## Scripts
 

@@ -1,1 +1,3 @@
 GEMINI_API_KEY=
+# Optional. Leave unset locally to skip the Turnstile bot check.
+# TURNSTILE_SECRET=
