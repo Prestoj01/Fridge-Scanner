@@ -8,6 +8,8 @@ MotionGlobalConfig.skipAnimations = true
 
 afterEach(() => {
   cleanup()
+  // Remembered ingredients and saved recipes must not leak between tests.
+  if (typeof localStorage !== 'undefined') localStorage.clear()
 })
 
 // jsdom has no IntersectionObserver. Report every element as in view at once,

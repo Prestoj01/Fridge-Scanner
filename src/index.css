@@ -1519,3 +1519,48 @@ a {
     aspect-ratio: 4 / 3;
   }
 }
+
+/* ───────────── Resume card ───────────── */
+
+.resume {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: var(--space-3) var(--space-4);
+  padding: var(--space-4);
+  border: var(--rule);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+}
+
+.resume__foods {
+  display: flex;
+}
+
+.resume__foods > * + * {
+  margin-left: -0.75rem;
+}
+
+.resume__text {
+  display: grid;
+  gap: var(--space-1);
+}
+
+.resume__text h3 {
+  color: var(--color-accent);
+}
+
+.resume__text p {
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  font-style: italic;
+  line-height: 1.25;
+}
+
+.resume__actions {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+}

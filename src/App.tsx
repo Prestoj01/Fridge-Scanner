@@ -87,6 +87,8 @@ export default function App() {
                         onRemovePhoto={flow.removePhoto}
                         onDetect={() => void flow.detect()}
                         onEnterManually={flow.enterManually}
+                        savedNames={flow.ingredients.map((item) => item.name)}
+                        onClearSaved={flow.clearIngredients}
                       />
                     )}
                     {flow.step === 'review' && (

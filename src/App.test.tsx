@@ -71,3 +71,30 @@ it('removes an ingredient', async () => {
   await user.click(screen.getByRole('button', { name: 'Remove eggs' }))
   expect(screen.getByText('Your list is empty')).toBeInTheDocument()
 })
+
+it('remembers ingredients between visits and offers to continue', async () => {
+  const user = userEvent.setup()
+  const { unmount } = render(<App />)
+
+  await user.click(await screen.findByRole('button', { name: 'Type your ingredients' }))
+  await user.type(await screen.findByLabelText('Ingredient name'), 'eggs, rice{Enter}')
+  unmount()
+
+  render(<App />)
+  expect(await screen.findByText('From last time')).toBeInTheDocument()
+  await user.click(screen.getByRole('button', { name: 'Continue with these' }))
+  const list = await screen.findByRole('list', { name: 'Your ingredients' })
+  expect(within(list).getByText('rice')).toBeInTheDocument()
+})
+
+it('clears the remembered list', async () => {
+  localStorage.setItem(
+    'fridge-scanner:pantry',
+    JSON.stringify({ ingredients: [{ id: 'a', name: 'eggs', source: 'manual' }], diet: 'any' }),
+  )
+  const user = userEvent.setup()
+  render(<App />)
+  await user.click(await screen.findByRole('button', { name: 'Clear' }))
+  expect(screen.queryByText('From last time')).not.toBeInTheDocument()
+  expect(localStorage.getItem('fridge-scanner:pantry')).toBeNull()
+})

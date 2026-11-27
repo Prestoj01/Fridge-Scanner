@@ -1,8 +1,9 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { detectIngredients, fetchRecipes } from '../lib/api'
 import { API_URL } from '../lib/config'
 import { prepareImage } from '../lib/image'
 import { addIngredients } from '../lib/ingredients'
+import { loadPantry, savePantry } from '../lib/pantry'
 import { suggestFromLibrary } from '../lib/recipeLibrary'
 import { previousStep } from '../lib/steps'
 import type { AsyncState, Diet, Ingredient, Photo, Recipe, RecipeContent, StepId } from '../types'
@@ -30,6 +31,7 @@ export interface ScanFlow {
   setDiet: (diet: Diet) => void
   findRecipes: () => Promise<void>
   showLibraryRecipes: () => void
+  clearIngredients: () => void
   reset: () => void
 }
 
@@ -50,12 +52,18 @@ export function useScanFlow(): ScanFlow {
 
   const [step, setStep] = useState<StepId>('upload')
   const [photos, setPhotos] = useState<readonly Photo[]>([])
-  const [ingredients, setIngredients] = useState<readonly Ingredient[]>([])
+  // The ingredient list and diet persist between visits.
+  const [pantry] = useState(loadPantry)
+  const [ingredients, setIngredients] = useState<readonly Ingredient[]>(pantry.ingredients)
   const [recipes, setRecipes] = useState<readonly Recipe[]>([])
-  const [diet, setDiet] = useState<Diet>('any')
+  const [diet, setDiet] = useState<Diet>(pantry.diet)
   const [detection, setDetection] = useState<AsyncState>(IDLE)
   const [detectedCount, setDetectedCount] = useState<number | null>(null)
   const [generation, setGeneration] = useState<AsyncState>(IDLE)
+
+  useEffect(() => {
+    savePantry({ ingredients: [...ingredients], diet })
+  }, [ingredients, diet])
 
   // Each async action takes a ticket. A result is ignored if a newer action
   // (or a reset) has started since, so stale replies never overwrite state.
@@ -155,6 +163,11 @@ export function useScanFlow(): ScanFlow {
     }
   }
 
+  /** Clears the remembered ingredient list without leaving the current step. */
+  const clearIngredients = () => {
+    setIngredients([])
+  }
+
   const reset = () => {
     ticket.current += 1
     for (const photo of photos) URL.revokeObjectURL(photo.url)
@@ -187,6 +200,7 @@ export function useScanFlow(): ScanFlow {
     setDiet,
     findRecipes,
     showLibraryRecipes,
+    clearIngredients,
     reset,
   }
 }

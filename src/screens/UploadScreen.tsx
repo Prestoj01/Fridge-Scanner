@@ -5,6 +5,7 @@ import { Cover } from '../components/Cover'
 import { Icon } from '../components/Icon'
 import { RevealText } from '../components/RevealText'
 import { Notice } from '../components/Notice'
+import { ResumeCard } from '../components/ResumeCard'
 import type { AsyncState, Photo } from '../types'
 import { API_LIMITS } from '../types/api'
 
@@ -16,6 +17,15 @@ interface UploadScreenProps {
   onRemovePhoto: (id: string) => void
   onDetect: () => void
   onEnterManually: () => void
+  /** Ingredient names remembered from the last visit. */
+  savedNames: readonly string[]
+  onClearSaved: () => void
+}
+
+function Resume({ savedNames, onEnterManually, onClearSaved }: UploadScreenProps) {
+  return savedNames.length > 0 ? (
+    <ResumeCard names={savedNames} onContinue={onEnterManually} onClear={onClearSaved} />
+  ) : null
 }
 
 export default function UploadScreen(props: UploadScreenProps) {
@@ -23,10 +33,12 @@ export default function UploadScreen(props: UploadScreenProps) {
 }
 
 /** Without a backend, photos cannot be read, so lead with typing instead. */
-function OfflineStart({ onEnterManually }: UploadScreenProps) {
+function OfflineStart(props: UploadScreenProps) {
+  const { onEnterManually } = props
   return (
     <section className="screen" aria-labelledby="upload-heading">
       <Cover />
+      <Resume {...props} />
       <header className="screen__header">
         <h2 id="upload-heading">
           <RevealText text="Turn what you have into a *healthy meal*" />
@@ -46,14 +58,8 @@ function OfflineStart({ onEnterManually }: UploadScreenProps) {
   )
 }
 
-function PhotoUpload({
-  photos,
-  detection,
-  onAddPhotos,
-  onRemovePhoto,
-  onDetect,
-  onEnterManually,
-}: UploadScreenProps) {
+function PhotoUpload(props: UploadScreenProps) {
+  const { photos, detection, onAddPhotos, onRemovePhoto, onDetect, onEnterManually } = props
   const inputRef = useRef<HTMLInputElement>(null)
   const [dragging, setDragging] = useState(false)
   const calm = useReducedMotion() ?? false
@@ -86,6 +92,7 @@ function PhotoUpload({
   return (
     <section className="screen" aria-labelledby="upload-heading">
       <Cover busy={busy} />
+      {photos.length === 0 && <Resume {...props} />}
       <header className="screen__header">
         <h2 id="upload-heading">
           <RevealText text="Photograph your fridge to *find recipes*" />
