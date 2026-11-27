@@ -176,3 +176,29 @@ it('swaps a recipe for something different and finds more ideas', async () => {
     expect(titles().length).toBeGreaterThan(before.length)
   })
 })
+
+it('walks through a recipe in cooking mode', async () => {
+  const user = userEvent.setup()
+  render(<App />)
+
+  await user.click(await screen.findByRole('button', { name: 'Type your ingredients' }))
+  await user.type(await screen.findByLabelText('Ingredient name'), 'eggs, spinach, tomato{Enter}')
+  await user.click(screen.getByRole('button', { name: 'Find recipes' }))
+
+  const [start] = await screen.findAllByRole('button', { name: 'Start cooking' })
+  if (!start) throw new Error('expected a Start cooking button')
+  await user.click(start)
+
+  const dialog = await screen.findByRole('dialog', { name: 'Spinach and tomato omelette' })
+  expect(within(dialog).getByText('Before you start')).toBeInTheDocument()
+  await user.click(within(dialog).getByRole('checkbox', { name: /eggs/ }))
+  expect(within(dialog).getByRole('checkbox', { name: /eggs/ })).toBeChecked()
+
+  await user.click(within(dialog).getByRole('button', { name: 'Let’s cook' }))
+  expect(await within(dialog).findByText('Step 1 of 5')).toBeInTheDocument()
+  await user.keyboard('{ArrowRight}')
+  expect(await within(dialog).findByText('Step 2 of 5')).toBeInTheDocument()
+
+  await user.keyboard('{Escape}')
+  expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+})

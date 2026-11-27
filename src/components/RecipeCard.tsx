@@ -1,11 +1,21 @@
-import { ChevronDown, Clock, Flame, Leaf, RefreshCw, ShoppingBasket, Users } from 'lucide-react'
+import {
+  ChevronDown,
+  ChefHat,
+  Clock,
+  Flame,
+  Leaf,
+  RefreshCw,
+  ShoppingBasket,
+  Users,
+} from 'lucide-react'
 import { motion, useReducedMotion, useScroll, useTransform, type MotionValue } from 'motion/react'
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 import type { FoodKind } from '../lib/foodKind'
 import { recipeFoods } from '../lib/recipeFoods'
 import { substitutesFor } from '../lib/substitutions'
 import type { Recipe } from '../types'
 import { AddToListButton } from './AddToListButton'
+import { CookingMode } from './CookingMode'
 import { Food } from './food/Food'
 import { Icon } from './Icon'
 import { NutritionBar } from './NutritionBar'
@@ -121,6 +131,7 @@ export function RecipeCard({
   busy = false,
 }: RecipeCardProps) {
   const calm = useReducedMotion() ?? false
+  const [cooking, setCooking] = useState(false)
   const ready = recipe.missingIngredients.length === 0
   const color = SPREAD_COLORS[index % SPREAD_COLORS.length] ?? 'tomato'
   const foods = recipeFoods(recipe)
@@ -189,6 +200,29 @@ export function RecipeCard({
       )}
 
       {recipe.nutrition && <NutritionBar nutrition={recipe.nutrition} />}
+
+      <button
+        type="button"
+
+        className="button cook-button"
+
+        onClick={() => {
+          setCooking(true)
+        }}
+      >
+        <Icon icon={ChefHat} size={20} />
+        Start cooking
+      </button>
+
+      {cooking && (
+        <CookingMode
+          recipe={recipe}
+
+          onClose={() => {
+            setCooking(false)
+          }}
+        />
+      )}
 
       {onSwap && (
         <button
