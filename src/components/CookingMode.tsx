@@ -1,8 +1,9 @@
-import { ChevronLeft, ChevronRight, X } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Volume2, VolumeX, X } from 'lucide-react'
 import { AnimatePresence, m, useReducedMotion, type PanInfo } from 'motion/react'
 import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { useStepTimers } from '../hooks/useStepTimers'
+import { useReadAloud } from '../hooks/useReadAloud'
 import { useWakeLock } from '../hooks/useWakeLock'
 import { recipeFoods } from '../lib/recipeFoods'
 import { findTimer, formatClock } from '../lib/timers'
@@ -99,6 +100,14 @@ export function CookingMode({ recipe, onClose }: CookingModeProps) {
   const step = steps[stepIndex]
   const found = step === undefined ? null : findTimer(step)
   // Timers still going on other steps, so the cook can jump back to them.
+  const spoken =
+    page === 0
+      ? `Get everything out. You'll need: ${recipe.ingredients.map((line) => convertLine(line, units)).join('. ')}.`
+      : step !== undefined
+        ? `Step ${String(stepIndex + 1)}. ${step}`
+        : 'Dinner is served. Enjoy every bite.'
+  const voice = useReadAloud(spoken)
+
   const elsewhere = [...timers.timers.keys()]
     .filter((index) => index !== stepIndex)
     .sort((a, b) => a - b)
@@ -120,6 +129,17 @@ export function CookingMode({ recipe, onClose }: CookingModeProps) {
           <p className="kicker">Cooking mode</p>
           <h2 id="cooking-title">{recipe.title}</h2>
         </div>
+        {voice.supported && (
+          <button
+            type="button"
+            className="cooking__close cooking__voice"
+            aria-label="Read steps aloud"
+            aria-pressed={voice.on}
+            onClick={voice.toggle}
+          >
+            <Icon icon={voice.on ? Volume2 : VolumeX} size={24} />
+          </button>
+        )}
         <button
           type="button"
           className="cooking__close"

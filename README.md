@@ -27,7 +27,7 @@ Snap a photo of your fridge or pantry and get healthy recipes, with steps, from 
 - **Shopping list.** Add a recipe's missing ingredients in one tap, check them off, and copy or share the list.
 - **US or metric.** One switch converts every amount and oven temperature. It starts from your device's region.
 - **Nutrition.** Estimated calories, protein, carbs, and fat per serving.
-- **Cooking mode.** A full-screen, high-contrast view with one step at a time, an ingredient checklist, step timers with a chime, and the screen kept awake.
+- **Cooking mode.** A full-screen, high-contrast view with one step at a time, an ingredient checklist, step timers with a chime, read-aloud steps for when your hands are messy, and the screen kept awake.
 - **Installable.** Add it to your home screen. After the first visit the app opens and works without a connection (typed ingredients and the built-in recipe library).
 - **Sharing.** Share a recipe as a link (the whole recipe travels in the URL, no server needed) or as a magazine-style image.
 

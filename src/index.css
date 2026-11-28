@@ -2592,3 +2592,14 @@ h2[tabindex='-1']:focus {
   background: var(--color-text, #151312);
   color: var(--color-bg);
 }
+
+/* Read-aloud sits beside the close button and lights up when on. */
+.cooking__voice {
+  margin-right: 0;
+  margin-left: auto;
+}
+
+.cooking__voice[aria-pressed='true'] {
+  background: var(--tomato);
+  color: #151312;
+}
