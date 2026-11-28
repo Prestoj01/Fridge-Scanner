@@ -73,6 +73,7 @@ describe('parsePreferences', () => {
         avoid: ['nuts', 'bacon', 'soy'],
         cuisine: 'indian',
         servings: 4,
+        goal: 'high-protein',
       }),
     ).toEqual({
       diet: 'vegan',
@@ -80,16 +81,20 @@ describe('parsePreferences', () => {
       avoid: ['nuts', 'soy'],
       cuisine: 'indian',
       servings: 4,
+      goal: 'high-protein',
     })
   })
 
   it('falls back to defaults', () => {
-    expect(parsePreferences({ maxMinutes: 17, cuisine: 'martian', servings: 99 })).toEqual({
+    expect(
+      parsePreferences({ maxMinutes: 17, cuisine: 'martian', servings: 99, goal: 'bulk' }),
+    ).toEqual({
       diet: 'any',
       maxMinutes: null,
       avoid: [],
       cuisine: 'any',
       servings: 8,
+      goal: 'balanced',
     })
     expect(parsePreferences(null).servings).toBe(2)
   })

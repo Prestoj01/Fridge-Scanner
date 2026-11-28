@@ -7,11 +7,13 @@ import {
   ALLERGENS,
   CUISINES,
   DEFAULT_PREFERENCES,
+  GOALS,
   MAX_SERVINGS,
   TIME_LIMITS,
   type Allergen,
   type Cuisine,
   type Diet,
+  type Goal,
   type Nutrition,
   type Preferences,
   type RecipeContent,
@@ -118,5 +120,6 @@ export function parsePreferences(value: unknown): Preferences {
     typeof value.servings === 'number' && Number.isInteger(value.servings)
       ? Math.min(Math.max(value.servings, 1), MAX_SERVINGS)
       : DEFAULT_PREFERENCES.servings
-  return { diet: parseDiet(value.diet), maxMinutes, avoid, cuisine, servings }
+  const goal: Goal = GOALS.find((option) => option === value.goal) ?? 'balanced'
+  return { diet: parseDiet(value.diet), maxMinutes, avoid, cuisine, servings, goal }
 }

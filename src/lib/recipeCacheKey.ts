@@ -22,6 +22,7 @@ export function recipeCacheKey(
     sorted(preferences.avoid),
     preferences.cuisine,
     preferences.servings,
+    preferences.goal,
     sorted(exclude),
   ])
 }

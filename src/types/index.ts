@@ -24,6 +24,10 @@ export interface Ingredient {
 
 export type Diet = 'any' | 'vegetarian' | 'vegan'
 
+export const GOALS = ['balanced', 'high-protein', 'low-carb', 'light'] as const
+/** A health goal that steers which recipes are suggested. */
+export type Goal = (typeof GOALS)[number]
+
 export const ALLERGENS = ['dairy', 'eggs', 'gluten', 'nuts', 'fish', 'soy'] as const
 export type Allergen = (typeof ALLERGENS)[number]
 
@@ -47,6 +51,7 @@ export interface Preferences {
   avoid: Allergen[]
   cuisine: Cuisine
   servings: number
+  goal: Goal
 }
 
 export const DEFAULT_PREFERENCES: Preferences = {
@@ -55,6 +60,7 @@ export const DEFAULT_PREFERENCES: Preferences = {
   avoid: [],
   cuisine: 'any',
   servings: 2,
+  goal: 'balanced',
 }
 
 export const TIME_LIMITS = [15, 30, 45] as const

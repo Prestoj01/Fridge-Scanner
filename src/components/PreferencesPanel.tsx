@@ -7,6 +7,7 @@ import {
   type Allergen,
   type Cuisine,
   type Diet,
+  type Goal,
   type Preferences,
 } from '../types'
 import { Icon } from './Icon'
@@ -21,6 +22,13 @@ const DIETS: readonly { value: Diet; label: string }[] = [
   { value: 'any', label: 'Anything' },
   { value: 'vegetarian', label: 'Vegetarian' },
   { value: 'vegan', label: 'Vegan' },
+]
+
+const GOAL_OPTIONS: readonly { value: Goal; label: string }[] = [
+  { value: 'balanced', label: 'Balanced' },
+  { value: 'high-protein', label: 'High protein' },
+  { value: 'low-carb', label: 'Low carb' },
+  { value: 'light', label: 'Light' },
 ]
 
 const TIMES: readonly { value: number; label: string }[] = [
@@ -47,7 +55,7 @@ const CUISINE_LABELS: Record<Cuisine, string> = {
   indian: 'Indian',
 }
 
-/** Diet, time, foods to avoid, cuisine, and servings for the next batch of recipes. */
+/** Diet, health goal, time, foods to avoid, cuisine, and servings for the next batch of recipes. */
 export function PreferencesPanel({ preferences, onChange }: PreferencesPanelProps) {
   const update = (patch: Partial<Preferences>) => {
     onChange({ ...preferences, ...patch })
@@ -73,6 +81,16 @@ export function PreferencesPanel({ preferences, onChange }: PreferencesPanelProp
         value={preferences.diet}
         onChange={(diet) => {
           update({ diet })
+        }}
+      />
+
+      <Segmented
+        legend="Goal"
+        name="goal"
+        options={GOAL_OPTIONS}
+        value={preferences.goal}
+        onChange={(goal) => {
+          update({ goal })
         }}
       />
 

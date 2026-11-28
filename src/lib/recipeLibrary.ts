@@ -1,5 +1,6 @@
 import { LIBRARY, type LibraryRecipe } from '../data/recipes'
 import type { Diet, Preferences, RecipeContent } from '../types'
+import { fitsGoal } from './goals'
 import { scaleLine } from './scale'
 
 const MAX_SUGGESTIONS = 6
@@ -42,6 +43,7 @@ export function suggestFromLibrary(
   const eligible = LIBRARY.filter(
     (recipe) =>
       fitsDiet(recipe, preferences.diet) &&
+      fitsGoal(recipe.nutrition, preferences.goal) &&
       (preferences.maxMinutes === null || recipe.timeMinutes <= preferences.maxMinutes) &&
       !recipe.allergens.some((allergen) => preferences.avoid.includes(allergen)) &&
       !skip.has(recipe.title.toLowerCase()),

@@ -125,3 +125,17 @@ describe('suggestFromLibrary use-it-up', () => {
     expect(urgent[0]?.usedIngredients).toContain('banana')
   })
 })
+
+describe('suggestFromLibrary health goals', () => {
+  const names = LIBRARY.flatMap((recipe) => recipe.core.map((core) => core.name))
+
+  it.each([
+    ['high-protein', (r: { nutrition?: { protein: number } }) => (r.nutrition?.protein ?? 0) >= 20],
+    ['low-carb', (r: { nutrition?: { carbs: number } }) => (r.nutrition?.carbs ?? 99) <= 20],
+    ['light', (r: { nutrition?: { calories: number } }) => (r.nutrition?.calories ?? 999) <= 350],
+  ] as const)('only suggests %s recipes for that goal', (goal, fits) => {
+    const recipes = suggestFromLibrary(names, { ...DEFAULT_PREFERENCES, goal })
+    expect(recipes.length).toBeGreaterThan(0)
+    expect(recipes.every(fits)).toBe(true)
+  })
+})

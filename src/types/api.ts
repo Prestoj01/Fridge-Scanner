@@ -2,7 +2,7 @@
  * Request and response shapes shared by the web app and the Worker in
  * `worker/`. Keep both sides in sync by importing from here.
  */
-import type { Allergen, Cuisine, Diet, RecipeContent } from './index'
+import type { Allergen, Cuisine, Diet, Goal, RecipeContent } from './index'
 
 export interface ApiImage {
   mimeType: 'image/jpeg' | 'image/png' | 'image/webp'
@@ -25,6 +25,7 @@ export interface RecipesRequest {
   avoid?: Allergen[]
   cuisine?: Cuisine
   servings?: number
+  goal?: Goal
   /** Titles already shown, so the model suggests something different. */
   exclude?: string[]
   /** Ingredients to use up first. */

@@ -1,4 +1,5 @@
 import type { Cuisine, Preferences } from '../../src/types'
+import { GOAL_RULES } from '../../src/lib/goals'
 import { API_LIMITS } from '../../src/types/api'
 
 export const DETECT_SYSTEM = `You identify food ingredients in photos of fridges, freezers, and pantries.
@@ -55,6 +56,9 @@ export function recipesPrompt(
     `Write every recipe for ${String(preferences.servings)} ${preferences.servings === 1 ? 'serving' : 'servings'}, with amounts to match.`,
   ]
   if (preferences.diet !== 'any') lines.push(`Every recipe must be ${preferences.diet}.`)
+  if (preferences.goal !== 'balanced') {
+    lines.push(`Every recipe must be ${GOAL_RULES[preferences.goal].prompt}.`)
+  }
   if (preferences.maxMinutes !== null) {
     lines.push(`Every recipe must take ${String(preferences.maxMinutes)} minutes or less in total.`)
   }

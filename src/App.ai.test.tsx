@@ -149,6 +149,7 @@ it('switches to built-in recipes on its own when the AI request fails', async ()
       avoid: ['nuts'],
       cuisine: 'italian',
       servings: 3,
+      goal: 'balanced',
     },
     [],
     [],
