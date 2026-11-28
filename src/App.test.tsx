@@ -140,7 +140,8 @@ it('adds missing ingredients to a shopping list and checks them off', async () =
   await user.click(await screen.findByRole('button', { name: 'Add it to shopping list' }))
   await user.click(screen.getByRole('link', { name: 'On your shopping list' }))
 
-  const list = await screen.findByRole('list', { name: 'Shopping list' })
+  const list = await screen.findByRole('group', { name: 'Shopping list' })
+  expect(within(list).getByRole('heading', { name: 'Dairy and eggs' })).toBeInTheDocument()
   expect(within(list).getByText('eggs')).toBeInTheDocument()
   await user.click(within(list).getByRole('checkbox'))
   expect(within(list).getByRole('checkbox')).toBeChecked()

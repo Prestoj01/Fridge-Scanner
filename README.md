@@ -24,7 +24,7 @@ Snap a photo of your fridge or pantry and get healthy recipes, with steps, from 
 - **Remembers your fridge.** Your ingredient list and preferences come back on your next visit.
 - **Something different.** Swap any recipe for a new one, or ask for more ideas.
 - **Ingredient swaps.** Missing something? Each recipe suggests what to use instead.
-- **Shopping list.** Add a recipe's missing ingredients in one tap, check them off, and copy or share the list.
+- **Shopping list.** Add a recipe's missing ingredients in one tap. The list is grouped by store aisle (produce, dairy, pantry, and so on), and you can check items off and copy or share it.
 - **US or metric.** One switch converts every amount and oven temperature. It starts from your device's region.
 - **Nutrition.** Estimated calories, protein, carbs, and fat per serving.
 - **Cooking mode.** A full-screen, high-contrast view with one step at a time, an ingredient checklist, step timers with a chime, read-aloud steps for when your hands are messy, and the screen kept awake.

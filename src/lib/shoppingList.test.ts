@@ -37,7 +37,10 @@ describe('shopping list', () => {
     const list = addToList([], ['garlic', 'pasta'], null)
     const [garlic, pasta] = list
     if (!garlic || !pasta) throw new Error('expected items')
-    expect(listAsText([garlic, { ...pasta, checked: true }])).toBe('Shopping list\n• garlic')
+    expect(listAsText([garlic, { ...pasta, checked: true }])).toBe(
+      'Shopping list\n\nPRODUCE\n• garlic',
+    )
+    expect(listAsText(list)).toBe('Shopping list\n\nPRODUCE\n• garlic\n\nPANTRY\n• pasta')
     storeShoppingList(list)
     expect(loadShoppingList()).toEqual(list)
   })

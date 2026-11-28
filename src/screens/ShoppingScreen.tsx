@@ -8,6 +8,7 @@ import { RevealText } from '../components/RevealText'
 import { useScreenFocus } from '../hooks/useScreenFocus'
 import { foodKind } from '../lib/foodKind'
 import { useShopping } from '../lib/shoppingContext'
+import { groupByAisle } from '../lib/aisles'
 import { listAsText } from '../lib/shoppingList'
 
 interface ShoppingScreenProps {
@@ -98,50 +99,57 @@ export default function ShoppingScreen({ onClose }: ShoppingScreenProps) {
           description="Add missing ingredients from any recipe, or type your own above."
         />
       ) : (
-        <ul className="shopping" aria-label="Shopping list">
-          <AnimatePresence mode="popLayout" initial={false}>
-            {items.map((item) => (
-              <m.li
-                key={item.id}
-                layout
-                className={`shopping__item${item.checked ? ' shopping__item--checked' : ''}`}
-                initial={calm ? false : { opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, x: 40, transition: { duration: 0.2 } }}
-              >
-                <label className="shopping__check">
-                  <input
-                    type="checkbox"
-                    checked={item.checked}
-                    onChange={() => {
-                      toggle(item.id)
-                    }}
-                  />
-                  <span className="shopping__box" aria-hidden="true">
-                    {item.checked && <Icon icon={Check} size={16} />}
-                  </span>
-                  <Food kind={foodKind(item.name)} size={32} shadow={false} />
-                  <span className="shopping__name">
-                    {item.name}
-                    {item.forRecipe !== null && (
-                      <span className="shopping__for kicker">for {item.forRecipe}</span>
-                    )}
-                  </span>
-                </label>
-                <button
-                  type="button"
-                  className="pantry__remove"
-                  aria-label={`Remove ${item.name}`}
-                  onClick={() => {
-                    remove(item.id)
-                  }}
-                >
-                  <Icon icon={X} size={20} />
-                </button>
-              </m.li>
-            ))}
-          </AnimatePresence>
-        </ul>
+        <div className="shopping" aria-label="Shopping list" role="group">
+          {groupByAisle(items).map((group) => (
+            <section key={group.aisle} className="shopping__aisle" aria-label={group.aisle}>
+              <h3 className="shopping__aisle-title kicker">{group.aisle}</h3>
+              <ul className="shopping__list">
+                <AnimatePresence mode="popLayout" initial={false}>
+                  {group.items.map((item) => (
+                    <m.li
+                      key={item.id}
+                      layout
+                      className={`shopping__item${item.checked ? ' shopping__item--checked' : ''}`}
+                      initial={calm ? false : { opacity: 0, y: 12 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, x: 40, transition: { duration: 0.2 } }}
+                    >
+                      <label className="shopping__check">
+                        <input
+                          type="checkbox"
+                          checked={item.checked}
+                          onChange={() => {
+                            toggle(item.id)
+                          }}
+                        />
+                        <span className="shopping__box" aria-hidden="true">
+                          {item.checked && <Icon icon={Check} size={16} />}
+                        </span>
+                        <Food kind={foodKind(item.name)} size={32} shadow={false} />
+                        <span className="shopping__name">
+                          {item.name}
+                          {item.forRecipe !== null && (
+                            <span className="shopping__for kicker">for {item.forRecipe}</span>
+                          )}
+                        </span>
+                      </label>
+                      <button
+                        type="button"
+                        className="pantry__remove"
+                        aria-label={`Remove ${item.name}`}
+                        onClick={() => {
+                          remove(item.id)
+                        }}
+                      >
+                        <Icon icon={X} size={20} />
+                      </button>
+                    </m.li>
+                  ))}
+                </AnimatePresence>
+              </ul>
+            </section>
+          ))}
+        </div>
       )}
 
       {items.length > 0 && (

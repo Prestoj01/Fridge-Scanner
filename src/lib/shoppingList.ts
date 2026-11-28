@@ -1,3 +1,4 @@
+import { groupByAisle } from './aisles'
 import { normalizeIngredientName } from './ingredients'
 import { readStored, writeStored } from './storage'
 import { isRecord } from './validate'
@@ -66,8 +67,12 @@ export function isOnList(items: readonly ShoppingItem[], names: readonly string[
   return names.every((name) => open.has(normalizeIngredientName(name)))
 }
 
-/** Plain text for copying or sharing: one item per line, open items first. */
+/** Plain text for copying or sharing: open items, grouped by store aisle. */
 export function listAsText(items: readonly ShoppingItem[]): string {
-  const open = items.filter((item) => !item.checked).map((item) => `• ${item.name}`)
-  return ['Shopping list', ...open].join('\n')
+  const groups = groupByAisle(items.filter((item) => !item.checked))
+  const lines = ['Shopping list']
+  for (const group of groups) {
+    lines.push('', group.aisle.toUpperCase(), ...group.items.map((item) => `• ${item.name}`))
+  }
+  return lines.join('\n')
 }

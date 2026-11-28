@@ -1701,8 +1701,21 @@ a {
 .shopping {
   position: relative;
   display: grid;
-  padding: 0;
+  gap: var(--space-5);
+  padding-top: var(--space-4);
   border-top: var(--rule);
+}
+
+.shopping__aisle-title {
+  margin-bottom: var(--space-1);
+  color: var(--color-accent);
+}
+
+.shopping__list {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  border-top: var(--rule-thin);
   list-style: none;
 }
 
