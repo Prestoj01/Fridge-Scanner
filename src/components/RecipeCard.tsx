@@ -23,6 +23,7 @@ import { AddToListButton } from './AddToListButton'
 import { Food } from './food/Food'
 import { Icon } from './Icon'
 import { NutritionBar } from './NutritionBar'
+import { PrintButton } from './PrintButton'
 import { SaveButton } from './SaveButton'
 import { UnitToggle } from './UnitToggle'
 import { ShareButton } from './ShareButton'
@@ -154,12 +155,13 @@ export function RecipeCard({
   const foods = recipeFoods(recipe)
   const layout = LAYOUTS[foods.length] ?? LAYOUTS[1] ?? []
 
+  const cardRef = useRef<HTMLElement>(null)
   const artRef = useRef<HTMLDivElement>(null)
   const { scrollYProgress } = useScroll({ target: artRef, offset: ['start end', 'end start'] })
   const drift = useTransform(scrollYProgress, [0, 1], [40, -40])
 
   return (
-    <article className="recipe-card">
+    <article ref={cardRef} className="recipe-card">
       <div className="spread__frame">
         <div ref={artRef} className={`spread__art spread__art--${color}`} aria-hidden="true">
           <span className="spread__number tabular">{String(index + 1).padStart(2, '0')}</span>
@@ -252,6 +254,7 @@ export function RecipeCard({
       <div className="recipe-card__share">
         <ShareButton recipe={recipe} />
         <ShareImageButton recipe={recipe} index={index} />
+        <PrintButton card={cardRef} />
         {onSwap && (
           <button
             type="button"
@@ -269,6 +272,10 @@ export function RecipeCard({
           </button>
         )}
       </div>
+
+      <p className="recipe-card__print-credit" aria-hidden="true">
+        From Fridge Scanner · cook what you have
+      </p>
 
       <details open={defaultOpen}>
         <summary>

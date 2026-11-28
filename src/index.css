@@ -2616,3 +2616,101 @@ h2[tabindex='-1']:focus {
   background: var(--tomato);
   color: #151312;
 }
+
+/* ───────────── Print ───────────── */
+
+.print-sheet {
+  display: none;
+}
+
+.recipe-card__print-credit {
+  display: none;
+}
+
+@media print {
+  @page {
+    margin: 14mm;
+  }
+
+  /* Paper is white: always print the light palette. */
+  :root,
+  :root[data-theme] {
+    color-scheme: light;
+  }
+
+  html,
+  body {
+    background: #fff !important;
+  }
+
+  .print-sheet {
+    display: block;
+  }
+
+  /* Printing one recipe: only the print sheet is shown. */
+  body.print-one > :not(.print-sheet) {
+    display: none !important;
+  }
+
+  .print-sheet .recipe-card {
+    color: #151312;
+  }
+
+  /* Without the one-recipe mode (browser menu print), keep it readable too. */
+  .masthead nav,
+  .ticker,
+  .stepper,
+  .back-slot,
+  .status-line,
+  .screen__actions,
+  .app-footer,
+  .page-wipe {
+    display: none !important;
+  }
+
+  .recipe-card button,
+  .recipe-card .button,
+  .recipe-card__share,
+  .add-to-list,
+  .recipe-card summary .recipe-card__chevron {
+    display: none !important;
+  }
+
+  .recipe-card {
+    break-inside: avoid-page;
+  }
+
+  .spread__art {
+    max-height: 70mm;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  .recipe-card summary,
+  .unit-toggle {
+    display: none !important;
+  }
+
+  /* Ingredients in two columns, like a magazine recipe box. */
+  .recipe-card__body ul {
+    display: block;
+    columns: 2;
+    column-gap: 10mm;
+  }
+
+  .recipe-card__body li {
+    break-inside: avoid;
+  }
+
+  .recipe-card__print-credit {
+    display: block;
+    margin-top: 6mm;
+    font-size: 9pt;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .print-sheet .recipe-card__print-credit {
+    order: 99;
+  }
+}
