@@ -37,6 +37,8 @@ export interface ScanFlow {
   enterManually: () => void
   addIngredient: (name: string) => void
   removeIngredient: (id: string) => void
+  /** Marks or unmarks an ingredient to use up first. */
+  toggleUseSoon: (id: string) => void
   setPreferences: (preferences: Preferences) => void
   /** Staples that always count as available. */
   staples: readonly Staple[]
@@ -123,6 +125,10 @@ export function useScanFlow(): ScanFlow {
     saveStaples(staples)
   }, [staples])
 
+  /** Names marked to use up first. */
+  const urgentNames = (): string[] =>
+    ingredients.filter((item) => item.useSoon === true).map((item) => item.name)
+
   /** What there is to cook with: the list plus ticked staples not already on it. */
   const available = (): string[] => {
     const names = ingredients.map((item) => item.name)
@@ -196,13 +202,29 @@ export function useScanFlow(): ScanFlow {
     setIngredients((current) => addIngredients(current, [name], 'manual'))
   }
 
+  const toggleUseSoon = (id: string) => {
+    setIngredients((current) =>
+      current.map((item) => {
+        if (item.id !== id) return item
+        if (item.useSoon === true) return { id: item.id, name: item.name, source: item.source }
+        return { ...item, useSoon: true }
+      }),
+    )
+  }
+
   const removeIngredient = (id: string) => {
     setIngredients((current) => current.filter((item) => item.id !== id))
   }
 
   const showLibraryRecipes = () => {
     ticket.current += 1
-    setRecipes(toRecipes(suggestFromLibrary(available(), preferences), 'library', staples))
+    setRecipes(
+      toRecipes(
+        suggestFromLibrary(available(), preferences, [], undefined, urgentNames()),
+        'library',
+        staples,
+      ),
+    )
     setRefineNote(null)
     setFallbackNote(null)
     setGeneration(IDLE)
@@ -223,21 +245,27 @@ export function useScanFlow(): ScanFlow {
     setStep('recipes')
     // With no connection there is no point waiting on the network.
     if (isOffline()) {
-      setRecipes(toRecipes(suggestFromLibrary(names, preferences), 'library', staples))
+      setRecipes(
+        toRecipes(
+          suggestFromLibrary(names, preferences, [], undefined, urgentNames()),
+          'library',
+          staples,
+        ),
+      )
       setFallbackNote(OFFLINE_NOTE)
       setGeneration(IDLE)
       return
     }
     setGeneration(LOADING)
     try {
-      const contents = await fetchRecipes(names, preferences)
+      const contents = await fetchRecipes(names, preferences, [], urgentNames())
       if (mine !== ticket.current) return
       setRecipes(toRecipes(contents, 'ai', staples))
       setGeneration(IDLE)
     } catch (error) {
       if (mine !== ticket.current) return
       // Fall back to the built-in library when it has something to offer.
-      const library = suggestFromLibrary(names, preferences)
+      const library = suggestFromLibrary(names, preferences, [], undefined, urgentNames())
       if (library.length > 0) {
         setRecipes(toRecipes(library, 'library', staples))
         setFallbackNote(fallbackNoteFor(error))
@@ -264,10 +292,14 @@ export function useScanFlow(): ScanFlow {
     const fresh = (list: RecipeContent[]) =>
       list.filter((item) => !seen.has(item.title.toLowerCase()))
     // Alternatives may ask for a little more shopping than the first picks.
-    const fromLibrary = () => fresh(suggestFromLibrary(names, preferences, shown, 0.25))
+    const fromLibrary = () =>
+      fresh(suggestFromLibrary(names, preferences, shown, 0.25, urgentNames()))
     if (!aiEnabled || isOffline()) return { found: fromLibrary(), source: 'library' }
     try {
-      return { found: fresh(await fetchRecipes(names, preferences, shown)), source: 'ai' }
+      return {
+        found: fresh(await fetchRecipes(names, preferences, shown, urgentNames())),
+        source: 'ai',
+      }
     } catch (error) {
       const found = fromLibrary()
       if (found.length === 0) throw error
@@ -342,6 +374,7 @@ export function useScanFlow(): ScanFlow {
     enterManually,
     addIngredient,
     removeIngredient,
+    toggleUseSoon,
     setPreferences,
     staples,
     setStaples,

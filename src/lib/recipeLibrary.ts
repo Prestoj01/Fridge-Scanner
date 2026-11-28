@@ -34,7 +34,10 @@ export function suggestFromLibrary(
   exclude: readonly string[] = [],
   /** Share of a recipe's core ingredients the user must have. */
   minScore = 0.5,
+  /** Ingredients to use up first; recipes that use more of them rank higher. */
+  useSoon: readonly string[] = [],
 ): RecipeContent[] {
+  const urgent = new Set(useSoon.map((name) => name.toLowerCase()))
   const skip = new Set(exclude.map((title) => title.trim().toLowerCase()))
   const eligible = LIBRARY.filter(
     (recipe) =>
@@ -65,6 +68,7 @@ export function suggestFromLibrary(
       used: [...used],
       missing,
       score: matched / recipe.core.length,
+      usesUp: [...used].filter((name) => urgent.has(name.toLowerCase())).length,
       // A chosen cuisine ranks first among equally good matches.
       cuisineMatch: preferences.cuisine !== 'any' && recipe.cuisine === preferences.cuisine,
     }
@@ -74,6 +78,7 @@ export function suggestFromLibrary(
     .filter((entry) => entry.score >= minScore)
     .sort(
       (a, b) =>
+        b.usesUp - a.usesUp ||
         Number(b.cuisineMatch) - Number(a.cuisineMatch) ||
         b.score - a.score ||
         a.missing.length - b.missing.length,

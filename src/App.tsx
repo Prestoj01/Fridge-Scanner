@@ -162,6 +162,7 @@ function Kitchen() {
                             preferences={flow.preferences}
                             onAddIngredient={flow.addIngredient}
                             onRemoveIngredient={flow.removeIngredient}
+                            onToggleUseSoon={flow.toggleUseSoon}
                             onPreferencesChange={flow.setPreferences}
                             staples={flow.staples}
                             onStaplesChange={flow.setStaples}
@@ -172,6 +173,9 @@ function Kitchen() {
                           <RecipesScreen
                             recipes={flow.recipes}
                             ingredientNames={flow.ingredients.map((item) => item.name)}
+                            useSoon={flow.ingredients
+                              .filter((item) => item.useSoon === true)
+                              .map((item) => item.name)}
                             generation={flow.generation}
                             onRetry={() => void flow.findRecipes()}
                             onUseLibrary={flow.showLibraryRecipes}

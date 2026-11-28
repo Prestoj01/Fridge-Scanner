@@ -1,4 +1,4 @@
-import { X } from 'lucide-react'
+import { Hourglass, X } from 'lucide-react'
 import { AnimatePresence, m, useReducedMotion } from 'motion/react'
 import { useEffect, useState, type SyntheticEvent } from 'react'
 import { EmptyState } from '../components/EmptyState'
@@ -19,6 +19,7 @@ interface ReviewScreenProps {
   preferences: Preferences
   onAddIngredient: (name: string) => void
   onRemoveIngredient: (id: string) => void
+  onToggleUseSoon: (id: string) => void
   onPreferencesChange: (preferences: Preferences) => void
   staples: readonly Staple[]
   onStaplesChange: (staples: Staple[]) => void
@@ -51,6 +52,7 @@ export default function ReviewScreen({
   preferences,
   onAddIngredient,
   onRemoveIngredient,
+  onToggleUseSoon,
   onPreferencesChange,
   staples,
   onStaplesChange,
@@ -146,6 +148,19 @@ export default function ReviewScreen({
                   <Food kind={foodKind(ingredient.name)} size={44} shadow={false} />
                 </m.span>
                 <span className="pantry__name">{ingredient.name}</span>
+                <button
+                  type="button"
+                  className={`use-soon${ingredient.useSoon === true ? ' use-soon--on' : ''}`}
+                  aria-pressed={ingredient.useSoon === true}
+                  aria-label={`Use soon: ${ingredient.name}`}
+                  title="Use this up first"
+                  onClick={() => {
+                    onToggleUseSoon(ingredient.id)
+                  }}
+                >
+                  <Icon icon={Hourglass} size={16} />
+                  <span aria-hidden="true">Use soon</span>
+                </button>
                 <button
                   type="button"
                   className="pantry__remove"

@@ -27,6 +27,8 @@ export interface RecipesRequest {
   servings?: number
   /** Titles already shown, so the model suggests something different. */
   exclude?: string[]
+  /** Ingredients to use up first. */
+  useSoon?: string[]
 }
 
 export interface RecipesResponse {

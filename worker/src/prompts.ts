@@ -46,6 +46,7 @@ export function recipesPrompt(
   ingredients: readonly string[],
   preferences: Preferences,
   exclude: readonly string[] = [],
+  useSoon: readonly string[] = [],
 ): string {
   const lines = [
     'Ingredients I have:',
@@ -64,6 +65,11 @@ export function recipesPrompt(
   }
   if (preferences.cuisine !== 'any') {
     lines.push(`Lean toward ${CUISINE_NAMES[preferences.cuisine]} cooking.`)
+  }
+  if (useSoon.length > 0) {
+    lines.push(
+      `These need using up soon, so build the recipes around them first: ${useSoon.join(', ')}.`,
+    )
   }
   if (exclude.length > 0) {
     lines.push('Suggest something different from these recipes I have already seen:')

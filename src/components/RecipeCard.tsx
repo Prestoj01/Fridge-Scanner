@@ -3,6 +3,7 @@ import {
   ChefHat,
   Clock,
   Flame,
+  Hourglass,
   Leaf,
   RefreshCw,
   ShoppingBasket,
@@ -12,6 +13,7 @@ import { m, useReducedMotion, useScroll, useTransform, type MotionValue } from '
 import { Suspense, useRef, useState } from 'react'
 import type { FoodKind } from '../lib/foodKind'
 import { CookingMode } from '../lib/lazyViews'
+import { matchesTerm } from '../lib/recipeLibrary'
 import { recipeFoods } from '../lib/recipeFoods'
 import { substitutesFor } from '../lib/substitutions'
 import type { Recipe } from '../types'
@@ -34,6 +36,8 @@ interface RecipeCardProps {
   swapping?: boolean
   /** Disables the swap button while another change is running. */
   busy?: boolean
+  /** Ingredients marked to use up first; the card says which ones it uses. */
+  useSoon?: readonly string[]
 }
 
 const SPREAD_COLORS = ['tomato', 'sunshine', 'cobalt', 'basil', 'blush'] as const
@@ -131,7 +135,14 @@ export function RecipeCard({
   onSwap,
   swapping = false,
   busy = false,
+  useSoon = [],
 }: RecipeCardProps) {
+  const usesUp = useSoon.filter((name) =>
+    recipe.usedIngredients.some((used) => {
+      const a = used.toLowerCase()
+      return a === name || matchesTerm(a, name) || matchesTerm(name, a)
+    }),
+  )
   const calm = useReducedMotion() ?? false
   const [cooking, setCooking] = useState(false)
   const ready = recipe.missingIngredients.length === 0
@@ -182,6 +193,13 @@ export function RecipeCard({
         <h3>{recipe.title}</h3>
         {recipe.summary !== '' && <p className="recipe-card__summary">{recipe.summary}</p>}
       </header>
+
+      {usesUp.length > 0 && (
+        <p className="recipe-card__uses-up">
+          <Icon icon={Hourglass} size={16} />
+          Uses up {usesUp.join(', ')}
+        </p>
+      )}
 
       {ready ? (
         <p className="recipe-card__status recipe-card__status--ready">You have everything</p>

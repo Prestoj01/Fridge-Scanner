@@ -15,7 +15,14 @@ function parsePantry(value: unknown): Pantry | null {
     if (!isRecord(item) || typeof item.id !== 'string' || typeof item.name !== 'string') return []
     const name = item.name.trim().slice(0, 60)
     if (name === '') return []
-    return [{ id: item.id, name, source: item.source === 'detected' ? 'detected' : 'manual' }]
+    return [
+      {
+        id: item.id,
+        name,
+        source: item.source === 'detected' ? 'detected' : 'manual',
+        ...(item.useSoon === true ? { useSoon: true } : {}),
+      },
+    ]
   })
   // Older saves stored only a diet at the top level.
   const preferences = parsePreferences(

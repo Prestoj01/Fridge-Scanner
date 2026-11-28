@@ -262,3 +262,22 @@ it('never lists ticked kitchen staples as missing', async () => {
   if (!card) throw new Error('Recipe card not found')
   expect(within(card).getByText('You have everything')).toBeInTheDocument()
 })
+
+it('puts recipes that use up marked ingredients first and says so', async () => {
+  const user = userEvent.setup()
+  render(<App />)
+
+  await user.click(await screen.findByRole('button', { name: 'Type your ingredients' }))
+  await user.type(
+    await screen.findByLabelText('Ingredient name'),
+    'eggs, spinach, tomato, oats, banana, milk{Enter}',
+  )
+  const toggle = screen.getByRole('button', { name: 'Use soon: banana' })
+  await user.click(toggle)
+  expect(toggle).toHaveAttribute('aria-pressed', 'true')
+  await user.click(screen.getByRole('button', { name: 'Find recipes' }))
+
+  const [first] = await screen.findAllByRole('article')
+  if (!first) throw new Error('No recipes')
+  expect(within(first).getByText('Uses up banana')).toBeInTheDocument()
+})

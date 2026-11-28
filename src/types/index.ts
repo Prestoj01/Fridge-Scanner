@@ -18,6 +18,8 @@ export interface Ingredient {
   name: string
   /** Whether the ingredient came from photo detection or was typed in. */
   source: 'detected' | 'manual'
+  /** Marked to use up first, for example because it expires soon. */
+  useSoon?: boolean
 }
 
 export type Diet = 'any' | 'vegetarian' | 'vegan'

@@ -1219,7 +1219,7 @@ a {
 
 .pantry__item {
   display: grid;
-  grid-template-columns: auto 1fr auto;
+  grid-template-columns: auto 1fr auto auto;
   align-items: center;
   gap: var(--space-3);
   padding: var(--space-2) 0;
@@ -2506,4 +2506,50 @@ h2[tabindex='-1']:focus {
   font-weight: 400;
   letter-spacing: 0;
   text-transform: none;
+}
+
+/* "Use soon" marks an ingredient to use up first. */
+.use-soon {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35em;
+  min-height: 2rem;
+  padding: 0 0.7em;
+  border: 1.5px solid var(--color-rule-soft);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--color-text-muted);
+  font-size: 0.75rem;
+  font-stretch: 85%;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition:
+    background-color var(--duration-base) var(--ease-out),
+    color var(--duration-base) var(--ease-out),
+    border-color var(--duration-base) var(--ease-out);
+}
+
+.use-soon:hover {
+  border-color: currentColor;
+}
+
+.use-soon--on {
+  border-color: var(--sunshine);
+  background: var(--sunshine);
+  color: #151312;
+}
+
+.recipe-card__uses-up {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  justify-self: start;
+  padding: 0.25em 0.7em;
+  border-radius: 999px;
+  background: var(--sunshine);
+  color: #151312;
+  font-size: var(--text-sm);
+  font-weight: 700;
 }

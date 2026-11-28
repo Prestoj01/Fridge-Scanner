@@ -12,8 +12,10 @@ export function recipeCacheKey(
   ingredients: readonly string[],
   preferences: Preferences,
   exclude: readonly string[] = [],
+  useSoon: readonly string[] = [],
 ): string {
   return JSON.stringify([
+    sorted(useSoon),
     sorted(ingredients),
     preferences.diet,
     preferences.maxMinutes,

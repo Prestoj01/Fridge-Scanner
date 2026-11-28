@@ -15,6 +15,8 @@ interface RecipesScreenProps {
   recipes: readonly Recipe[]
   /** The user's ingredient names, for the loading scene. */
   ingredientNames: readonly string[]
+  /** Ingredients marked to use up first. */
+  useSoon?: readonly string[]
   generation: AsyncState
   onRetry: () => void
   onUseLibrary: () => void
@@ -45,6 +47,7 @@ function summaryLine(recipes: readonly Recipe[]): string {
 export default function RecipesScreen({
   recipes,
   ingredientNames,
+  useSoon = [],
   generation,
   onRetry,
   onUseLibrary,
@@ -162,6 +165,7 @@ export default function RecipesScreen({
             <RecipeCard
               recipe={recipe}
               index={index}
+              useSoon={useSoon}
               defaultOpen={index === 0 && !twoUp}
               onSwap={() => {
                 onSwap(recipe.id)

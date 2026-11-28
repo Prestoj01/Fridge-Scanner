@@ -152,6 +152,7 @@ interface RecipesInput {
   ingredients: string[]
   preferences: Preferences
   exclude: string[]
+  useSoon: string[]
 }
 
 function parseRecipesInput(body: Record<string, unknown>): RecipesInput {
@@ -166,7 +167,9 @@ function parseRecipesInput(body: Record<string, unknown>): RecipesInput {
         .filter((title) => title !== '')
         .slice(0, 12)
     : []
-  return { ingredients, preferences: parsePreferences(body), exclude }
+  // Only ingredients that are on the list can be used up.
+  const useSoon = parseIngredientNames(body.useSoon).filter((name) => ingredients.includes(name))
+  return { ingredients, preferences: parsePreferences(body), exclude, useSoon }
 }
 
 async function generateRecipes(input: RecipesInput, env: Env): Promise<RecipesResponse> {
@@ -174,7 +177,7 @@ async function generateRecipes(input: RecipesInput, env: Env): Promise<RecipesRe
     apiKey: requireApiKey(env),
     model: env.GEMINI_MODEL ?? DEFAULT_MODEL,
     system: RECIPES_SYSTEM,
-    prompt: recipesPrompt(input.ingredients, input.preferences, input.exclude),
+    prompt: recipesPrompt(input.ingredients, input.preferences, input.exclude, input.useSoon),
     schema: RECIPES_SCHEMA,
   })
   return { recipes: parseRecipes(isRecord(result) ? result.recipes : null) }
@@ -208,6 +211,7 @@ async function route(request: Request, env: Env): Promise<unknown> {
       recipesInput.ingredients,
       recipesInput.preferences,
       recipesInput.exclude,
+      recipesInput.useSoon,
     )
     const cached = await readCachedRecipes(cacheKey)
     if (cached) return cached

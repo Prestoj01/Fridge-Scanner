@@ -124,8 +124,10 @@ export async function fetchRecipes(
   preferences: Preferences,
   /** Titles already shown, so the model suggests something different. */
   exclude: readonly string[] = [],
+  /** Ingredients to use up first. */
+  useSoon: readonly string[] = [],
 ): Promise<RecipeContent[]> {
-  const key = recipeCacheKey(ingredients, preferences, exclude)
+  const key = recipeCacheKey(ingredients, preferences, exclude, useSoon)
   const cached = readSessionCache().find(([existing]) => existing === key)
   if (cached && cached[1].length > 0) return cached[1]
 
@@ -133,6 +135,7 @@ export async function fetchRecipes(
     ingredients,
     ...preferences,
     ...(exclude.length > 0 ? { exclude: [...exclude] } : {}),
+    ...(useSoon.length > 0 ? { useSoon: [...useSoon] } : {}),
   }
   const body = await post('/recipes', payload)
   if (!isRecord(body) || !Array.isArray(body.recipes)) throw new ApiError('bad_response')

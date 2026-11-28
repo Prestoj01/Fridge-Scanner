@@ -167,6 +167,18 @@ describe('POST /recipes', () => {
     expect(text).toContain('- Fried rice')
   })
 
+  it('asks the model to use up marked ingredients, ignoring ones not on the list', async () => {
+    const fetchMock = mockGemini({ recipes: [] })
+    await worker.fetch(
+      post('/recipes', { ingredients: ['rice', 'Spinach'], useSoon: ['spinach', 'caviar'] }),
+      env,
+    )
+    const [, init] = fetchMock.mock.calls[0] as unknown as [string, RequestInit]
+    const text = (JSON.parse(init.body as string) as { input: { text: string }[] }).input[0]?.text
+    expect(text).toContain('using up soon, so build the recipes around them first: spinach.')
+    expect(text).not.toContain('caviar')
+  })
+
   it('requires at least one ingredient', async () => {
     const response = await worker.fetch(post('/recipes', { ingredients: [] }), env)
     expect(response.status).toBe(400)

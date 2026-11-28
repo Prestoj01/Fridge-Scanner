@@ -96,6 +96,8 @@ it('detects ingredients from a photo and shows AI recipes', async () => {
   expect(fetchRecipes).toHaveBeenCalledWith(
     ['chicken', 'broccoli', 'olive oil', 'salt', 'black pepper'],
     DEFAULT_PREFERENCES,
+    [],
+    [],
   )
 })
 
@@ -148,6 +150,8 @@ it('switches to built-in recipes on its own when the AI request fails', async ()
       cuisine: 'italian',
       servings: 3,
     },
+    [],
+    [],
   )
 
   // Trying the AI again replaces the library picks when it answers.

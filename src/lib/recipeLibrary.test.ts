@@ -113,3 +113,15 @@ describe('library data', () => {
     }
   })
 })
+
+describe('suggestFromLibrary use-it-up', () => {
+  it('ranks recipes that use ingredients marked to use soon first', () => {
+    const names = ['eggs', 'spinach', 'tomato', 'oats', 'banana', 'milk']
+    const plain = suggestFromLibrary(names, DEFAULT_PREFERENCES)
+    const urgent = suggestFromLibrary(names, DEFAULT_PREFERENCES, [], 0.5, ['banana'])
+    expect(plain.map((recipe) => recipe.title)).toEqual(
+      expect.arrayContaining(urgent.map((recipe) => recipe.title)),
+    )
+    expect(urgent[0]?.usedIngredients).toContain('banana')
+  })
+})
