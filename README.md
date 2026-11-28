@@ -32,7 +32,7 @@ Everything you save stays in your browser.
 
 **Accessibility.** Every screen passes [axe](https://github.com/dequelabs/axe-core) checks in light and dark mode, including color contrast. Focus moves to the new heading on each step so screen readers announce it, cooking mode traps the page behind it, and all motion respects the reduced-motion setting. An axe test runs in CI.
 
-The app also works with no backend at all. In **offline mode** you type your ingredients and recipes come from a built-in library, matched against what you have. If the AI service fails or hits its quota, the app offers the same library as a fallback.
+The app also works with no backend at all. In **offline mode** you type your ingredients and recipes come from a built-in library, matched against what you have. If the AI service fails, hits its quota, or you are offline, the app switches to the same library on its own and says why, with a button to try the AI again.
 
 ## Design
 

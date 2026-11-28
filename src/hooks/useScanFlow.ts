@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { detectIngredients, fetchRecipes } from '../lib/api'
+import { ApiError, detectIngredients, fetchRecipes } from '../lib/api'
 import { API_URL } from '../lib/config'
 import { prepareImage } from '../lib/image'
 import { addIngredients } from '../lib/ingredients'
@@ -42,6 +42,8 @@ export interface ScanFlow {
   refining: Refining
   /** A short note when no different recipe could be found. */
   refineNote: string | null
+  /** Why the built-in library is showing instead of AI recipes, if it is. */
+  fallbackNote: string | null
   swapRecipe: (id: string) => Promise<void>
   moreRecipes: () => Promise<void>
   showLibraryRecipes: () => void
@@ -57,6 +59,21 @@ const LOADING: AsyncState = { status: 'loading' }
 
 function toRecipes(contents: readonly RecipeContent[], source: Recipe['source']): Recipe[] {
   return contents.map((content) => ({ ...content, id: crypto.randomUUID(), source }))
+}
+
+/** The browser knows it has no connection. */
+function isOffline(): boolean {
+  return typeof navigator !== 'undefined' && !navigator.onLine
+}
+
+const OFFLINE_NOTE = 'You’re offline, so these come from the built-in recipe library.'
+
+function fallbackNoteFor(error: unknown): string {
+  if (isOffline() || (error instanceof ApiError && error.code === 'network')) return OFFLINE_NOTE
+  if (error instanceof ApiError && error.code === 'rate_limited') {
+    return 'The AI kitchen is busy right now, so these come from the built-in library.'
+  }
+  return 'The AI kitchen couldn’t answer, so these come from the built-in library.'
 }
 
 function errorMessage(error: unknown): string {
@@ -79,6 +96,7 @@ export function useScanFlow(): ScanFlow {
   const [generation, setGeneration] = useState<AsyncState>(IDLE)
   const [refining, setRefining] = useState<Refining>(NOT_REFINING)
   const [refineNote, setRefineNote] = useState<string | null>(null)
+  const [fallbackNote, setFallbackNote] = useState<string | null>(null)
 
   useEffect(() => {
     savePantry({ ingredients: [...ingredients], preferences })
@@ -157,6 +175,7 @@ export function useScanFlow(): ScanFlow {
     const names = ingredients.map((item) => item.name)
     setRecipes(toRecipes(suggestFromLibrary(names, preferences), 'library'))
     setRefineNote(null)
+    setFallbackNote(null)
     setGeneration(IDLE)
     setStep('recipes')
   }
@@ -167,22 +186,36 @@ export function useScanFlow(): ScanFlow {
       showLibraryRecipes()
       return
     }
+    const names = ingredients.map((item) => item.name)
     const mine = ++ticket.current
     setRecipes([])
     setRefineNote(null)
-    setGeneration(LOADING)
+    setFallbackNote(null)
     setStep('recipes')
+    // With no connection there is no point waiting on the network.
+    if (isOffline()) {
+      setRecipes(toRecipes(suggestFromLibrary(names, preferences), 'library'))
+      setFallbackNote(OFFLINE_NOTE)
+      setGeneration(IDLE)
+      return
+    }
+    setGeneration(LOADING)
     try {
-      const contents = await fetchRecipes(
-        ingredients.map((item) => item.name),
-        preferences,
-      )
+      const contents = await fetchRecipes(names, preferences)
       if (mine !== ticket.current) return
       setRecipes(toRecipes(contents, 'ai'))
       setGeneration(IDLE)
     } catch (error) {
       if (mine !== ticket.current) return
-      setGeneration({ status: 'error', message: errorMessage(error) })
+      // Fall back to the built-in library when it has something to offer.
+      const library = suggestFromLibrary(names, preferences)
+      if (library.length > 0) {
+        setRecipes(toRecipes(library, 'library'))
+        setFallbackNote(fallbackNoteFor(error))
+        setGeneration(IDLE)
+      } else {
+        setGeneration({ status: 'error', message: errorMessage(error) })
+      }
     }
   }
 
@@ -192,23 +225,34 @@ export function useScanFlow(): ScanFlow {
   }
 
   /** New recipes that differ from the ones on screen, from the API or the library. */
-  const differentRecipes = async (): Promise<RecipeContent[]> => {
+  const differentRecipes = async (): Promise<{
+    found: RecipeContent[]
+    source: Recipe['source']
+  }> => {
     const names = ingredients.map((item) => item.name)
     const shown = recipes.map((recipe) => recipe.title)
     const seen = new Set(shown.map((title) => title.toLowerCase()))
     const fresh = (list: RecipeContent[]) =>
       list.filter((item) => !seen.has(item.title.toLowerCase()))
     // Alternatives may ask for a little more shopping than the first picks.
-    if (!aiEnabled) return fresh(suggestFromLibrary(names, preferences, shown, 0.25))
-    return fresh(await fetchRecipes(names, preferences, shown))
+    const fromLibrary = () => fresh(suggestFromLibrary(names, preferences, shown, 0.25))
+    if (!aiEnabled || isOffline()) return { found: fromLibrary(), source: 'library' }
+    try {
+      return { found: fresh(await fetchRecipes(names, preferences, shown)), source: 'ai' }
+    } catch (error) {
+      const found = fromLibrary()
+      if (found.length === 0) throw error
+      setFallbackNote(fallbackNoteFor(error))
+      return { found, source: 'library' }
+    }
   }
 
-  const refine = async (mode: Refining, apply: (found: RecipeContent[]) => void): Promise<void> => {
+  const refine = async (mode: Refining, apply: (found: Recipe[]) => void): Promise<void> => {
     const mine = ++ticket.current
     setRefining(mode)
     setRefineNote(null)
     try {
-      const found = await differentRecipes()
+      const { found, source } = await differentRecipes()
       if (mine !== ticket.current) return
       if (found.length === 0) {
         setRefineNote(
@@ -217,7 +261,7 @@ export function useScanFlow(): ScanFlow {
             : 'That is every match in the built-in library. Add ingredients for new ideas.',
         )
       } else {
-        apply(found)
+        apply(toRecipes(found, source))
       }
     } catch (error) {
       if (mine !== ticket.current) return
@@ -229,14 +273,14 @@ export function useScanFlow(): ScanFlow {
 
   const swapRecipe = (id: string) =>
     refine({ kind: 'swap', id }, (found) => {
-      const [next] = toRecipes(found.slice(0, 1), aiEnabled ? 'ai' : 'library')
+      const [next] = found
       if (!next) return
       setRecipes((current) => current.map((recipe) => (recipe.id === id ? next : recipe)))
     })
 
   const moreRecipes = () =>
     refine({ kind: 'more' }, (found) => {
-      setRecipes((current) => [...current, ...toRecipes(found, aiEnabled ? 'ai' : 'library')])
+      setRecipes((current) => [...current, ...found])
     })
 
   const reset = () => {
@@ -245,6 +289,7 @@ export function useScanFlow(): ScanFlow {
     setPhotos([])
     setIngredients([])
     setRecipes([])
+    setFallbackNote(null)
     setDetection(IDLE)
     setDetectedCount(null)
     setGeneration(IDLE)
@@ -272,6 +317,7 @@ export function useScanFlow(): ScanFlow {
     findRecipes,
     refining,
     refineNote,
+    fallbackNote,
     swapRecipe,
     moreRecipes,
     showLibraryRecipes,

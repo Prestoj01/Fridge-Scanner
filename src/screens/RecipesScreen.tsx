@@ -22,6 +22,8 @@ interface RecipesScreenProps {
   onReset: () => void
   refining: Refining
   refineNote: string | null
+  /** Shown when the built-in library stands in for the AI. */
+  fallbackNote?: string | null
   onSwap: (id: string) => void
   onMore: () => void
 }
@@ -50,6 +52,7 @@ export default function RecipesScreen({
   onReset,
   refining,
   refineNote,
+  fallbackNote = null,
   onSwap,
   onMore,
 }: RecipesScreenProps) {
@@ -127,10 +130,18 @@ export default function RecipesScreen({
           />
         </h2>
         <p className="screen__intro">{summaryLine(recipes)}</p>
-        {recipes.some((recipe) => recipe.source === 'library') && (
+        {fallbackNote === null && recipes.some((recipe) => recipe.source === 'library') && (
           <p className="screen__source">From the built-in library</p>
         )}
       </header>
+      {fallbackNote !== null && (
+        <Notice>
+          {fallbackNote}{' '}
+          <button type="button" className="link-button" onClick={onRetry}>
+            Try the AI again
+          </button>
+        </Notice>
+      )}
       <ul className="recipe-list">
         {recipes.map((recipe, index) => (
           <m.li

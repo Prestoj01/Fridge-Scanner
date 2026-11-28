@@ -177,6 +177,7 @@ function Kitchen() {
                             onReset={flow.reset}
                             refining={flow.refining}
                             refineNote={flow.refineNote}
+                            fallbackNote={flow.fallbackNote}
                             onSwap={(id) => void flow.swapRecipe(id)}
                             onMore={() => void flow.moreRecipes()}
                           />

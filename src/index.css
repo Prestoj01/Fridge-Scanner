@@ -2441,3 +2441,18 @@ a {
 h2[tabindex='-1']:focus {
   outline: none;
 }
+
+/* An inline action inside running text, styled like a link. */
+.link-button {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  font-weight: 700;
+  text-decoration: underline;
+  text-decoration-color: var(--tomato);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.2em;
+  cursor: pointer;
+}

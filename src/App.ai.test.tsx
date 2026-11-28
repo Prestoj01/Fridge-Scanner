@@ -119,7 +119,7 @@ it('shows a busy state while detecting, then an error with retry', async () => {
   expect(await screen.findByText(/could not spot any food/)).toBeInTheDocument()
 })
 
-it('falls back to built-in recipes when the AI request fails', async () => {
+it('switches to built-in recipes on its own when the AI request fails', async () => {
   vi.mocked(fetchRecipes).mockRejectedValue(new ApiError('not_configured'))
   const user = userEvent.setup()
   render(<App />)
@@ -133,7 +133,8 @@ it('falls back to built-in recipes when the AI request fails', async () => {
   await user.click(screen.getByRole('button', { name: 'More servings' }))
   await user.click(screen.getByRole('button', { name: 'Find recipes' }))
 
-  expect(await screen.findByRole('alert')).toHaveTextContent('not set up yet')
+  expect(await screen.findByRole('heading', { name: 'Avocado toast with egg' })).toBeInTheDocument()
+  expect(screen.getByText(/AI kitchen couldn’t answer/)).toBeInTheDocument()
   expect(fetchRecipes).toHaveBeenCalledWith(['bread', 'avocado', 'eggs'], {
     diet: 'vegetarian',
     maxMinutes: 30,
@@ -142,6 +143,34 @@ it('falls back to built-in recipes when the AI request fails', async () => {
     servings: 3,
   })
 
-  await user.click(screen.getByRole('button', { name: 'Use built-in recipes' }))
-  expect(await screen.findByRole('heading', { name: 'Avocado toast with egg' })).toBeInTheDocument()
+  // Trying the AI again replaces the library picks when it answers.
+  vi.mocked(fetchRecipes).mockResolvedValue([stirFry])
+  await user.click(screen.getByRole('button', { name: 'Try the AI again' }))
+  expect(await screen.findByRole('heading', { name: stirFry.title })).toBeInTheDocument()
+  expect(screen.queryByText(/AI kitchen couldn’t answer/)).not.toBeInTheDocument()
+})
+
+it('shows the error when the library has nothing either', async () => {
+  vi.mocked(fetchRecipes).mockRejectedValue(new ApiError('not_configured'))
+  const user = userEvent.setup()
+  render(<App />)
+
+  await user.click(await screen.findByRole('button', { name: 'Type ingredients instead' }))
+  await user.type(await screen.findByLabelText('Ingredient name'), 'ketchup{Enter}')
+  await user.click(screen.getByRole('button', { name: 'Find recipes' }))
+  expect(await screen.findByRole('alert')).toHaveTextContent('not set up yet')
+  expect(screen.getByRole('button', { name: 'Use built-in recipes' })).toBeInTheDocument()
+})
+
+it('skips the network when the browser is offline', async () => {
+  const online = vi.spyOn(navigator, 'onLine', 'get').mockReturnValue(false)
+  const user = userEvent.setup()
+  render(<App />)
+
+  await user.click(await screen.findByRole('button', { name: 'Type ingredients instead' }))
+  await user.type(await screen.findByLabelText('Ingredient name'), 'eggs, spinach{Enter}')
+  await user.click(screen.getByRole('button', { name: 'Find recipes' }))
+  expect(await screen.findByText(/You’re offline/)).toBeInTheDocument()
+  expect(fetchRecipes).not.toHaveBeenCalled()
+  online.mockRestore()
 })
