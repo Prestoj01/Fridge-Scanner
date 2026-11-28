@@ -6,6 +6,8 @@ import { useStepTimers } from '../hooks/useStepTimers'
 import { useWakeLock } from '../hooks/useWakeLock'
 import { recipeFoods } from '../lib/recipeFoods'
 import { findTimer, formatClock } from '../lib/timers'
+import { convertLine, convertStep } from '../lib/units'
+import { useUnits } from '../hooks/useUnits'
 import type { Recipe } from '../types'
 import { Food } from './food/Food'
 import { Icon } from './Icon'
@@ -25,7 +27,8 @@ const SWIPE_DISTANCE = 80
  */
 export function CookingMode({ recipe, onClose }: CookingModeProps) {
   const calm = useReducedMotion() ?? false
-  const steps = recipe.steps
+  const units = useUnits()
+  const steps = recipe.steps.map((line) => convertStep(line, units))
   // Page 0 is the checklist, then one page per step, then the finish.
   const lastPage = steps.length + 1
   const [page, setPage] = useState(0)
@@ -188,7 +191,7 @@ export function CookingMode({ recipe, onClose }: CookingModeProps) {
                           }}
                         />
                         <span className="cooking__box" aria-hidden="true" />
-                        <span className="cooking__item">{line}</span>
+                        <span className="cooking__item">{convertLine(line, units)}</span>
                       </label>
                     </li>
                   ))}

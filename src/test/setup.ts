@@ -2,6 +2,7 @@ import '@testing-library/jest-dom/vitest'
 import { cleanup } from '@testing-library/react'
 import { MotionGlobalConfig } from 'motion/react'
 import { afterEach, vi } from 'vitest'
+import { resetUnits } from '../hooks/useUnits'
 
 // Animations add nothing to behavior tests and delay exits.
 MotionGlobalConfig.skipAnimations = true
@@ -11,6 +12,7 @@ afterEach(() => {
   // Remembered ingredients and saved recipes must not leak between tests.
   if (typeof localStorage !== 'undefined') localStorage.clear()
   if (typeof sessionStorage !== 'undefined') sessionStorage.clear()
+  resetUnits()
   if (typeof window !== 'undefined') window.history.replaceState(null, '', window.location.pathname)
 })
 

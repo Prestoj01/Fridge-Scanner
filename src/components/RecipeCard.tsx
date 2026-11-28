@@ -16,12 +16,15 @@ import { CookingMode } from '../lib/lazyViews'
 import { matchesTerm } from '../lib/recipeLibrary'
 import { recipeFoods } from '../lib/recipeFoods'
 import { substitutesFor } from '../lib/substitutions'
+import { convertLine, convertStep } from '../lib/units'
+import { useUnits } from '../hooks/useUnits'
 import type { Recipe } from '../types'
 import { AddToListButton } from './AddToListButton'
 import { Food } from './food/Food'
 import { Icon } from './Icon'
 import { NutritionBar } from './NutritionBar'
 import { SaveButton } from './SaveButton'
+import { UnitToggle } from './UnitToggle'
 import { ShareButton } from './ShareButton'
 import { ShareImageButton } from './ShareImageButton'
 
@@ -144,6 +147,7 @@ export function RecipeCard({
     }),
   )
   const calm = useReducedMotion() ?? false
+  const units = useUnits()
   const [cooking, setCooking] = useState(false)
   const ready = recipe.missingIngredients.length === 0
   const color = SPREAD_COLORS[index % SPREAD_COLORS.length] ?? 'tomato'
@@ -272,16 +276,19 @@ export function RecipeCard({
           <Icon icon={ChevronDown} className="recipe-card__chevron" />
         </summary>
         <div className="recipe-card__body">
-          <h4>You’ll need</h4>
+          <div className="recipe-card__needs">
+            <h4>You’ll need</h4>
+            <UnitToggle />
+          </div>
           <ul>
             {recipe.ingredients.map((line, i) => (
-              <li key={i}>{line}</li>
+              <li key={i}>{convertLine(line, units)}</li>
             ))}
           </ul>
           <h4>Method</h4>
           <ol>
             {recipe.steps.map((line, i) => (
-              <li key={i}>{line}</li>
+              <li key={i}>{convertStep(line, units)}</li>
             ))}
           </ol>
         </div>
