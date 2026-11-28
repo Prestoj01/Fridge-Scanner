@@ -28,7 +28,7 @@ export function StaplesPicker({ staples, onChange }: StaplesPickerProps) {
         </span>
         <Icon icon={ChevronDown} className="staples__chevron" />
       </summary>
-      <fieldset className="toggles">
+      <fieldset className="toggles toggles--include">
         <legend className="staples__hint">
           Tick what you always have. Recipes count these as on hand and never list them as missing.
         </legend>

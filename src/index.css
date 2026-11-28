@@ -2498,7 +2498,7 @@ h2[tabindex='-1']:focus {
   padding-bottom: var(--space-4);
 }
 
-.staples__hint {
+.staples .toggles .staples__hint {
   margin-bottom: var(--space-3);
   color: var(--color-text-muted, inherit);
   font-size: var(--text-sm);
@@ -2552,4 +2552,9 @@ h2[tabindex='-1']:focus {
   color: #151312;
   font-size: var(--text-sm);
   font-weight: 700;
+}
+
+/* In "include" groups a ticked chip means "have it", so it shows a check. */
+.toggles--include .toggle input[type='checkbox']:checked + span::before {
+  content: '✓';
 }

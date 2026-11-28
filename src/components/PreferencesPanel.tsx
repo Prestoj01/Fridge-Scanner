@@ -84,15 +84,24 @@ export function PreferencesPanel({ preferences, onChange }: PreferencesPanelProp
         }}
       />
 
-      <Segmented
-        legend="Goal"
-        name="goal"
-        options={GOAL_OPTIONS}
-        value={preferences.goal}
-        onChange={(goal) => {
-          update({ goal })
-        }}
-      />
+      <fieldset className="toggles">
+        <legend>Goal</legend>
+        <div className="toggles__options">
+          {GOAL_OPTIONS.map((option) => (
+            <label key={option.value} className="toggle">
+              <input
+                type="radio"
+                name="goal"
+                checked={preferences.goal === option.value}
+                onChange={() => {
+                  update({ goal: option.value })
+                }}
+              />
+              <span>{option.label}</span>
+            </label>
+          ))}
+        </div>
+      </fieldset>
 
       <Segmented
         legend="Ready in"
