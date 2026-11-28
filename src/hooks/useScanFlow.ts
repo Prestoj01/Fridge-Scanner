@@ -5,6 +5,7 @@ import { prepareImage } from '../lib/image'
 import { addIngredients } from '../lib/ingredients'
 import { loadPantry, savePantry } from '../lib/pantry'
 import { suggestFromLibrary } from '../lib/recipeLibrary'
+import { isCoveredByStaples, loadStaples, saveStaples, type Staple } from '../lib/staples'
 import { previousStep } from '../lib/steps'
 import type {
   AsyncState,
@@ -37,6 +38,9 @@ export interface ScanFlow {
   addIngredient: (name: string) => void
   removeIngredient: (id: string) => void
   setPreferences: (preferences: Preferences) => void
+  /** Staples that always count as available. */
+  staples: readonly Staple[]
+  setStaples: (staples: Staple[]) => void
   findRecipes: () => Promise<void>
   /** What "something different" is doing right now, if anything. */
   refining: Refining
@@ -57,8 +61,20 @@ const NOT_REFINING: Refining = { kind: 'idle' }
 const IDLE: AsyncState = { status: 'idle' }
 const LOADING: AsyncState = { status: 'loading' }
 
-function toRecipes(contents: readonly RecipeContent[], source: Recipe['source']): Recipe[] {
-  return contents.map((content) => ({ ...content, id: crypto.randomUUID(), source }))
+function toRecipes(
+  contents: readonly RecipeContent[],
+  source: Recipe['source'],
+  staples: readonly Staple[],
+): Recipe[] {
+  return contents.map((content) => ({
+    ...content,
+    // Ticked staples are always on hand, so they are never missing.
+    missingIngredients: content.missingIngredients.filter(
+      (name) => !isCoveredByStaples(name, staples),
+    ),
+    id: crypto.randomUUID(),
+    source,
+  }))
 }
 
 /** The browser knows it has no connection. */
@@ -97,10 +113,24 @@ export function useScanFlow(): ScanFlow {
   const [refining, setRefining] = useState<Refining>(NOT_REFINING)
   const [refineNote, setRefineNote] = useState<string | null>(null)
   const [fallbackNote, setFallbackNote] = useState<string | null>(null)
+  const [staples, setStaples] = useState<Staple[]>(loadStaples)
 
   useEffect(() => {
     savePantry({ ingredients: [...ingredients], preferences })
   }, [ingredients, preferences])
+
+  useEffect(() => {
+    saveStaples(staples)
+  }, [staples])
+
+  /** What there is to cook with: the list plus ticked staples not already on it. */
+  const available = (): string[] => {
+    const names = ingredients.map((item) => item.name)
+    const extra = staples.filter(
+      (staple) => !names.some((name) => isCoveredByStaples(name, [staple])),
+    )
+    return [...names, ...extra]
+  }
 
   // Each async action takes a ticket. A result is ignored if a newer action
   // (or a reset) has started since, so stale replies never overwrite state.
@@ -172,8 +202,7 @@ export function useScanFlow(): ScanFlow {
 
   const showLibraryRecipes = () => {
     ticket.current += 1
-    const names = ingredients.map((item) => item.name)
-    setRecipes(toRecipes(suggestFromLibrary(names, preferences), 'library'))
+    setRecipes(toRecipes(suggestFromLibrary(available(), preferences), 'library', staples))
     setRefineNote(null)
     setFallbackNote(null)
     setGeneration(IDLE)
@@ -186,7 +215,7 @@ export function useScanFlow(): ScanFlow {
       showLibraryRecipes()
       return
     }
-    const names = ingredients.map((item) => item.name)
+    const names = available()
     const mine = ++ticket.current
     setRecipes([])
     setRefineNote(null)
@@ -194,7 +223,7 @@ export function useScanFlow(): ScanFlow {
     setStep('recipes')
     // With no connection there is no point waiting on the network.
     if (isOffline()) {
-      setRecipes(toRecipes(suggestFromLibrary(names, preferences), 'library'))
+      setRecipes(toRecipes(suggestFromLibrary(names, preferences), 'library', staples))
       setFallbackNote(OFFLINE_NOTE)
       setGeneration(IDLE)
       return
@@ -203,14 +232,14 @@ export function useScanFlow(): ScanFlow {
     try {
       const contents = await fetchRecipes(names, preferences)
       if (mine !== ticket.current) return
-      setRecipes(toRecipes(contents, 'ai'))
+      setRecipes(toRecipes(contents, 'ai', staples))
       setGeneration(IDLE)
     } catch (error) {
       if (mine !== ticket.current) return
       // Fall back to the built-in library when it has something to offer.
       const library = suggestFromLibrary(names, preferences)
       if (library.length > 0) {
-        setRecipes(toRecipes(library, 'library'))
+        setRecipes(toRecipes(library, 'library', staples))
         setFallbackNote(fallbackNoteFor(error))
         setGeneration(IDLE)
       } else {
@@ -229,7 +258,7 @@ export function useScanFlow(): ScanFlow {
     found: RecipeContent[]
     source: Recipe['source']
   }> => {
-    const names = ingredients.map((item) => item.name)
+    const names = available()
     const shown = recipes.map((recipe) => recipe.title)
     const seen = new Set(shown.map((title) => title.toLowerCase()))
     const fresh = (list: RecipeContent[]) =>
@@ -261,7 +290,7 @@ export function useScanFlow(): ScanFlow {
             : 'That is every match in the built-in library. Add ingredients for new ideas.',
         )
       } else {
-        apply(toRecipes(found, source))
+        apply(toRecipes(found, source, staples))
       }
     } catch (error) {
       if (mine !== ticket.current) return
@@ -314,6 +343,8 @@ export function useScanFlow(): ScanFlow {
     addIngredient,
     removeIngredient,
     setPreferences,
+    staples,
+    setStaples,
     findRecipes,
     refining,
     refineNote,

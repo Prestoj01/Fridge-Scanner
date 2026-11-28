@@ -2456,3 +2456,54 @@ h2[tabindex='-1']:focus {
   text-underline-offset: 0.2em;
   cursor: pointer;
 }
+
+/* ───────────── Staples ───────────── */
+
+.staples {
+  border-top: var(--rule-thin);
+  border-bottom: var(--rule-thin);
+}
+
+.staples summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: var(--control-md);
+  font-size: var(--text-sm);
+  font-stretch: 85%;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  list-style: none;
+  cursor: pointer;
+}
+
+.staples summary::-webkit-details-marker {
+  display: none;
+}
+
+.staples__count {
+  color: var(--color-accent);
+}
+
+.staples__chevron {
+  transition: transform var(--duration-base) var(--ease-out);
+}
+
+.staples[open] .staples__chevron {
+  transform: rotate(180deg);
+}
+
+.staples .toggles {
+  padding-bottom: var(--space-4);
+}
+
+.staples__hint {
+  margin-bottom: var(--space-3);
+  color: var(--color-text-muted, inherit);
+  font-size: var(--text-sm);
+  font-stretch: 100%;
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
+}

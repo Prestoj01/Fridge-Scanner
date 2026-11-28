@@ -4,10 +4,12 @@ import { useEffect, useState, type SyntheticEvent } from 'react'
 import { EmptyState } from '../components/EmptyState'
 import { Icon } from '../components/Icon'
 import { PreferencesPanel } from '../components/PreferencesPanel'
+import { StaplesPicker } from '../components/StaplesPicker'
 import { RevealText } from '../components/RevealText'
 import { useScreenFocus } from '../hooks/useScreenFocus'
 import { Food } from '../components/food/Food'
 import { foodKind } from '../lib/foodKind'
+import type { Staple } from '../lib/staples'
 import type { Ingredient, Preferences } from '../types'
 
 interface ReviewScreenProps {
@@ -18,6 +20,8 @@ interface ReviewScreenProps {
   onAddIngredient: (name: string) => void
   onRemoveIngredient: (id: string) => void
   onPreferencesChange: (preferences: Preferences) => void
+  staples: readonly Staple[]
+  onStaplesChange: (staples: Staple[]) => void
   onFindRecipes: () => void
 }
 
@@ -48,6 +52,8 @@ export default function ReviewScreen({
   onAddIngredient,
   onRemoveIngredient,
   onPreferencesChange,
+  staples,
+  onStaplesChange,
   onFindRecipes,
 }: ReviewScreenProps) {
   const headingRef = useScreenFocus<HTMLHeadingElement>()
@@ -155,6 +161,8 @@ export default function ReviewScreen({
           </AnimatePresence>
         </ul>
       )}
+
+      <StaplesPicker staples={staples} onChange={onStaplesChange} />
 
       <PreferencesPanel preferences={preferences} onChange={onPreferencesChange} />
 

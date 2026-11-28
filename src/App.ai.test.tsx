@@ -92,7 +92,11 @@ it('detects ingredients from a photo and shows AI recipes', async () => {
   expect(screen.getByRole('heading', { name: '1 healthy recipe for you' })).toBeInTheDocument()
   expect(screen.getByText('Need soy sauce')).toBeInTheDocument()
   expect(screen.getByText('Cook the chicken for 6 minutes.')).toBeInTheDocument()
-  expect(fetchRecipes).toHaveBeenCalledWith(['chicken', 'broccoli'], DEFAULT_PREFERENCES)
+  // Default staples (oil, salt, pepper) count as available too.
+  expect(fetchRecipes).toHaveBeenCalledWith(
+    ['chicken', 'broccoli', 'olive oil', 'salt', 'black pepper'],
+    DEFAULT_PREFERENCES,
+  )
 })
 
 it('shows a busy state while detecting, then an error with retry', async () => {
@@ -135,13 +139,16 @@ it('switches to built-in recipes on its own when the AI request fails', async ()
 
   expect(await screen.findByRole('heading', { name: 'Avocado toast with egg' })).toBeInTheDocument()
   expect(screen.getByText(/AI kitchen couldn’t answer/)).toBeInTheDocument()
-  expect(fetchRecipes).toHaveBeenCalledWith(['bread', 'avocado', 'eggs'], {
-    diet: 'vegetarian',
-    maxMinutes: 30,
-    avoid: ['nuts'],
-    cuisine: 'italian',
-    servings: 3,
-  })
+  expect(fetchRecipes).toHaveBeenCalledWith(
+    ['bread', 'avocado', 'eggs', 'olive oil', 'salt', 'black pepper'],
+    {
+      diet: 'vegetarian',
+      maxMinutes: 30,
+      avoid: ['nuts'],
+      cuisine: 'italian',
+      servings: 3,
+    },
+  )
 
   // Trying the AI again replaces the library picks when it answers.
   vi.mocked(fetchRecipes).mockResolvedValue([stirFry])

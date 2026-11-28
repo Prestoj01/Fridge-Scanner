@@ -163,6 +163,8 @@ function Kitchen() {
                             onAddIngredient={flow.addIngredient}
                             onRemoveIngredient={flow.removeIngredient}
                             onPreferencesChange={flow.setPreferences}
+                            staples={flow.staples}
+                            onStaplesChange={flow.setStaples}
                             onFindRecipes={() => void flow.findRecipes()}
                           />
                         )}

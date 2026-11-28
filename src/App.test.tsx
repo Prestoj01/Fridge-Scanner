@@ -245,3 +245,20 @@ it('copies a share link when the device has no share sheet', async () => {
     'Spinach and tomato omelette',
   )
 })
+
+it('never lists ticked kitchen staples as missing', async () => {
+  const user = userEvent.setup()
+  render(<App />)
+
+  await user.click(await screen.findByRole('button', { name: 'Type your ingredients' }))
+  await user.type(await screen.findByLabelText('Ingredient name'), 'chicken, broccoli{Enter}')
+  await user.click(screen.getByText(/Always in your kitchen/))
+  await user.click(screen.getByRole('checkbox', { name: 'Garlic' }))
+  await user.click(screen.getByRole('checkbox', { name: 'Soy sauce' }))
+  await user.click(screen.getByRole('button', { name: 'Find recipes' }))
+
+  const heading = await screen.findByRole('heading', { name: 'Chicken and broccoli stir-fry' })
+  const card = heading.closest('article')
+  if (!card) throw new Error('Recipe card not found')
+  expect(within(card).getByText('You have everything')).toBeInTheDocument()
+})

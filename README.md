@@ -19,6 +19,7 @@ Snap a photo of your fridge or pantry and get healthy recipes, with steps, from 
 ## Features
 
 - **Saved recipes.** Heart any recipe to keep it on the Saved page.
+- **Kitchen staples.** Tick what you always have (oil, salt, garlic, and so on). Recipes count them as on hand and never list them as missing.
 - **Remembers your fridge.** Your ingredient list and preferences come back on your next visit.
 - **Something different.** Swap any recipe for a new one, or ask for more ideas.
 - **Ingredient swaps.** Missing something? Each recipe suggests what to use instead.
